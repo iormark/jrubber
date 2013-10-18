@@ -1,0 +1,77 @@
+<script type="text/javascript">
+    $(document).ready(function() {
+        var book = new Array();
+
+        book[0] = {
+            url: 'http://www.vsemayki.ru/?Pa9G6WbIb_840000ZhjBm1y5KfK1cm9kGxS198Ypz8kW0ucQU4EO1PsdxCa9ag5bkTscEOgX5xc5gW6bhgP90eq1aRJND0mEaoEP1KACaFRHe93lvw-Gzj6Kd6GJfv6c4AYfxgf0fB00000DhlWQyCCvl_lY1B41iWIxzCL2GUnRSqG4U0y0&ref=135016',
+            title:'',
+            img:{
+                src:'http://affiliate.vsemayki.ru/bundles/partner/upload/3834db7239770f6_20121203132716.gif',
+                width: 180,
+                height: 300
+            }
+        };
+        book[1] = {
+            url: 'http://www.vsemayki.ru/catalog/view/cases?Pa9G6WbIb_840000ZhjBm1y5KfK1cm9kGxS198Ypz8kW0ucQU4EO1PsdxCa9ag5bkTscEOgX5xc5gW6bhgP90eq1aRJND0mEaoEP1KACaFRHe93lvw-Gzj6Kd6GJfv6c4AYfxgf0fB00000DhlWQyCCvl_lY1B41iWIxzCL2GUnRSqG4U0y0&ref=135016',
+            title:'',
+            img:{
+                src:'http://affiliate.vsemayki.ru/bundles/partner/upload/d65993ce786464b_20130828125429.jpg',
+                width: 180,
+                height: 180
+            }
+        };
+        book[2] = {
+            url: 'http://www.vsemayki.ru/catalog/type/manshort/names/zhenat_na?Pa9G6WbIb_840000ZhjBm1y5KfK1cm9kGxS198Ypz8kW0ucQU4EO1PsdxCa9ag5bkTscEOgX5xc5gW6bhgP90eq1aRJND0mEaoEP1KACaFRHe93lvw-Gzj6Kd6GJfv6c4AYfxgf0fB00000DhlWQyCCvl_lY1B41iWIxzCL2GUnRSqG4U0y0&ref=135016',
+            title:'',
+            img:{
+                src:'http://affiliate.vsemayki.ru/bundles/partner/upload/f7e5efe95f6785d_20130805082809.jpg',
+                width: 180,
+                height: 180
+            }
+        };
+        book[3] = {
+            url: 'http://www.vsemayki.ru/catalog/type/manlong/body?Pa9G6WbIb_840000ZhjBm1y5KfK1cm9kGxS198Ypz8kW0ucQU4EO1PsdxCa9ag5bkTscEOgX5xc5gW6bhgP90eq1aRJND0mEaoEP1KACaFRHe93lvw-Gzj6Kd6GJfv6c4AYfxgf0fB00000DhlWQyCCvl_lY1B41iWIxzCL2GUnRSqG4U0y0&ref=135016',
+            title:'',
+            img:{
+                src:'http://affiliate.vsemayki.ru/bundles/partner/upload/9ea327f4e09de61_20130527152229.jpg',
+                width: 180,
+                height: 180
+            }
+        };
+        book[4] = {
+            url: 'http://www.vsemayki.ru/catalog/stud?Pa9G6WbIb_840000ZhjBm1y5KfK1cm9kGxS198Ypz8kW0ucQU4EO1PsdxCa9ag5bkTscEOgX5xc5gW6bhgP90eq1aRJND0mEaoEP1KACaFRHe93lvw-Gzj6Kd6GJfv6c4AYfxgf0fB00000DhlWQyCCvl_lY1B41iWIxzCL2GUnRSqG4U0y0&ref=135016',
+            title:'',
+            img:{
+                src:'http://affiliate.vsemayki.ru/bundles/partner/upload/67be84d0741a3bd_20121204081652.jpg',
+                width: 180,
+                height: 180
+            }
+        };
+        book[5] = {
+            url: 'http://www.vsemayki.ru/catalog/type/manshort/mayki_sport/socer?Pa9G6WbIb_840000ZhjBm1y5KfK1cm9kGxS198Ypz8kW0ucQU4EO1PsdxCa9ag5bkTscEOgX5xc5gW6bhgP90eq1aRJND0mEaoEP1KACaFRHe93lvw-Gzj6Kd6GJfv6c4AYfxgf0fB00000DhlWQyCCvl_lY1B41iWIxzCL2GUnRSqG4U0y0&ref=135016',
+            title:'',
+            img:{
+                src:'http://affiliate.vsemayki.ru/bundles/partner/upload/fb739f43b6533d0_20121203153857.gif',
+                width: 180,
+                height: 360
+            }
+        };
+        
+        function set(book) {
+            $('a#ad-space >img').attr('src',book.img.src).
+            attr('height',book.img.height).attr('width',book.img.width);
+            
+            $('a#ad-space').attr('href', book.url).
+            attr('title',book.title);
+        }
+        
+        var iter = randomNumber(0, book.length-1);
+        set(book[iter]);
+    });
+</script>
+<!--noindex-->
+<p>
+    <a id="ad-space" rel="nofollow" href="http://www.vsemayki.ru/?ref=135016" target="_blank"><img src=""  style="max-width: 180px; min-height: 180px"/></a>
+</p>
+<!--/noindex-->
+<div class="line1"></div>

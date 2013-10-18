@@ -1,0 +1,147 @@
+${content.getCategoryBreadCrumbs()!""}
+<h1>${(content.getSelectedType()["headline"])!"Самое смешное"}
+    
+    <span style="float: right;">
+        ${content.getByLink()!''}
+    </span>
+</h1>
+
+
+<#if main=="1">
+
+<#else>
+<#if (((content.getSelectedType()["advt"])!"")!="")>
+${(content.getSelectedType()["advt"])!""}
+<hr>
+</#if>
+</#if>
+<div style="position: fixed;top:60px;left: 5px;width: 120px;" id="resl"></div>
+
+<#assign i = 0>
+<#list content.getItem()?keys as key>
+<#assign i = i+1>
+
+
+<#if (i == 500)>
+<article style="margin-left: 67px">
+    <script language="Javascript">
+        var bnbuniqid = 'N1Slq60i4p3h5t9NPphH';
+        var bnbuniqsid = '62948';
+        var async = 0;
+    </script>
+    <script type="text/javascript" src="http://morenews4.net/viewb.js"></script>
+    <div style="margin: .5em 0;">&nbsp;</div>
+</article>
+</#if>
+<#if (i == 800)>
+<article style="margin-left: 67px">
+    <script language="Javascript">
+        var bntuniqid = 'T37U4dRDUS7GfgNjCOp2';
+        var bntuniqsid = '62948';
+        var async = 0;
+    </script>
+    <script type="text/javascript" src="http://korenizvosmi.net/viewt.js"></script>
+    <div style="margin: .5em 0;">&nbsp;</div>
+</article>
+</#if>
+
+
+<article id="i__${key}" class="item__segment" <#if ((content.getItem()[key]['image']!'')!='')>itemscope itemtype="http://schema.org/ImageObject"</#if>>
+         <div class="list_head">
+
+        <div class="vote">
+            <div class="vote_up" value="${key}" title="+1">&nbsp;</div>
+            <span id="vote_${key}" class="vote_count ">${(content.getItem()[key]["vote"])!""}</span>
+            <div class="vote_down" value="${key}" title="-1">&nbsp;</div>
+        </div>
+
+        <div class="list_title">
+            <a class="h2" href="/anekdot?id=${key}">${(content.getItem()[key]['title'])!''} ${(content.getItem()[key]['CountPosts'])!''}</a>
+        </div>
+
+        <div class="list_date">
+            <b title="${content.getItem()[key]['dateMore']}"><span style="color: red;">${content.getItem()[key]['date']!''}</span></b>
+            <span>Добавил(а): ${content.getItem()[key]["name"]!"Волонтер"}</span>
+            <#if (((content.getItem()[key]['commentCount'])!'0') > 0)>
+            <a href="/anekdot?id=${key}#comments">Комментариев ${(content.getItem()[key]['commentCount'])!''}</a>
+            </#if>
+
+            <a href="/${(content.getItem()[key]['hurl'])!''}" title="${(content.getItem()[key]['name_alias'])!''}">${(content.getItem()[key]['type_name'])!''}</a>
+        </div>
+
+    </div>
+
+    <div class="list_info">
+        <#if ((content.getItem()[key]["text"]!'')!='')>
+        <div class="text">${(content.getItem()[key]["text"])!""}</div>
+        </#if>
+
+        <#if ((content.getItem()[key]['image']!'')!='')>
+        <div class="item__image">
+            <meta itemprop="description" content="${content.getItem()[key]['alt']!''}">
+            <meta itemprop="contentUrl" content="http://yourmood.ru/photo_anekdot/${content.getItem()[key]['image']!''}">
+            <#if (((content.getItem()[key]['animated'])!'')!='')>
+            <div style="display: inline-block;position: relative">
+                <a class="image img__href img__animated" value="${(content.getItem()[key]['image'])!''}" target="_blank" href="/anekdot?id=${key}">
+                    <img class="border" src="http://yourmood.ru/photo_anekdot/middle_${(content.getItem()[key]['image'])!''}" alt="${content.getItem()[key]['alt']!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
+                    <div class="list__info__img__hint">gif, ${content.getItem()[key]['size']!''}</div>
+                </a>
+            </div>
+            <#else>
+            <a class="image img__href" target="_blank" href="/anekdot?id=${key}">
+                <img class="border" src="http://yourmood.ru/photo_anekdot/middle_${(content.getItem()[key]['image'])!''}" alt="${content.getItem()[key]['alt']!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
+            </a>
+            </#if>
+        </div>
+        ${content.getItem()[key]["readMore"]!""}
+        </#if>
+    </div>
+
+    <div class="list_meta">
+        <a href="/anekdot?id=${key}#add-comments">Комментировать</a>
+    </div>
+    <div style="margin: .5em 0;">&nbsp;</div>
+</article>
+</#list>
+
+<div style="margin-left: 67px">
+    <script language="Javascript">
+        var bntuniqid = 'ElIURRU1ns31OUMvk31G';
+        var bntuniqsid = '62948';
+        var async = 0;
+    </script>
+    <script type="text/javascript" src="http://pralilipiped.net/viewt.js"></script>
+</div>
+
+<#if ((content.PageNavig()!"")!="")>
+<hr>
+<div class="pagNav">
+    <p>${content.PageNavig()}</p>
+</div>
+<hr>
+</#if>
+
+
+
+
+<#if main=="1">
+<div class="faq">
+    <p>Все самое смешное на сайте "Юмор + Интеллект". Здесь собраны <a href="/kartinki.html">смешные картинки</a>, анекдоты и демотиваторы обновляющиеся каждый день. Коллекция курьезных, поучительных и просто очень смешных анекдотов, афоризмов, историй, которые будет приятно почитать...</p>
+    <p>Мы постарались собрать для вас самые лучшие, самые <a href="/anekdoty.html">смешные анекдоты</a> в мире, интересные истории, <a href="/aforizmy.html">афоризмы</a> и высказывания.</p>
+</div>
+<#else>
+<#if (((content.getSelectedType()["body"])!"")!="")>
+<div class="faq">
+    ${(content.getSelectedType()["body"])!""}
+</div>
+</#if>
+</#if>
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        try {
+            $('body').listScroll({});
+        } catch (e) {}    
+    });    
+</script>

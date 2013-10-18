@@ -1,0 +1,50 @@
+<script type="text/javascript">
+    $(document).ready(function() {
+        
+        var $side = $('#side');
+        var $block = $('.scroll');
+        var $offset = $block.offset().top;
+
+
+        
+        //if($(window).height()>($block.height())) {
+            
+        $block.width($('.navhead').width());
+        $(window).scroll(function(){
+                
+            //$('#res').html($(window).scrollTop()+" > "+$offset);
+                
+            if (($(window).scrollTop() > $offset)) {
+                $block.css({position: "fixed", top: "35px"});
+            } else  {
+                $block.css({position: "relative"});
+            }
+                    
+        });
+        
+        $block.width($('.navhead').width()+10);
+        $(window).resize(function() {
+            $block.width($('.navhead').width()+10);
+        });
+        //}
+    
+    
+        if(($side.height()+720) > $(document).height()) {
+            $('#scroll').html('');
+        }
+    
+    });
+</script>
+
+<!--noindex-->
+<div id="scroll">
+    <div class="scroll">
+        <div id="res"></div>
+        <script language="Javascript">
+            var bncuniqid = 'dq39UcQYo1d7RVVdT86a';
+            var bncuniqsid = '62948';
+        </script>
+        <script type="text/javascript" src="http://tizergun.net/viewc.js"></script>
+    </div>
+</div>
+<!--/noindex-->

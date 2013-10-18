@@ -1,0 +1,18 @@
+<#if category??>
+<#if (category?size > 0)>
+<div class="line1"></div>
+
+<ul>
+    <#list category?keys as key>
+    <#if key!="selected">
+    <li><font size="2"><a href="/${category[key]['hurl']!''}">${category[key]['name']!''}</a> (${category[key]['count']!''})</font></li>
+    </#if>
+    </#list>
+</ul>
+<p></p>
+<a href="/catalog.html">Каталог сайтов</a>
+<p></p>
+
+<div class="line1"></div>
+</#if>
+</#if>

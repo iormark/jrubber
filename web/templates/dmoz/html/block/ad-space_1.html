@@ -1,0 +1,99 @@
+<script type="text/javascript">
+    $(document).ready(function() {
+        var book = new Array();
+
+        book[0] = {
+            url: 'http://www.vsemayki.ru/catalog/view/cases?Pa9G6WbIb_840000ZhjBm1y5KfK1cm9kGxS198Ypz8kW0ucQU4EO1PsdxCa9ag5bkTscEOgX5xc5gW6bhgP90eq1aRJND0mEaoEP1KACaFRHe93lvw-Gzj6Kd6GJfv6c4AYfxgf0fB00000DhlWQyCCvl_lY1B41iWIxzCL2GUnRSqG4U0y0&ref=135016',
+            title:'',
+            img:{
+                src:'http://affiliate.vsemayki.ru/bundles/partner/upload/917d1c7e0896cc4_20130828125415.jpg',
+                width: 160,
+                height: 600
+            }
+        };
+        book[1] = {
+            url: 'http://www.vsemayki.ru/catalog/type/manshort/mayki_sport/zal?Pa9G6WbIb_840000ZhjBm1y5KfK1cm9kGxS198Ypz8kW0ucQU4EO1PsdxCa9ag5bkTscEOgX5xc5gW6bhgP90eq1aRJND0mEaoEP1KACaFRHe93lvw-Gzj6Kd6GJfv6c4AYfxgf0fB00000DhlWQyCCvl_lY1B41iWIxzCL2GUnRSqG4U0y0&ref=135016',
+            title:'',
+            img:{
+                src:'http://affiliate.vsemayki.ru/bundles/partner/upload/d687eb035db3c72_20121203153654.jpg',
+                width: 160,
+                height: 600
+            }
+        };
+        book[2] = {
+            url: 'http://www.vsemayki.ru/catalog/type/manshort/Mayki_games?Pa9G6WbIb_840000ZhjBm1y5KfK1cm9kGxS198Ypz8kW0ucQU4EO1PsdxCa9ag5bkTscEOgX5xc5gW6bhgP90eq1aRJND0mEaoEP1KACaFRHe93lvw-Gzj6Kd6GJfv6c4AYfxgf0fB00000DhlWQyCCvl_lY1B41iWIxzCL2GUnRSqG4U0y0&ref=135016',
+            title:'',
+            img:{
+                src:'http://affiliate.vsemayki.ru/bundles/partner/upload/384753905ed3da8_20121204081300.jpg',
+                width: 160,
+                height: 600
+            }
+        };
+        book[3] = {
+            url: 'http://www.seosprint.net/?Pa9G6WbIb_840000ZhjBm1y5KfK1cm9kGxS198Ypz8kW0ucQU4EO1PsdxCa9ag5bkTscEOgX5xc5gW6bhgP90eq1aRJND0mEaoEP1KACaFRHe93lvw-Gzj6Kd6GJfv6c4AYfxgf0fB00000DhlWQyCCvl_lY1B41iWIxzCL2GUnRSqG4U0y0&ref=2363682',
+            title:'',
+            img:{
+                src:'http://www.seosprint.net/baners/seo2x240x400.gif',
+                width: 160,
+                height: 400
+            }
+        };
+        
+        function set(book) {
+            $('a#ad-space >img').attr('src',book.img.src).
+                attr('height',book.img.height).attr('width',book.img.width);
+            
+            $('a#ad-space').attr('href', book.url).
+                attr('title',book.title);
+        }
+        
+        var iter = randomNumber(0, book.length-1);
+        set(book[iter]);
+            
+        
+        
+        var $block = $(".scroll");
+        
+        if($(window).height()>($block.height())) {
+            $(window).scroll(function(){
+                
+                //$('#res').html($(window).scrollTop()+" > "+$block.offset().top);
+                
+                if (!$block.hasClass("fixed") && ($(window).scrollTop() > $block.offset().top+130)) {
+                    
+                    $block.addClass("fixed").data("top", $block.offset().top);
+                    
+                } else if ($block.hasClass("fixed") && ($(window).scrollTop() < $block.data("top"))) {
+                    
+                    $block.removeClass("fixed");
+                    
+                } else if(!$block.hasClass("bottom") && $(window).scrollTop()+$block.height()>$('#ft').offset().top) {
+                    
+                    $block.addClass("bottom");
+                    //$block.stop().animate({top: '-=100'}, 150);
+                    
+                } else if($block.hasClass("bottom") && $(window).scrollTop()+$block.height()<$('#ft').offset().top) {
+                    
+                    $block.removeClass("bottom");
+                    //$block.stop().animate({top: '+=100'}, 150);
+                    
+                }
+            });
+        }
+    });
+    //});
+</script>
+<!--
+<iframe frameborder="0" scrolling="no" height="330" width="100%" style="border:1px solid #999999;margin:0px;" src="http://ozon.sterno.ru/widget/home.html?partner=ayata"></iframe>
+<div id="res">666</div>-->
+
+<!--noindex-->
+<div id="scroll">
+    <!--<div class="navhead">Реклама:</div>-->
+    <div class="scroll">
+        
+        <a id="ad-space" rel="nofollow" href="http://www.vsemayki.ru/?ref=135016" target="_blank">
+            <img src="" style="max-width: 180px; min-height: 180px"/></a>
+    </div>
+</div>
+<!--/noindex-->

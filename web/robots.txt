@@ -1,0 +1,14 @@
+User-agent: *
+Disallow: /*by=
+Disallow: /*q=
+Disallow: /*_=
+Disallow: /*page=
+Disallow: /*post=
+Disallow: /*action=
+Disallow: /*sorting=
+Disallow: /*_openstat=
+Disallow: /*utm_source=
+Disallow: /*utm_medium=
+Disallow: /live
+Host: yourmood.ru
+Sitemap: http://yourmood.ru/sitemap.xml

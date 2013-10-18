@@ -1,0 +1,112 @@
+<script type="text/javascript">
+    $(document).ready(function() {
+        
+        var $side = $('#side');
+        
+        if($(document).height()>($side.height()+500)) {
+            var book = new Array();
+
+            book[0] = {
+                url: 'http://www.vsemayki.ru/?Pa9G6WbIb_840000ZhjBm1y5KfK1cm9kGxS198Ypz8kW0ucQU4EO1PsdxCa9ag5bkTscEOgX5xc5gW6bhgP90eq1aRJND0mEaoEP1KACaFRHe93lvw-Gzj6Kd6GJfv6c4AYfxgf0fB00000DhlWQyCCvl_lY1B41iWIxzCL2GUnRSqG4U0y0&ref=135016',
+                title:'Прикольные футболки за 530 руб',
+                desc:'Vsemayki.ru - лидер среди футболок. Огромный Ассортимент. Быстрая Доставка',
+            };
+            book[1] = {
+                url: 'http://www.seosprint.net/?Pa9G6WbIb_840000ZhjBm1y5KfK1cm9kGxS198Ypz8kW0ucQU4EO1PsdxCa9ag5bkTscEOgX5xc5gW6bhgP90eq1aRJND0mEaoEP1KACaFRHe93lvw-Gzj6Kd6GJfv6c4AYfxgf0fB00000DhlWQyCCvl_lY1B41iWIxzCL2GUnRSqG4U0y0&ref=2363682',
+                title:'SEO sprint - можно реально зарабатывать',
+                desc:'Просматривайте сайты, читайте письма рекламодателей, выполняйте несложные и интересные тесты и задания за вознаграждение.',
+            };
+            book[2] = {
+                url: 'http://gold-line24.ru/live',
+                title:'Миллионы людей',
+                desc:'Будут отправлять вам деньги. Реальный проект который работает уже больше года.',
+            };
+            book[3] = {
+                url: 'https://bill2fast.com/aff.php?q=Pa9G6WbIb_840000ZhjBm1y5KfK1cm9kGxS198Ypz8kW0ucQU4EO1PsdxCa9ag5bkTscEOgX5xc5gW6bhgP90eq1aRJND0mEaoEP1KACaFRHe93lvw-Gzj6Kd6GJfv6c4AYfxgf0fB00000DhlWQyCCvl_lY1B41iWIxzCL2GUnRSqG4U0y0&aff=1445&site=/dedicated/',
+                title:'Dedicated от 2100 руб/мес',
+                desc:'Мощные серверы в дата-центрах Германии и Эстонии. Спешите!',
+            };
+        
+            var lt = 3;
+        
+            var start = randomNumber(0, book.length-lt);
+        
+            var ads = '';
+            var inc = 0;
+            for (var i = start; i < book.length; i++) {
+                ads += ('<li><h3><a rel="nofollow" href="'+book[i].url+'" target="_blank">'+book[i].title+'</a></h3><span>'+book[i].desc+'</span></li>');
+                inc++;
+                if(inc==lt) break;
+            }
+        
+            я$('#scroll').html('<div class="scroll"><h2>Реклама</h2><ol>'+ads+'</ol></div>');
+        }
+        
+        var $block = $('.scroll');
+        if($block.length > 0) {
+            if($(window).height()>($block.height())) {
+            
+                $block.width($('.navhead').width());
+                $(window).scroll(function(){
+                
+                    //$('#res').html($(window).scrollTop()+" > "+$block.offset().top);
+                
+                    if (!$block.hasClass("fixed") && ($(window).scrollTop() > $block.offset().top+30)) {
+                    
+                        $block.addClass("fixed").data("top", $block.offset().top);
+                    
+                    } else if ($block.hasClass("fixed") && ($(window).scrollTop() < $block.data("top"))) {
+                    
+                        $block.removeClass("fixed");
+                    
+                    } else if(!$block.hasClass("bottom") && $(window).scrollTop()+$block.height()>$('#ft').offset().top) {
+                    
+                        $block.addClass("bottom");
+                        //$block.stop().animate({top: '-=100'}, 150);
+                    
+                    } else if($block.hasClass("bottom") && $(window).scrollTop()+$block.height()<$('#ft').offset().top) {
+                    
+                        $block.removeClass("bottom");
+                        //$block.stop().animate({top: '+=100'}, 150);
+                    
+                    }
+                });
+            
+                $(window).resize(function() {
+                    $block.width($('.navhead').width());
+                });
+            }
+        }
+    });
+    //});
+</script>
+
+<style>
+    #scroll {
+        font-size: small;
+        padding-left: 5px;
+    }
+    #scroll h2 {
+        font-size:13px;
+        padding:1px 0 4px;
+        text-align:left;
+        margin:0;
+        color: #767676;
+    }
+    #scroll h3 { font-size: 16px; }
+    #scroll ol {
+        border: 0;
+        margin: 0;
+        padding: 0;
+        border-right: 1px solid #ddd;
+        padding-right: 20px;
+    }
+    #scroll ol li {
+        list-style: none;
+        margin: 10px 0 0;
+    }
+</style>
+
+<!--noindex-->
+<div id="scroll"></div>
+<!--/noindex-->

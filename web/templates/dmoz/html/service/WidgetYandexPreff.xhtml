@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:widget="http://wdgt.yandex.ru/ns/"  >
+  <head>
+    <meta name="title" content="Конвертор величин измерения расстояний" />
+    <meta name="description" 
+content="Конвертор величин измерения расстояний позволяет переводить различные меры длины друг в друга."/>
+    <widget:preferences>
+      <preference name="mm" type="boolean" defaultValue="true" label="Миллиметры" />
+      <preference name="cm" type="boolean" defaultValue="true" label="Сантиметры" />
+      <preference name="m" type="boolean" defaultValue="true" label="Метры" />
+      <preference name="foot" type="boolean" defaultValue="true" label="Футы" />
+      <preference name="inch" type="boolean" defaultValue="true" label="Дюймы" />
+    </widget:preferences>
+    <style type="text/css">
+      body {
+        background-color:#ffcc00;
+        text-align:center;
+      }
+      #toVal{
+        color:blue;
+      }
+    </style>
+    <script type="text/javascript" src="http://img.yandex.net/webwidgets/1/WidgetApi.js">
+    </script>
+    <script type="text/javascript">
+      <!--
+      var metrics = {
+        "mm" : 1,
+        "cm" : 10,
+        "m" : 1000,
+        "inch" : 25.4,
+        "foot" : 304.8
+      };
+      function convert(){
+        var val = document.getElementById("fromVal").value;
+        if(isNaN(val)){
+          return;
+        } 
+        document.getElementById("toVal").value =
+          document.getElementById("fromVal").value *    
+          metrics[document.getElementById("fromSystem").value] / 
+          metrics[document.getElementById("toSystem").value];
+      }
+      widget.onload = function(){
+        widget.adjustIFrameHeight();
+        var metricNames = ["m", "cm", "mm", "foot", "inch"];
+        var metrics = "";
+        for(var i = 0; i < metricNames.length; ++i){
+          if(widget.getValue(metricNames[i]) == "true"){
+            metrics += ("," + metricNames[i] + ",");
+          }
+        }
+        delOtherValuesFromList(document.getElementById("fromSystem"), metrics);
+        delOtherValuesFromList(document.getElementById("toSystem"), metrics);
+      }
+      function delOtherValuesFromList(list, values){
+        for(var i = 0; i < list.options.length;){
+          values.indexOf("," + list.options[i].value + ",") == -1 ? list.remove(i) : ++i;
+        }  
+      }
+      var interval = null;
+      function watchChanges(){
+        interval == null ? setInterval("convert()", 500) : clearInterval(interval);
+      }
+      //-->
+    </script>
+  </head>  
+  <body style="margin:0">
+    <table>
+      <tr>
+        <td>
+         <input type="text" id="fromVal" style="width:80px" 
+              onfocus="watchChanges()" onblur="watchChanges()"/>
+        </td>
+        <td>
+          <select id="fromSystem" onchange="convert()">
+            <option value="mm">миллиметров</option>
+            <option selected="selected" value="cm">сантиметров</option>
+            <option value="m">метров</option>
+            <option value="foot">футов</option>
+            <option value="inch">дюймов</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" align="center">=</td>
+      </tr>
+      <tr>
+        <td><input type="text" style="width:80px" disabled="true" id="toVal"/></td>
+        <td>
+          <select id ="toSystem" onchange="convert()">
+            <option value="mm">миллиметров</option>
+            <option value="cm">сантиметров</option>
+            <option value="m">метров</option>
+            <option selected="selected" value="foot">футов</option>
+            <option value="inch">дюймов</option>
+          </select>
+        </td>
+      </tr>
+    </table>
+    <a class="btn-small" href="#" onclick="widget.showPreferences(); return false">Настройка</a>
+  </body>
+</html>

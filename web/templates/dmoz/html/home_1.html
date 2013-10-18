@@ -1,0 +1,104 @@
+<!--<h2 class="navsections">Рубрикатор по буквам</h2>
+<div class="navsections">
+    <a href="">A</a>
+    <a href="">Б</a>
+    <a href="">В</a>
+    <a href="">Г</a>
+    Д Е Ж З И К Л М Н О П Р С Т У Ф Х Ц Ч Ш Э Я
+</div>-->
+
+
+${content.getCategoryBreadCrumbs()!""}
+<h1>${(content.getSelectedType()["title"])!"Самое смешное"}</h1>
+
+<#if main=="1">
+<p style="text-align:center">
+    <a href="http://fusion.google.com/add?source=atgs&amp;feedurl=http://yourmood.ru/xml/all.xml" target="_blank"><img src="http://gmodules.com/ig/images/plus_google.gif" border="0" alt="Добавить в Google"></a>
+    <a href="http://mail.yandex.ru/lenta/add?feed_url=http://yourmood.ru/xml/all.xml" target="_blank"><img src="http://img.yandex.net/i/addfeed.gif" border="0" alt="Читать в Яндекс.Подписках"></a>
+</p>
+<hr>
+<#else>
+<#if (((content.getSelectedType()["advt"])!"")!="")>
+${(content.getSelectedType()["advt"])!""}
+<hr>
+</#if>
+</#if>
+
+
+<#assign i = 0>
+<#list content.getItem()?keys as key>
+<#assign i = i+1>
+
+<#if (i == 5)>
+<center></center>
+<script language="Javascript">
+var bnbuniqid = 'N1Slq60i4p3h5t9NPphH';
+var bnbuniqsid = '62948';
+var async = 0;
+</script>
+<script type="text/javascript" src="http://morenews4.net/viewb.js"></script>
+<hr>
+</#if>
+<#if (i == 8)>
+<script language="Javascript">
+var bntuniqid = 'T37U4dRDUS7GfgNjCOp2';
+var bntuniqsid = '62948';
+var async = 0;
+</script>
+<script type="text/javascript" src="http://korenizvosmi.net/viewt.js"></script>
+<hr>
+</#if>
+
+
+<div <#if ((content.getItem()[key]['image']!'')!='')>itemscope itemtype="http://schema.org/ImageObject"</#if>>
+    <b title="${content.getItem()[key]['dateMore']}"><span style="color: red;">${content.getItem()[key]['date']!''}</span>:</b>
+    <a class="h2" href="/anekdot?id=${key}">${content.getItem()[key]['title']!''}</a>
+    <span class="rating">
+        <a href="" class="ajax-rating-down hand-down" value="${key}" title="-1">&minus;</a>
+        <span id="rating_${key}" class="score">${content.getItem()[key]['score']!''}</span>
+        <a href="" class="ajax-rating-top hand-top" value="${key}" title="+1">+</a>
+    </span>
+
+
+    <div>${content.getItem()[key]["text"]!""}</div>
+
+    <#if ((content.getItem()[key]['image']!'')!='')>
+    <meta itemprop="description" content="${content.getItem()[key]['alt']!''}">
+    <a target="_blank" itemprop="contentUrl" href="http://yourmood.ru/photo_anekdot/${content.getItem()[key]['image']!''}">
+        <img class="border" src="http://yourmood.ru/photo_anekdot/middle_${content.getItem()[key]['image']!''}" alt="${content.getItem()[key]['alt']!''}" >
+    </a>
+    ${content.getItem()[key]["readMore"]!""}
+    </#if>
+    <div>
+        <a style="font-size: small;margin-right: 10px" href="/anekdot?id=${key}#comments">Комментировать</a>
+        <span style="color: #999;font-size: small">Добавил(а): ${content.getItem()[key]["name"]!"Волонтер"}</span>
+    </div>
+</div>
+<hr>
+</#list>
+
+
+
+
+<#if ((content.PageNavig()!"")!="")>
+<div class="pagNav">
+    <p>${content.PageNavig()}</p>
+</div>
+<hr>
+</#if>
+
+
+
+
+<#if main=="1">
+<div class="faq">
+    <p>Все самое смешное на сайте "Порка анекдотов". Здесь собраны <a href="/kartinki.html">смешные картинки</a> и анекдоты, обновляющиеся каждый день. Коллекция курьезных, поучительных и просто очень смешных анекдотов, афоризмов, историй, которые будет приятно почитать...</p>
+    <p>Мы постарались собрать для вас самые лучшие, самые <a href="/anekdoty.html">смешные анекдоты</a> в мире, интересные истории, <a href="/aforizmy.html">афоризмы</a> и высказывания.</p>
+</div>
+<#else>
+<#if (((content.getSelectedType()["body"])!"")!="")>
+<div class="faq">
+    ${(content.getSelectedType()["body"])!""}
+</div>
+</#if>
+</#if>

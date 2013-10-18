@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>${title!'Юмор + Интеллект'}</title>
+        <meta charset="utf-8">
+        <link href="/templates/dmoz/css/style.css?8" rel="stylesheet" type="text/css">
+        <link href="/templates/dmoz/css/default.css?7" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="/scriptiki/jquery-1.10.2.min.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/templates/dmoz/js/script.js?10" charset="utf-8"></script>
+        <script type="text/javascript" src="//vk.com/js/api/openapi.js?62"></script>
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+        <link rel="alternate" type="application/rss+xml" title="Юмор + Интеллект" href="/xml/all.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Юмор + Интеллект - анекдоты" href="/xml/anekdot.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Юмор + Интеллект - афоризмы" href="/xml/aforizm.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Юмор + Интеллект - картинки" href="/xml/kartinka.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Юмор + Интеллект - рассказы" href="/xml/rasskaz.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Юмор + Интеллект - высказывания" href="/xml/mysli-velikikh.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Юмор + Интеллект - интересно" href="/xml/interesno.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Юмор + Интеллект - поэзия" href="/xml/stishki.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Юмор + Интеллект - демотиваторы" href="/xml/demotivatory.xml" />
+
+        ${head!''}
+
+        <!--[if lt IE 9]>
+        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <!--[if lt IE 7]>  
+            <div class="IE" style="top: 0;left: 0;width: 100%;position: fixed;background: #273132;z-index: 1;color: #fff;text-align: center;font-size: 20px;padding: 10px;">
+                Пользователь IE! Идите на ХУЙ! с таким браузером. Он настолько дыряв, что ваши вирусы могут просочиться через него к нам.</div>
+            <div style="height: 50px;clear: both"></div>
+        <![endif]-->
+
+
+        <div id="doc">
+            <header>
+                <div id="hd">
+                    <a id="logo" href="/" title="Банальщина... не пройдет!">
+                        <img height="24" width="208" border="0" src="/templates/dmoz/image/yourmood.gif.png" alt="YourMood: Юмор, Анекдоты, Картинки">
+                    </a>
+                    <span id="hotkeys" title="Горячие клавиши">[S], [W], [R]</span>
+
+                    <div id="search">
+                        <form class="center" action="/" method="get">
+                            <a href="/rss.html" title="Rss-подписка, виджеты, сообщества.">Rss</a>&nbsp;
+                            <a href="/link.html" title="Наши ссылки">Link</a>
+                            &nbsp;<span style="color: rgba(0, 0, 0, 0.4);">|</span>&nbsp;
+                            <a href="/?q=search&luck=true" title="Мне повезет!" rel="nofollow">Мне повезет!</a>
+                            <input size="23" name="key" value="${(content.getKey())!''}" title="Поиск" placeholder="Поиск" tabindex="1" class="searchNod">
+                            <input type="submit" value="Поиск" class="btn">
+                            <input type="hidden" name="q" value="search">
+                            <input type="hidden" name="page" value="1">
+                        </form>
+                    </div>
+                </div>
+            </header>
+
+            <div style="max-width: 1800px;margin: 0 auto;">
+
+                <div id="mainContent">
+                    <div style="width: 675px;margin: 0 auto;">
+
+                        <#include "${content_tpl!''}">
+
+
+                        <div>
+                            <!--<span class="catalog">
+                                Перейти в <a href="">раздел</a>
+                            </span>-->
+                            <p>&nbsp;</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="side">
+                    <div style="width: 230px">
+                        <#if leftNav??>
+                        <#list leftNav as key>
+                        <#include "${key}">
+                        </#list>
+                        </#if>
+                    </div>
+                </div>
+            </div>
+
+
+            <footer>
+                <div class="footer">
+                    <div id="ft">
+                        <span class="float-l">Copyright © 2013 Yourmood</span>
+                        <span class="float-r"><a href="/terms_of_use.html" style="font-size:.9em;">Условия использования</a></span>
+                    </div>
+                    <div id="ft-bar" class="ft-barN" style="color:#000; font-family:times New Roman;font-size:16px;">
+                        <b>Интересные разделы:</b>&nbsp;&nbsp;
+                        <a href="/catalog.html">Каталог сайтов</a>&nbsp;|
+                        &nbsp;<a href="/secretform.html">Изготовить пост</a>&nbsp;|
+                        &nbsp;<a href="/rss.html">RSS-подписка</a><br><br>
+                        <div class="ft-barUpN">
+
+                            <#if LastModified??>Последнее обновление: ${LastModified}</#if>
+
+                        </div>
+                    </div>
+            </footer>
+        </div>
+                
+        <div id="out__error"></div>
+        <!-- Yandex.Metrika counter --><script type="text/javascript">(function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter439068 = new Ya.Metrika({id:439068, webvisor:true, clickmap:true, trackLinks:true, accurateTrackBounce:true, trackHash:true}); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks");</script><!-- /Yandex.Metrika counter -->
+    </body>
+</html>

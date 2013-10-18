@@ -1,0 +1,23 @@
+<div class="navhead">Каталог анекдотов</div>
+<ul class="nav">
+    <li><b><a href="/">Главная</a></b></li>
+    <li><b><a href="/rss.html">RSS-подписка</a></b>
+    </li>
+    <li><b><a href="#">Категории</a></b>
+        <#if category??>
+        <#if (category?size > 0)>
+        <ul>
+            <#list category?keys as key>
+            <#if key!="selected">
+            <li><a href="/${category[key]['hurl']!''}" title="${category[key]['title']!''}">${category[key]["name"]!""} (${category[key]["count"]!""})</a></li>
+            </#if>
+            </#list>
+        </ul>
+        </#if>
+        </#if>
+    </li>
+    <li><b><a href="/secretform.html">Добавить анекдот</a></b>
+    </li>
+</ul>
+
+

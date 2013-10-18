@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>${title!'Оу, Щет!'}</title>
+        ${head!''}
+        <meta name="google-site-verification" content="VDwQCcAHvG2kr0aHp6JwgwF3Btyo5NpYNh29_9_Sjr4" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link type="text/css" href="/templates/default/css/style.css" rel="stylesheet" charset="utf-8">
+
+        <script type="text/javascript" src="/scriptiki/jquery-1.8.1.min.js" charset="UTF-8"></script>
+        <script type="text/javascript" src="/scriptiki/script.js" charset="utf-8"></script>
+
+        <script type="text/javascript" src="/scriptiki/jquery.fancybox.pack.js"></script>
+        <link rel="stylesheet" type="text/css" href="/scriptiki/jquery.fancybox.css" media="screen">
+
+        <script type="text/javascript" src="//yandex.st/share/share.js" charset="utf-8"></script>
+
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                if (($.browser.msie) && ($.browser.version <= '8.0')) {
+                    $('#content').css('display','none');
+                }
+            });
+            
+            $(document).ready(function() {
+                $(".fancybox-thumb").fancybox({
+                    prevEffect : 'none',
+                    nextEffect : 'none',
+                    openSpeed  : 150,
+                    closeSpeed  : 150,
+                    padding:8,
+                    helpers : {
+                        title : {
+                            type : 'inside'
+                        }
+                    }
+                });
+            });
+
+        </script>
+        <script type="text/javascript" src="//vk.com/js/api/openapi.js?62"></script>
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+
+        <link rel="alternate" type="application/rss+xml" title="Порка анекдотов" href="/xml/all.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Порка анекдотов - анекдоты" href="/xml/anekdot.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Порка анекдотов - афоризмы" href="/xml/aforizm.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Порка анекдотов - картинки" href="/xml/kartinka.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Порка анекдотов - рассказы" href="/xml/rasskaz.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Порка анекдотов - высказывания" href="/xml/mysli-velikikh.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Порка анекдотов - интересно" href="/xml/interesno.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Порка анекдотов - поэзия" href="/xml/stishki.xml" />
+    </head>
+    <body>
+
+        <!--[if lte IE 6]>
+    <center>
+
+            <div id="ie">
+                <div><b>Идите на ХУЙ! с таким браузером. Он настолько дыряв что ваши вирусы могут просочиться через него к нам.</b></div>
+                <div>
+                    <a href="http://getfirefox.com/">Firefox</a>
+                    <a href="http://opera.com/">Opera</a>
+                    <a href="http://apple.com/safari/">Safari</a>
+                    <a href="http://google.com/chrome/">Google Chrome</a>
+                </div>
+            </div>
+    </center>
+        <![endif]-->
+
+
+
+    <center id="content">
+        <div class="toppanel" style="font-size: 12px;margin-bottom: 10px;">
+            <a style="color:#000" href="http://www.yandex.ru/?add=116314&from=promocode" rel="nofollow"><span style="color:red">Я</span>.Виджет</a> |
+            <a style="color:green" href="/rss.html">RSS</a> |
+            <a style="color:green" href="https://twitter.com/YourMood">Twitter</a> |
+            <a style="color:green" href="http://vk.com/porka_anekdotov">Vk</a>
+        </div>
+
+
+
+        <div style="margin-bottom: 10px;">
+            <a href="/"><img height="45" width="346" src="/templates/default/image/yourmood.gif" alt="YourMood, Анекдоты"></a>
+        </div>
+
+
+        <div style="min-width: 990px;margin: 0 2%; padding: 6px 0;border-top: 1px solid grey;border-bottom: 1px solid grey;">
+            <strong title="">Очевидные вещи, <a href="http://yasno-ponyatno.ru/" target="_blank">Ясно Понятно</a>.</strong>
+        </div>
+
+        <br>
+        <table width="1006" border="0">
+            <tbody>
+                <tr>
+                    <td valign="top" align="left" width="180" class="navLeft">
+                        <div class="navCon">
+                            
+                            <div style="text-align: center;background: saddlebrown;color:#fff;margin-bottom: 10px;">Каталог анекдотов:</div>
+
+                            <p><font size="2">Лучшие анекдоты, картинки и афоризмы нашего сайта.</font></p>
+                            <p><font size="2">Каждый день только новые!</font></p>
+
+                            
+
+                            <#if leftNav??>
+                            <#list leftNav as key>
+                            <#include "${key}">
+                            </#list>
+                            </#if>
+                            
+                            <div style="text-align: center;background: saddlebrown;color:#fff;margin-bottom: 10px;">Добавить анекдот:</div>
+                            <p>
+
+                                <font size="2">
+                                Посылайте свои анекдоты и картинки по адресу: <a href="mailto:neamno@yourmood.ru">neomno@yourmood.ru</a>
+
+                                или через <a href="/secretform.html">секретную форму</a>.
+                                <br>Основано 10 октября 2009 г.
+                                </font>
+                            </p>
+
+                            <div class="line1"></div>
+
+                            <div style="text-align: center;background: saddlebrown;color:#fff;margin-bottom: 10px;">Кнопка на сайт:</div>
+                            <p>
+                                <font size="2">
+                                Если вы хотите поставить ссылку на сайт "<strong>смешных анекдотов</strong>", берите эту картинку:
+                                <br>
+                                <img src="/yourmood.gif" alt="YourMood, Анекдоты" width="88" height="31" vspace="5" border="0">
+                                <br>
+                                Если вы не хотите брать картинку, ставьте ссылку просто так.
+                                </font>
+                            </p>
+
+
+                            
+
+                            
+
+
+
+                            <!--
+                            <div class="line1"></div>
+                            <ul>
+                                <li>
+                                    <font size="2">
+                                    <a href="/rand.html">Как повезёт</a>
+                                    - случайно выбранный анекдот. Иногда попадается <a href="/404" rel="nofollow" title="Игра на раздевание">404-я ошибка (18+)</a>!
+                                    </font>
+                                </li>
+                            </ul>
+                            <p></p>
+                            -->
+
+                            <div class="line1"></div>
+
+
+
+                            <center>
+                                <p>
+                                    <font size="2">
+                                    <a href="http://www.knigoed.info/"><img src="/image/kigoed.gif" alt="Книгоед — ебёт книги!"></a>
+                                    </font>
+                                </p>
+                            </center>
+                            <div class="line1"></div>
+
+                            <!--<p>
+                                            <font size="2">
+                
+                                            <img src="http://tema.ru/rrr/kartinki/nomat.gif" width="114" height="141" border="0">
+                                            </font>
+                                        </p>
+                                        <div class="line1"></div>-->
+                        </div>
+                    </td>
+
+
+
+
+                    <td valign="top" align="left">
+
+                        <div class="content">
+                            <#include "${content_tpl!''}">
+
+
+                            <table style="margin: 0 0 1em 0;" width="100%" border="0" cellspacing="0" cellpadding="4">
+                                <tbody>
+                                    <tr>
+                                        <td style="background-color:#42529C">
+                                            <font size="2" style="float: right;color: #fff">
+                                            <a href="#content" style="color: #fff;text-decoration: none"><b><span style="font-size: 100%">&ShortUpArrow;</span> Вверх</b></a>
+                                            </font>
+
+                                            <h2>${(category['selected']['title'])!'Самое прикольное, самое смешное.'}</h2>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+
+
+                            <#if main=="1">
+                            <p>Все самое смешное на сайте "Порка анекдотов". Здесь собраны <a href="/kartinki.html">смешные картинки</a> и анекдоты, обновляющиеся каждый день. Коллекция курьезных, поучительных и просто очень смешных анекдотов, афоризмов, историй, которые будет приятно почитать...</p>
+                            <p>Мы постарались собрать для вас самые лучшие, самые <a href="/anekdoty.html">смешные анекдоты</a> в мире, интересные истории, <a href="/aforizmy.html">афоризмы</a> и высказывания.</p>
+                            <#else>
+                            ${(category['selected']['body'])!''}
+                            </#if>
+
+                        </div>
+
+
+                    </td>
+                    <td valign="top" align="left" width="180" class="navRight">
+                        <div class="navCon">
+                            <div class="line1"></div>
+                            
+                            
+                            <#if rightNav??>
+                            <#list rightNav as key>
+                            <#include "${key}">
+                            </#list>
+                            </#if>
+                            
+                            
+                            <div style="text-align: center;background: saddlebrown;color:#fff;margin-bottom: 10px;">Юмор + Интеллект:</div>
+
+                            <p>
+                                <!-- VK Widget -->
+                            <div id="vk_groups"></div>
+                            <script type="text/javascript">
+                                VK.Widgets.Group("vk_groups", {mode: 0, width: "178", height: "290"}, 47094437);
+                            </script>
+                            </p>
+                            <div class="line1"></div>
+                            
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <#include "${footer_tpl!''}">
+
+    </center>
+</body>
+</html>

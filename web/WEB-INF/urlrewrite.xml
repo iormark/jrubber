@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE urlrewrite
+    PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN"
+    "http://www.tuckey.org/res/dtds/urlrewrite4.0.dtd">
+
+<urlrewrite>
+    
+    <!--<rule>
+        <name>Domain Name Check</name>
+        <condition name="host" operator="equal">www.yourmood.my:8080</condition>
+        <from>^(.*)$</from>
+        <to type="redirect">http://yourmood.my:8080$1</to>
+    </rule>-->
+
+
+
+    <rule>
+        <from>^/(search|(rand[.]html|secretform[.]html|anekdot|rss[.]html|catalog[.]html|anekdoty[.]html|kartinki|kartinki[/](.+)|demotivatory|demotivatory[/](.+)|aforizmy[.]html|rasskazy[.]html|mysli[-]velikikh[.]html|interesno[.]html|video|video[/](.+)|krik[-]dushi[.]html|stishki[.]html|stishki[.]html)|terms_of_use[.]html|link[.]html)/?$</from>
+        <to>/index.html?q=$1</to>
+    </rule>
+
+</urlrewrite>
+

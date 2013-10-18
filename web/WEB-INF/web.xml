@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    
+    <filter>
+        <filter-name>HelloWorld</filter-name>
+        <filter-class>core.HelloWorld</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>HelloWorld</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <filter>
+     <filter-name>UrlRewriteFilter</filter-name>
+     <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+
+     <!-- defaults to false. use mod_rewrite style configuration file (if this is true and confPath
+     is not specified confPath will be set to /WEB-INF/.htaccess) 
+     <init-param>
+         <param-name>modRewriteConfText</param-name>
+         <param-value><![CDATA[
+
+             # redirect mozilla to another area
+             RewriteCond %{HTTP_HOST} ^www\.yourmood\.my:8080$ [NC]
+             RewriteRule ^(.*)$ http://yourmood.my:8080/$1 [L,R=301]
+
+            ]]></param-value>
+        </init-param>-->
+
+    </filter>
+
+    <filter-mapping>
+        <filter-name>UrlRewriteFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    
+    
+    <resource-ref>
+        <description>База шуток</description>
+        <res-ref-name>jdbc/yourmood</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+        <res-sharing-scope>Shareable</res-sharing-scope>
+    </resource-ref>
+
+    
+    <error-page>
+        <error-code>404</error-code>
+        <location>/templates/default/html/fuck/sexdice/index.html</location>
+    </error-page>
+    
+    <!--<security-constraint>
+        <display-name>securedArea</display-name>
+        <web-resource-collection>
+            <web-resource-name>securedSite</web-resource-name>
+            <url-pattern>/log/*</url-pattern>
+            <http-method>DELETE</http-method>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+            <http-method>PUT</http-method>
+        </web-resource-collection>
+        <auth-constraint/>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>-->
+ 
+</web-app>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:widget="http://wdgt.yandex.ru/ns/">
+    <head>
+        <meta name="title" content="Порка анекдотов" />
+        <meta name="description" content="Смешные анекдоты и куча неадекватного текста, отвлекающего от работы!" />
+        <meta name="titleURL" content="http://www.yourmood.ru/" />
+        
+        <link type="text/css" href="/templates/default/css/WidgetYandex.css" rel="stylesheet"/>
+        <script type="text/javascript" src="http://img.yandex.net/webwidgets/1/WidgetApi.js"></script>
+
+        <style type="text/css">
+            
+        </style>
+    </head>
+    <body onload="widget.adjustIFrameHeight();">
+
+        <div class="text">
+            <#list content.getItem()?keys as key>
+                
+            ${content.getItem()[key]["text"]!""}
+                
+            <#if ((content.getItem()[key]['image']!'')!='')>
+            <div style="text-align: center">
+                <a href="/anekdot?id=${key!''}" target="_blank" style="text-decoration: none" >
+                    <img  src="/photo_anekdot/small_${content.getItem()[key]['image']!''}" alt="${content.getItem()[key]['alt']!''}">
+                </a>
+            </div>
+            </#if>
+                
+            <div style="color:#666;font-size:11px;">создано: ${content.getItem()[key]["date"]!"ХЗ"}</div>
+            </#list>
+        </div>
+        
+        <#list content.getItem()?keys as key>
+        <a class="btn-small" href="/anekdot?id=${key!''}" target="_blank">Подробнее</a>
+        </#list>
+        <a class="btn-small" href="#" onclick="javascript:document.location.reload();">Следующий»</a>
+        
+        
+         
+        <!--<div class="premiere"></div>-->
+
+    </body>
+</html>

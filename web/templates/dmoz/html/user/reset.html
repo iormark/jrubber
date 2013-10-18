@@ -1,0 +1,38 @@
+<div id="wrapper">
+    <#include "auth-top.html">
+
+    <div id="centerSlots">
+
+        <h1>Сменить пароль</h1>
+        <ul id="message-error">
+            ${content.getMessage()}
+        </ul>
+
+        <form method="post" action="/auth?q=reset" class="setForm">
+            
+            <p>
+                <em>Придумайте пароль<span>*</span></em>
+                <input type="password" name="password" value="" />
+            </p>
+
+            <p>
+                <em>Подтвердите пароль<span>*</span></em>
+                <input type="password" name="passwordConfirm" value="" />
+            </p>
+
+            <p>
+                <input type="submit" name="button" value="Сменить пароль" />
+            </p>
+
+        </form>
+    </div>
+    
+    <div id="auth-footer">
+        <h3>Мой аккаунт</h3>
+        <p>Вернуться в аккаунт? <a href="/user?q=home">Мой аккаунт</a></p>
+    </div>
+
+    <center id="auth-footer-2">
+        © 2013, Книгоед, <a href="/">YourMood.Ru</a>.
+    </center>
+</div>

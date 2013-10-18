@@ -1,0 +1,47 @@
+<div id="wrapper">
+    <#include "auth-top.html">
+
+    <div id="centerSlots">
+
+
+
+        <h1>Войти</h1>
+        <ul id="message-error">
+            ${content.getMessage()}
+        </ul>
+
+        <form method="post" action="/user?q=login" class="setForm">
+            <fieldset>
+                
+                <label class="inputLabel" for="email">
+                    Какой у вас E-mail?<span class="alert">*</span>
+                </label>
+                <input type="text" name="email" value="${content.getEmail()}" id="email"/>
+
+                <div class="clearBoth"></div>
+
+                <label class="inputLabel" for="pass">
+                    Какой у вас пароль?<span class="alert">*</span>
+                </label>
+                <input type="password" name="password" value="" id="pass"/>
+
+                <div class="clearBoth"></div>
+
+                <label class="inputLabel"></label>
+                <input type="submit" name="button" value="Войти" />
+
+            </fieldset>
+
+        </form>
+    </div>
+
+    <div id="auth-footer">
+        <h3>Войти в систему</h3>
+        <p>Забыли пароль? <a href="?q=password">Получить новый пароль</a>.</p>
+        <p>Вы новый клиент? <a href="?q=register">Регистрация</a>.</p>
+    </div>
+
+    <center id="auth-footer-2">
+        © ${footer!'2010'}, <a href="/">YourMood.Ru</a>.
+    </center>
+</div>

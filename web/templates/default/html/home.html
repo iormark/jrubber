@@ -1,0 +1,121 @@
+
+
+<table  style="margin: 0 ;" width="100%" border="0" cellspacing="0" cellpadding="4">
+    <tbody>
+        <tr>
+            <td style="background-color:#42529C;">
+                <h1 style="float: left">${(category['selected']['title'])!'Все самое смешное.'}</h1>
+                <a class="live" href="" onclick="document.location.href = 'http://gold-line24.ru/live';return false" style="color:#fff606; background-color:#51b848;float: right" target="_blank" title="">1000000</a>
+            </td>
+        </tr>
+        <tr>
+            <td valign="left" class="margin">
+                <#if main=="1">
+                <p style="text-align:center">
+                    <a href="http://fusion.google.com/add?source=atgs&amp;feedurl=http://yourmood.ru/xml/all.xml" target="_blank"><img src="http://gmodules.com/ig/images/plus_google.gif" border="0" alt="Добавить в Google"></a>
+                    <a href="http://mail.yandex.ru/lenta/add?feed_url=http://yourmood.ru/xml/all.xml" target="_blank"><img src="http://img.yandex.net/i/addfeed.gif" border="0" alt="Читать в Яндекс.Подписках"></a>
+                </p>
+                <#else>
+                ${(category['selected']['advt'])!''}
+                </#if>
+
+                <#if ((content.PageNavig()!"")!="")>
+                <div class="pagNav">
+                    ${content.PageNavig()}
+                </div>
+                </#if>
+
+                <ul class="home border">
+
+
+                    <#list content.getItem()?keys as key>
+                    <li<#if ((content.getItem()[key]['image']!'')!='')> itemscope itemtype="http://schema.org/ImageObject"</#if>>
+
+                        <b title="${content.getItem()[key]['dateMore']}"><span style="color: red;">${content.getItem()[key]['date']!''}</span>:</b>
+                        <a class="h2" href="/anekdot?id=${key}">${content.getItem()[key]['title']!''}</a>
+
+                        <br> 
+
+                        <div itemprop="description">${content.getItem()[key]["text"]!""}</div>
+
+                        <#if ((content.getItem()[key]['image']!'')!='')>
+                        <p>
+                            <a class="fancybox-thumb" rel="fancybox-thumb" href="http://yourmood.ru/photo_anekdot/${content.getItem()[key]['image']!''}">
+                                <img src="http://yourmood.ru/photo_anekdot/middle_${content.getItem()[key]['image']!''}" alt="${content.getItem()[key]['alt']!''}" itemprop="contentUrl">
+                            </a>
+                            ${content.getItem()[key]["readMore"]!""}
+                        </p>
+                        
+                        </#if>
+
+
+
+                        <script type="text/javascript">
+                           
+                            new Ya.share({	
+                                element: 'ya${key}',	
+                                l10n: 'ru',
+                                elementStyle: {
+                                    'type': 'link',
+                                    'border': false,
+                                    'quickServices': []
+                                },
+                                link: 'http://yourmood.ru/anekdot?id=${key}',
+                                title: '${content.getItem()[key]["title"]!""}',
+                                popupStyle: {
+                                    blocks: {
+                                        'Поделитесь с друзьями': ['vkontakte', 'facebook', 'twitter', 'friendfeed', 'lj', 'odnoklassniki', 'yaru', 'gplus']
+                                    },
+                                    copyPasteField: true
+                                }<#if ((content.getItem()[key]['image']!'')!='')>,image: 'http://yourmood.ru//photo_anekdot/middle_${content.getItem()[key]['image']!''}'</#if>
+                                });
+
+                        </script>
+
+
+
+
+
+                        <div class="metadot">
+                            <a href="/anekdot?id=${key}#comments" rel="nofollow">Комментировать</a> 
+
+
+                            <span class="rating">
+                                <a href="" class="ajax-rating-down hand-down" value="${key}" title="-1">(:</a>
+
+                                <span id="rating_${key}" class="score">${content.getItem()[key]['score']!''}</span>
+                                <a href="" class="ajax-rating-top hand-top" value="${key}" title="+1">:)</a>
+                            </span>
+
+                            <style>
+                                .b-share__text {
+                                    border-bottom: 1px dotted;
+                                }
+                                a.b-share__handle:hover .b-share__text {
+                                    text-decoration: none;
+                                }
+                            </style>
+                            <div style="float: right;width: 140px;font-size: 1.2em;text-align: right;padding: 0;margin: 0;" id="ya${key}">секундочку</div>
+
+                        </div>
+                        <hr class="hr">
+
+                    </li>
+                    </#list>
+
+
+                </ul>
+
+                <#if ((content.PageNavig()!"")!="")>
+                <div class="pagNav">
+                    ${content.PageNavig()}
+                </div>
+                </#if>
+
+
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+

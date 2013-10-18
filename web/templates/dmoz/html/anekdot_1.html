@@ -1,0 +1,179 @@
+${content.getCategoryBreadCrumbs()!""}
+
+<h1> ${content.getTitle()!""}
+
+
+    <span style="color: #999;font-size: small;float:right">Добавил(а): ${(content.getItemMeta()["name"])!"Волонтер"}</span></h1>
+<div class="faq">
+    <span style="">Создано: <b title="">${(content.getItemMeta()["created"])!""}</b></span>
+    | Оценка: 
+    <span class="rating">
+        <a href="" class="ajax-rating-down hand-down" value="${content.getItemMeta()['id']!''}_1" title="-1">&minus;</a>
+        <span id="rating_${content.getItemMeta()['id']!'0'}_1" class="score">${content.getItemMeta()['score']!''}</span>
+        <a href="" class="ajax-rating-top hand-top" value="${content.getItemMeta()['id']!''}_1" title="+1">+</a>
+    </span>
+</div>
+
+<div style="margin-bottom: 1em;min-height: 95px;">
+    <script language="Javascript">
+        var bntuniqid = '0jJ40YTV19me1UjS0HWx';
+        var bntuniqsid = '62948';
+        var async = 0;
+    </script>
+    <script type="text/javascript" src="http://korenizvosmi.net/viewt.js"></script>
+</div>
+
+<div id="book">
+
+
+    <#list content.getItem()?keys as key>
+    <div <#if ((content.getItem()[key]['image']!'')!='')> itemscope itemtype="http://schema.org/ImageObject"</#if>>
+
+        <#if ((content.getItem()[key]['text']!'')!='')>
+        <div class="text">${content.getItem()[key]['text']!''}&nbsp;</div>
+        </#if>
+
+        <#if ((content.getItem()[key]['image']!'')!='')>
+        <meta itemprop="description" content="${content.getItem()[key]['alt']!''}">
+        <p  style="text-align: center;">
+            <a itemprop="contentUrl" href="http://yourmood.ru/photo_anekdot/${content.getItem()[key]['image']!''}">
+                <img style="" class="border" src="http://yourmood.ru/photo_anekdot/middle_${content.getItem()[key]['image']!''}" alt="${content.getItem()[key]['alt']!''}">
+            </a>
+        </p>
+        </#if>
+
+    </div>
+    </#list>
+
+
+
+    <table width="100%"   style="margin: 1em 0">
+        <tr>
+            <td>
+                <div  class="faq" style="margin: 1em 0;text-align: center">
+                    <#if (content.getNext()>0)>
+                    <div style="float: left">
+                        <span style="font-size: 16px">←</span> <a href="/anekdot?id=${content.getNext()!''}" style="margin-right: 10px;">Предыдущий</a>
+                    </div>
+                    </#if>
+
+                    &nbsp;
+
+                    <#if (content.getBack()>0)>
+                    <div style="float: right">
+                        <a href="/anekdot?id=${content.getBack()!''}" style="margin-left: 10px;">Следующий</a>  <span style="font-size: 16px">→</span>
+                    </div>
+                    </#if>
+
+
+                </div>
+            </td>
+        </tr>
+    </table>
+
+
+    <div style="margin: 1em 0">
+
+        <table class="data" width="602px">
+
+
+            <tr>
+                <td>URL</td>
+                <td><input type="text" value="http://yourmood.ru/anekdot?id=${content.getId()}" style="width: 99%" readonly="readonly"></td>
+            </tr>
+            <tr>
+                <td>BBCode</td>
+                <td><input type="text" value="[url=&quot;http://yourmood.ru/anekdot?id=${content.getId()}&quot;]${content.getTitle()!''}[/url]" style="width: 99%" readonly="readonly"></td>
+            </tr>
+            <tr>
+                <td>HTML</td>
+                <td><input type="text" value="&lt;a href=&quot;http://yourmood.ru/anekdot?id=${content.getId()}&quot;&gt;${content.getTitle()!''}&lt;/a&gt;" style="width: 99%" readonly="readonly"></td>
+            </tr>
+            <tr>
+                <td>Отправить</td>
+                <td>
+                    <div id="share">
+                        <a href="#" title="Рассказать друзьям в Контакте" class="vkontakte" rel="nofollow">В контакте</a>&nbsp;
+                        <a href="#" title="Рассказать друзьям в Facebook" class="facebook" rel="nofollow">Facebook</a>&nbsp;
+                        <a href="#" title="Рассказать друзьям в Google+" class="gplus" rel="nofollow">Google+</a>&nbsp;
+                        <a href="#" title="Рассказать друзьям в LiveJournal" class="jj" target="_blank" rel="nofollow">LiveJournal</a>&nbsp;
+                        <a href="#" title="Рассказать друзьям в Я.ру" class="yaru" target="_blank" rel="nofollow">Я.ру</a>&nbsp;
+                        <a href="#" title="Рассказать друзьям в Одноклассниках" class="odnoklassniki" rel="nofollow">Одноклассники</a>&nbsp;
+                        <a href="#" title="Рассказать друзьям в Twitter" class="twitter" rel="nofollow">Twitter</a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+    <#if (content.getComment()?size>0)>
+    <div class="getComment">
+        <h1>Комментарии</h1>
+        <#list content.getComment()?keys as key>
+        <div class="comment">
+            <div class="created"><div>${content.getComment()[key]["created"]!""} - ${content.getComment()[key]["name"]!""}</div></div>
+            <div class="text">${content.getComment()[key]["comment"]!""}</div>
+        </div>
+        </#list>
+    </div>
+    </#if>
+
+    <fieldset class="noBorder">
+        <div id="comments">
+            <form method="post" action="/Service" id="addComment">
+                <div class="addComment">
+                    <h1>Оставить комментарий</h1>
+
+
+                    <div id="message"></div>
+
+
+
+                    <div>
+                        <div><b>Ваше имя</b> <span>*</span></div>
+
+                        <#if (!content.getCName()??)>
+                        <input type="text" name="name" value="" placeholder="Василий Иванович">
+                        <#else>
+                        <input type="text" value="${content.getCName()!''}" readonly class="readonly">
+                        </#if>
+                    </div>
+
+                    <div>
+                        <div><b>E-mail</b> <span>*</span></div>
+
+                        <#if (!content.getCEmail()??)>
+                        <input type="text" name="email" value="" placeholder="vasia@ivanovich.ru">
+                        <#else>
+                        <input type="text" value="${content.getCEmail()!''}" readonly class="readonly">
+                        </#if>
+                    </div>
+
+                    <div>
+                        <div><b>Комментарий</b> <span>*</span></div>
+                        <textarea rows="9" name="text"></textarea>
+                        <div><i><small>Строки и параграфы переносятся автоматически.</small></i></div>
+                    </div>
+                    <div>
+                        <input type="hidden" name="q" value="AddComment">
+                        <input type="hidden" name="id" value="${content.getId()}">
+                        <input type="submit" name="button" value="Оставить комментарий">
+                    </div>
+                </div>
+                <div>
+
+                </div>
+            </form>
+        </div>
+    </fieldset>
+    <hr>
+    <script type="text/javascript" src="/templates/dmoz/js/lib.js" charset="utf-8"></script>
+    <script>
+        $(document).ready(function() {
+            try {
+                $('#addComment').addComment({id:${content.getId()}});
+            } catch (e) {}
+        });
+    </script>
+</div>

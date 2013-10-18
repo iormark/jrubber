@@ -1,0 +1,24 @@
+<#if widget??>
+<#if (widget?size > 0)>
+<p></p>
+<div style="text-align: center;background: saddlebrown;color:#fff;margin-bottom: 10px;">Виджет для Яндекса:</div>
+
+<font size="2">${widget["all"]["text"]!""}</font>
+
+<#if ((widget["all"]["image"]!"")!="")>
+<div style="text-align: center">
+    <a href="/anekdot?id=${widget['all']['id']!''}" target="_blank" style="text-decoration: none" >
+    <img src="http://yourmood.ru/photo_anekdot/small_${widget['all']['image']!''}" width="100%" border="0">
+    </a>
+</div>
+</#if>
+<div style="text-align: center">
+    <a href="http://www.yandex.ru/?add=116314&from=promocode" rel="nofollow" target="_blank">
+        <img border="0" width="149" height="24" src="/templates/default/image/wdgt-add-button-yandex.png" alt="Ставьте Яндекс.Виджет">
+    </a>
+</div>
+
+<p></p>
+<div class="line1"></div>
+</#if>
+</#if>

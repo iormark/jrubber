@@ -1,0 +1,152 @@
+<script>
+    $(document).ready(function() {
+        try {
+            $('#addComment').addComment({id:${content.getId()}});
+        } catch (e) {}
+    });
+</script>
+
+<table style="margin:0;" width="100%" border="0" cellspacing="0" cellpadding="4">
+    <tbody>
+        <tr>
+            <td style="background-color:#42529C">
+                <h1 style="float: left">${content.getTitle()!''}</h1>
+                <a class="live" href="" onclick="document.location.href = 'http://gold-line24.ru/live'; return false" style="color:#fff606; background-color:#51b848;float: right" target="_blank" title="Программа развития общественной благотворительности (MI47168)">Пригласил</a>
+            </td>
+        </tr>
+        <tr>
+            <td class="margin">
+
+                <ul class="border">
+
+                    <li class="metatext">
+                        <a href="/${content.getItemMeta()['hurl']!''}">${content.getItemMeta()['type']!''}</a> / 
+                        <time datetime="${content.getItemMeta()['time']!''}">Опубликовано: ${content.getItemMeta()['created']!''}</time>
+                    </li>
+
+                    <#list content.getItem()?keys as key>
+                    <li<#if ((content.getItem()[key]['image']!'')!='')> itemscope itemtype="http://schema.org/ImageObject"</#if>>
+
+                        <#if ((content.getItem()[key]['text']!'')!='')>
+                        <p itemprop="description">${content.getItem()[key]['text']!''}&nbsp;</p>
+                        </#if>
+
+                        <#if ((content.getItem()[key]['image']!'')!='')>
+                        <p>
+                            <a class="fancybox-thumb" rel="fancybox-thumb" href="http://yourmood.ru/photo_anekdot/${content.getItem()[key]['image']!''}">
+                                <img  src="http://yourmood.ru/photo_anekdot/middle_${content.getItem()[key]['image']!''}" alt="${content.getItem()[key]['alt']!''}" itemprop="contentUrl">
+                            </a>
+                        </p>
+                        </#if>
+
+                    </li>
+                    </#list>
+                    <li>
+
+                        <br>
+
+                        <div style="text-align: center">
+                            <#if (content.getNext()>0)>
+                            <a href="/anekdot?id=${content.getNext()!''}" style="float: left;margin-left: 50px;">«предыдущий</a>
+                            </#if>
+
+                            <span class="rating">
+                                <a href="" class="ajax-rating-down hand-down" value="${content.getItemMeta()['id']!''}" title="-1">(:</a>
+                                <span id="rating_${content.getItemMeta()['id']!'0'}" class="score">${content.getItemMeta()['score']!''}</span>
+                                <a href="" class="ajax-rating-top hand-top" value="${content.getItemMeta()['id']!''}" title="+1">:)</a>
+
+                            </span>
+
+                            <#if (content.getBack()>0)>
+                            <a href="/anekdot?id=${content.getBack()!''}" style="float: right;margin-right: 70px;">следующий»</a>
+                            </#if>
+
+                        </div>
+
+                        <br>
+
+                        <div class="yashare-auto-init" data-yashareL10n="ru" data-yashareType="button" data-yashareQuickServices="vkontakte,facebook,twitter,friendfeed,lj,odnoklassniki,yaru,gplus"></div> 
+
+
+                        <br>
+
+                        <form action="/secretform.html">
+                            <input type="hidden" name="_" value="1">
+                            <center><input type="submit" value="Внести свою тему на сайт."></center>
+                        </form>
+
+                        <br>
+
+                        <div class="getComment">
+                            <#list content.getComment()?keys as key>
+                            <div class="comment">
+                                <div class="created">${content.getComment()[key]["created"]!""} - ${content.getComment()[key]["name"]!""}</div>
+                                <div class="text">${content.getComment()[key]["comment"]!""}</div>
+                            </div>
+                            </#list>
+                        </div>
+
+                        <hr class="hr">
+
+                        <div id="comments">
+                            <form method="post" action="/Service" id="addComment">
+                                <div class="addComment">
+
+                                    <ul id="message"></ul>
+
+
+                                    <div>
+                                        <div>Ваше имя <span>*</span></div>
+
+                                        <#if (!content.getCName()??)>
+                                        <input type="text" name="name" value="" placeholder="Василий Иванович">
+                                        <#else>
+                                        <input type="text" value="${content.getCName()!''}" readonly class="readonly">
+                                        </#if>
+                                    </div>
+
+                                    <div>
+                                        <div>E-mail <span>*</span></div>
+
+                                        <#if (!content.getCEmail()??)>
+                                        <input type="text" name="email" value="" placeholder="vasia@ivanovich.ru">
+                                        <#else>
+                                        <input type="text" value="${content.getCEmail()!''}" readonly class="readonly">
+                                        </#if>
+                                    </div>
+
+                                    <div>
+                                        <div>Комментарий <span>*</span></div>
+                                        <textarea rows="5" name="text"></textarea>
+                                        <i><small>Строки и параграфы переносятся автоматически.</small></i>
+                                    </div>
+                                    <div>
+                                        <input type="hidden" name="q" value="AddComment">
+                                        <input type="hidden" name="id" value="${content.getId()}">
+                                        <input type="submit" name="button" value="Оставить комментарий">
+                                    </div>
+                                </div>
+                                <div>
+
+                                </div>
+                            </form>
+                        </div>
+                        <!--
+                                        <script type="text/javascript">
+                                            VK.init({apiId: 3209560, onlyWidgets: true});
+                                        </script>
+                        
+                                        <div id="vk_comments"></div>
+                                        <script type="text/javascript">
+                                            VK.Widgets.Comments("vk_comments", {limit: 10, width: "642", attach: "*"});
+                                        </script>-->
+
+                        <br>
+
+                    </li>
+                </ul>
+
+            </td>
+        </tr>
+    </tbody>
+</table>

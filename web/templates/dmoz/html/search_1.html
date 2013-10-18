@@ -1,0 +1,42 @@
+<h1>Результаты поиска <small> (${content.getFound()!"0"} для <b>"</b>${content.getKey()!""}<b>"</b>)</small></h1>
+
+${content.getMessage()}
+
+
+<#list content.getItem()?keys as key>
+
+<div <#if ((content.getItem()[key]['image']!'')!='')>itemscope itemtype="http://schema.org/ImageObject"</#if>>
+    <b title="${content.getItem()[key]['dateMore']!''}"><span style="color: red;">${content.getItem()[key]["date"]!""}</span>:</b>
+    <a class="h2" href="/anekdot?id=${key}">${content.getItem()[key]["title"]!""} ${content.getItem()[key]["CountPosts"]!""}</a>
+    <span class="rating">
+        <a href="" class="ajax-rating-down hand-down" value="${key}" title="-1">&minus;</a>
+        <span id="rating_${key}" class="score">${content.getItem()[key]['score']!''}</span>
+        <a href="" class="ajax-rating-top hand-top" value="${key}" title="+1">+</a>
+    </span>
+
+    <div itemprop="description">${content.getItem()[key]["text"]!""}</div>
+
+    <#if ((content.getItem()[key]['image']!'')!='')>
+    <meta itemprop="description" content="${content.getItem()[key]['alt']!''}">
+    <a target="_blank" itemprop="contentUrl" rel="fancybox-thumb" href="http://yourmood.ru/photo_anekdot/${content.getItem()[key]['image']!''}">
+        <img class="border" src="http://yourmood.ru/photo_anekdot/middle_${content.getItem()[key]['image']!''}" alt="${content.getItem()[key]['alt']!''}">
+    </a>
+    ${content.getItem()[key]["readMore"]!""}
+    </#if>
+    <div>
+        <a style="font-size: small;margin-right: 10px" href="/anekdot?id=${key}#comments">add comment</a>
+        <span style="color: #999;font-size: small">Добавил(а): ${content.getItem()[key]["name"]!"Волонтер"}</span>
+    </div>
+</div>
+<hr>
+</#list>
+
+
+
+
+<#if ((content.PageNavig()!"")!="")>
+<div class="pagNav">
+    <p>${content.PageNavig()}</p>
+</div>
+<hr>
+</#if>
