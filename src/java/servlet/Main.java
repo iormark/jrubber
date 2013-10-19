@@ -4,7 +4,7 @@
  */
 package servlet;
 
-import logic.SecretForm;
+import logic.Add;
 import core.JNDIConnection;
 import core.Templating;
 import java.io.IOException;
@@ -111,8 +111,8 @@ public class Main extends HttpServlet {
                     leftNav.add("/block/widget.html");
                     leftNav.add("/block/ad-space.html");
 
-                } else if ("secretform.html".equals(q)) {
-                    creator = new SecretForm(request, response, stmt, getServletContext().getRealPath("/"));
+                } else if ("add.html".equals(q)) {
+                    creator = new Add(request, response, stmt, getServletContext().getRealPath("/"));
 
                     root.put("time_addition", block.getTimeAddition());
                     root.put("category", block.getCategoriesLi());

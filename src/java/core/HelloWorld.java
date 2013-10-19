@@ -52,13 +52,13 @@ public class HelloWorld implements Filter {
 
 
         //System.out.println(req.getHeader("host"));
-        if (!"yourmood.ru".matches(req.getHeader("Host")) && !"localhost:8084".matches(req.getHeader("Host"))) {
+        /*if (!"yourmood.ru".matches(req.getHeader("Host")) && !"localhost:8084".matches(req.getHeader("Host"))) {
             resp.setStatus(302);
             resp.setHeader("Location",
                     (req.getRequestURL().toString()).replaceAll("^http://(www.)?" + req.getHeader("host"), "http://yourmood.ru")
                     + (req.getQueryString() == null ? "" : "?" + req.getQueryString()));
             resp.setHeader("Connection", "close");
-        }
+        }*/
 
 
         HashMap redirect = new HashMap();

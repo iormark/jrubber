@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author mark
  */
-public class SecretForm extends Creator {
+public class Add extends Creator {
 
     private Util util = new Util();
     private StringBuilder message = new StringBuilder();
@@ -25,7 +25,7 @@ public class SecretForm extends Creator {
     private String UploadMessage = "", UploadName = "", UploadEmail = "", UploadEdit = null, UploadTitle = "", UploadText = "", UploadImageOn = "", UploadListContent = "";
     private CategoriesTree ct = null;
 
-    public SecretForm(HttpServletRequest request, HttpServletResponse response, Statement stmt, String RealPath) throws SQLException, Exception {
+    public Add(HttpServletRequest request, HttpServletResponse response, Statement stmt, String RealPath) throws SQLException, Exception {
 
         EditCookie editcookie = new EditCookie(request, response);
 

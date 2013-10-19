@@ -43,10 +43,10 @@ import org.apache.log4j.Logger;
  *
  * @author mark
  */
-@WebServlet(name = "FileUpload", urlPatterns = {"/FileUpload"})
-public class FileUpload extends HttpServlet {
+@WebServlet(name = "FileUpload", urlPatterns = {"/FileUpload_1"})
+public class FileUpload_1 extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(FileUpload.class);
+    private static final Logger logger = Logger.getLogger(FileUpload_1.class);
     private Util util = new Util();
     private String button = "", name = "", email = "", type = "", text = "", nameImage = null, ImageOn = "", alt = "";
     private long getTime = 0;
