@@ -2,6 +2,7 @@ $(document).ready(function() {
 
 
     // Консоль
+    var logout = $("#add__logout");
     var console = $("#console");
 
     // Инфа о выбранных файлах
@@ -19,6 +20,7 @@ $(document).ready(function() {
 
     // Счетчик всех выбранных файлов и их размера
     var imgCount = 0;
+    var downCount = 0;
     var imgSize = 0;
     var imgCountFast = 0;
 
@@ -28,7 +30,8 @@ $(document).ready(function() {
 
     // Вывод в консоль
     function log(str) {
-        $(console).html(str);
+        $(logout).add('<ul/>').addClass('error').html(str);
+        $('<div/>').html(str).prependTo(console);
     }
 
     // Вывод инфы о выбранных
@@ -42,6 +45,10 @@ $(document).ready(function() {
         var width = bar.width();
         var bgrValue = -width + (value * (width / 100));
         bar.attr('rel', value).css('background-position', bgrValue + 'px center').text(value + '%');
+    }
+
+    function updateDown() {
+        downCount = $(imgList.find('li.down')).length;
     }
 
 
@@ -77,6 +84,15 @@ $(document).ready(function() {
             $('<div/>').text(file.name).appendTo(li);
             img = $('<img/>').appendTo(li);
             $('<div/>').addClass('progress').attr('rel', '0').text('0%').appendTo(li);
+            $('<div/>').appendTo(li).append('<span>Не добавлять</span>').
+                    addClass('close').
+                    click(function() {
+                $(li).remove();
+                imgCount--;
+                imgSize -= file.size;
+                updateInfo();
+            });
+            $('<div/>').addClass('out').appendTo(li);
             li.get(0).file = file;
 
             imgCountFast++;
@@ -139,12 +155,25 @@ $(document).ready(function() {
     });
 
 
-    // Обаботка события нажатия на кнопку "Загрузить". Проходим по всем миниатюрам из списка,
-    // читаем у каждой свойство file (добавленное при создании) и начинаем загрузку, создавая
-    // экземпляры объекта uploaderObject. По мере загрузки, обновляем показания progress bar,
-    // через обработчик onprogress, по завершении выводим информацию
     $("#upload-all").click(function() {
-        uploaderFile();
+        log('Начинаем загрузку...');
+        
+        $.post("/FileUpload", {
+            q: "header",
+            name: $("#add input[name='name']").val(),
+            email: $("#add input[name='email']").val(),
+            title: $("#add input[name='title']").val(),
+            tags: $("#add input[name='tags']").val()
+        },
+        function(response) {
+            if (response.status == 'ok') {
+                uploaderFile(response);
+            } else {
+                log(response.message);
+            }
+        }, "json").fail(function() {
+            log("Произошла ошибка! Пожалуйста, повторите попытку...");
+        });
     });
 
     function uploaderFile() {
@@ -153,7 +182,6 @@ $(document).ready(function() {
 
             var uploadItem = this;
             var pBar = $(uploadItem).find('.progress');
-            log('Начинаем загрузку...');
 
             if (!uploadItem.file) {
 
@@ -162,11 +190,13 @@ $(document).ready(function() {
                     name: $("#add input[name='name']").val(),
                     email: $("#add input[name='email']").val(),
                     title: $("#add input[name='title']").val(),
-                    text: $(uploadItem).find('textarea').val()
+                    tags: $("#add input[name='tags']").val(),
+                    text: $(uploadItem).find('textarea').val(),
+                    key: $("#add input[name='key']").val()
                 },
                 function(response) {
-                    if (response.status === "ok") {
-                        log(response.message);
+                    if (response.status == 'ok') {
+                        log(response.id);
                     } else {
                         log(response.message);
                     }
@@ -176,29 +206,88 @@ $(document).ready(function() {
                 return false;
             } else {
 
+                var create = createPost();
+                if (!create)
+                    return false;
+
+                // Отсеиваем загруженное
+                if ($(uploadItem).hasClass('down')) {
+                    log('Файл отсеян: `' + uploadItem.file.name + '` (тип ' + uploadItem.file.type + ')');
+                    return true;
+                }
+                
+                //alert("file");
                 new uploaderObject({
-                    id: params.id,
+                    name: $("#add input[name='name']").val(),
+                    email: $("#add input[name='email']").val(),
+                    title: $("#add input[name='title']").val(),
+                    tags: $("#add input[name='tags']").val(),
+                    key: $("#add input[name='key']").val(),
                     text: $(uploadItem).find('textarea').val(),
-                    fieldText: 'text',
                     file: uploadItem.file,
                     url: '/FileUpload',
-                    fieldName: 'file',
                     onprogress: function(percents) {
                         updateProgress(pBar, percents);
                     },
                     oncomplete: function(done, data) {
                         if (done) {
                             updateProgress(pBar, 100);
-                            log('Загружен:<br/>*****<br/>' + data + '<br/>*****');
+
+                            $(logout).remove('.error');
+
+                            if (data.status == 'ok') {
+                                $(uploadItem).addClass('down');
+                            } else if (data.status == 'error') {
+                                $(uploadItem).addClass('down__error');
+                                pBar.attr('rel', 0).text('0%').css('background', 'none');
+                                $('<ul/>').html(data.message).addClass('error').appendTo($(uploadItem).find('.out'));
+                            }
+
+                            var create = createPost();
+                            if (!create)
+                                return false;
+
                         } else {
-                            log('Ошибка:<br/>' + this.lastError.text);
+                            log('Ошибка: ' + this.lastError.text);
                         }
                     }
                 });
+
             }
         });
-
     }
+
+
+    function createPost() {
+        updateDown();
+        if (downCount == imgCount) {
+            log("Пора создавать пост" + downCount + '==' + imgCount);
+
+            $.post("/FileUpload", {
+                q: "create",
+                name: $("#add input[name='name']").val(),
+                email: $("#add input[name='email']").val(),
+                title: $("#add input[name='title']").val(),
+                tags: $("#add input[name='tags']").val(),
+                key: $("#add input[name='key']").val()
+            },
+            function(response) {
+                if (response.status == "ok") {
+                    log(response.id);
+                } else {
+                    log(response.message);
+                }
+            }, "json").fail(function() {
+                log("Произошла ошибка! Пожалуйста, повторите попытку, \nпростите...");
+            });
+
+
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 
 
     // Проверка поддержки File API в браузере

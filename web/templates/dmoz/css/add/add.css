@@ -1,0 +1,15 @@
+#add input:focus, #add textarea:focus {
+    outline:none;
+}
+#add input[type="text"], #add textarea {
+    border: 3px solid #ccc;
+    padding: 2px 0;
+    border-radius: 4px;
+}
+#add .field {
+    margin-bottom: 1em;
+}
+
+#filed__title, #filed__tags {
+    width: 99%;
+}

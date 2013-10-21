@@ -1,14 +1,13 @@
 package logic;
 
 import core.CategoriesTree;
+import core.TagsTree;
 import core.Util;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -63,6 +62,12 @@ public class NavBlock extends CreatorBlock {
     public StringBuilder getCategoriesLi() throws SQLException {
         CategoriesTree ct = new CategoriesTree(stmt, 0, true);
         return ct.getCategoriesLi();
+        //return null;
+    }
+    
+    public Map<String, HashMap> getTagsLi() throws SQLException {
+        TagsTree tt = new TagsTree(stmt, 0, true);
+        return tt.getTags();
         //return null;
     }
 

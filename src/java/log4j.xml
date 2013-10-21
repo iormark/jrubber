@@ -5,15 +5,7 @@
     
 
     <!--<param name="file" value="/home/mark/sites/knigoed/log/quest.log"/>-->
-    <!--
-    Запись поисковых запросов
-    -->
-    
-    
-    
 
-    
-    Запись переходов в магазины
     
     <appender name="YaWidget" class="org.apache.log4j.RollingFileAppender">
         <param name="file" value="/home/mark/sites/log/yourmood/YaWidget.log"/>
@@ -67,7 +59,7 @@
     </appender>
     -->
 
-    <appender name="OUT-ERROR" class="org.apache.log4j.RollingFileAppender">
+    <appender name="OUTERROR" class="org.apache.log4j.RollingFileAppender">
         <param name="file" value="/home/mark/sites/log/yourmood/error.log"/>
         <param name="Append" value="true"/>
         <param name="MaxFileSize" value="50KB"/>
@@ -100,6 +92,6 @@
     </category>
     <root>
         <priority value="ERROR"/>
-        <appender-ref ref="OUT-ERROR" />
+        <appender-ref ref="OUTERROR" />
     </root>
 </log4j:configuration>

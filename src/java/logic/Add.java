@@ -114,6 +114,11 @@ public class Add extends Creator {
     public String getUploadImageOn() {
         return UploadImageOn;
     }
+    
+    
+    public long getFileKey() {
+        return System.nanoTime();
+    }
 
     public String getUploadListContent() {
         return UploadListContent;

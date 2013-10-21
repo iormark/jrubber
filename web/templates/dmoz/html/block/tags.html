@@ -1,0 +1,37 @@
+<div class="navhead">Поупулярные теги:</div>
+
+<style>
+    .tagged {margin-bottom: 10px;margin-top: 5px;}
+    a.post-tag {
+        background: #F1F6EC;
+        border-bottom: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        padding: 2px 4px 3px 4px;
+        margin: 2px 2px 2px 0;
+        text-decoration: none;
+        font-size: 90%;
+        line-height: 1.4;
+        white-space: nowrap;
+        display: inline-block;
+    }
+    a.post-tag:hover {
+        background: #E3ECDA;
+    }
+</style>
+
+<#list tags?keys as key>
+<div class="tagged">
+    <a href="/tag/${(tags[key]['tags'])!''}" class="post-tag" title="" rel="tag">${(tags[key]["tags"])!""}</a>
+    <span class="item-multiplier">
+        <span class="item-multiplier-x">×</span>
+        <span class="item-multiplier-count">${(tags[key]["count"])!"0"}</span>   
+    </span>
+</div>
+
+</#list>
+
+
+<!--
+
+SELECT t.tags, p.*, COUNT(i.id) AS CountPosts, i.text, i.alt, i.image, i.img, (SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount FROM post p, post_item i, tags t, tags_link tl WHERE p.id=i.post AND p.status='on' AND p.id=tl.post AND t.id=tl.tags AND t.id=1 GROUP BY i.post ORDER BY date desc
+-->

@@ -1,11 +1,4 @@
-* { margin: 0; padding: 0; }
 
-html, body { height: 100%; }
-
-body {
-    font-family: Arial;
-    font-size: 10pt;
-}
 
 #wrapper {
     height:auto !important;
@@ -14,7 +7,7 @@ body {
 }
 
 #leftpanel {
-    
+
     background-color: lightgrey;
     position: relative;
 }
@@ -40,8 +33,6 @@ body {
 }
 
 #workfield {
-    
-    overflow: hidden;
     width: 100%;
 }
 
@@ -52,7 +43,6 @@ body {
 #img-container {
     margin-top: 30px;
     min-width: 400px;
-    min-height: 300px;
 }
 
 .highlighted {
@@ -64,8 +54,15 @@ body {
     margin: 0;
     padding: 0;
 }
-#img-list li {
+#img-list > li {
     width: 100%;
+    margin-bottom: 1em;
+}
+#img-list > li .close {
+    cursor: pointer
+}
+#img-list > li.down__error {
+    border: 1px solid #f90;
 }
 
 #img-list div.progress {

@@ -17,8 +17,8 @@
 
 var uploaderObject = function(params) {
     var self = this;
-    
-    if (!params.id || !params.file || !params.url) {
+
+    if (!params.key || !params.file || !params.url) {
         self.lastError = {
             code: 1,
             text: 'Not image'
@@ -58,6 +58,7 @@ var uploaderObject = function(params) {
             };
         }, false);
 
+
         self.xhr.onreadystatechange = function() {
             var callbackDefined = params.oncomplete instanceof Function;
             if (this.readyState == 4) {
@@ -69,7 +70,9 @@ var uploaderObject = function(params) {
                     } else {
                         self.successful = true;
                         if (callbackDefined) {
-                            params.oncomplete.call(self, true, this.responseText);
+
+                            //alert(JSON.parse(this.responseText))
+                            params.oncomplete.call(self, true, JSON.parse(this.responseText));
                         }
                     }
                 } else {
@@ -85,37 +88,55 @@ var uploaderObject = function(params) {
         };
 
         self.xhr.open("POST", params.url);
+        var f = new FormData();
+        f.append("q", params.q);
+        f.append("name", params.name);
+        f.append("email", params.email);
+        f.append("title", params.title);
+        f.append("tags", params.tags);
+        f.append("key", params.key);
+        f.append("text", params.text);
+        f.append("file", params.file);
 
-        var boundary = "xxxxxxxxx";
-        self.xhr.setRequestHeader("Content-Type", "multipart/form-data, boundary=" + boundary);
-        self.xhr.setRequestHeader("Cache-Control", "no-cache");
+        self.xhr.send(f);
 
-        var body = "--" + boundary + "\r\n";
-        body += "Content-Disposition: form-data; name='id'\r\n\r\n";
-        body += (params.id) + "\r\n";
-
-        body += "--" + boundary + "\r\n";
-        body += "Content-Disposition: form-data; name='" + (params.fieldText || 'text') + "'\r\n\r\n";
-        body += (params.text) + "\r\n";
-
-        body += "--" + boundary + "\r\n";
-        body += "Content-Disposition: form-data; name='" + (params.fieldName || 'file') + "'; filename='" + params.file.name + "'\r\n";
-        body += "Content-Type: application/octet-stream\r\n\r\n";
-        body += self.reader.result + "\r\n";
-        body += "--" + boundary + "--\r\n";
-
-
-        //alert(body);
-
-        if (self.xhr.sendAsBinary) {
-            // firefox
-            self.xhr.sendAsBinary(body);
-        } else {
-            // chrome (W3C spec.)
-            self.xhr.send(body);
-        }
+        /*
+         var boundary = "TrahTebeDoh";
+         self.xhr.setRequestHeader("Content-Type", "multipart/form-data, boundary=" + boundary);
+         self.xhr.setRequestHeader("Cache-Control", "no-cache");
+         
+         var body = "--" + boundary + "\r\n";
+         body += 'Content-Disposition: form-data; name="key"\r\n\r\n';
+         body += (params.key) + "\r\n";
+         
+         body += "--" + boundary + "\r\n";
+         body += 'Content-Disposition: form-data; name="text"\r\n\r\n';
+         body += (params.text) + "\r\n";
+         
+         body += "--" + boundary + "\r\n";
+         body += 'Content-Disposition: form-data; name="file"; filename="' + params.file.name + '"\r\n';
+         body += "Content-Type: application/octet-stream\r\n\r\n";
+         
+         body += self.reader.result + '\r\n';
+         body += "--" + boundary + "--\r\n";
+         //self.reader.result + 
+         
+         log(body);
+         
+         
+         if (self.xhr.sendAsBinary) {
+         // firefox
+         self.xhr.sendAsBinary(body);
+         } else {
+         // chrome (W3C spec.)
+         self.xhr.send(body);
+         }*/
 
     };
 
-    self.reader.readAsBinaryString(params.file);
+    //self.reader.readAsArrayBuffer(params.file);
+    //self.reader.readAsText(params.file);
+    self.reader.readAsArrayBuffer(params.file);
+
 };
+
