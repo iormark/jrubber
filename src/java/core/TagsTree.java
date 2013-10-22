@@ -38,19 +38,20 @@ public class TagsTree {
     private void getTagsTree(Statement stmt, int id, boolean isCount) throws SQLException {
         ResultSet rs;
 
-        if (isCount) {
-            rs = stmt.executeQuery("SELECT `id`, `tags`, (SELECT count(*) FROM `tags_link` WHERE tags = t.id) AS count FROM `tags` t WHERE 1 ORDER BY id;");
-        } else {
-            rs = stmt.executeQuery("SELECT `id`, `parent`, `name`, `hurl`, 0 AS count FROM `type` WHERE " + (id > 0 ? "parent=" + id + " AND " : "") + "`edit`='on';");
-        }
+        //if (isCount) {
+        rs = stmt.executeQuery("SELECT t.id, t.tags, p.date, COUNT(*) as count FROM tags_link tl, tags t, post p JOIN (SELECT * FROM post WHERE date > DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)) AS p2 ON p.id=p2.id AND p.date=p2.date WHERE tl.post=p.id AND t.id=tl.tags AND p.date > DATE_SUB(CURRENT_DATE, INTERVAL 30  DAY) GROUP BY tl.tags");
+        //} else {
+        // rs = stmt.executeQuery("SELECT `id`, `parent`, `name`, `hurl`, 0 AS count FROM `type` WHERE " + (id > 0 ? "parent=" + id + " AND " : "") + "`edit`='on';");
+        //}
 
         while (rs.next()) {
-
-            HashMap node = new HashMap();
-            node.put("id", rs.getString("id"));
-            node.put("count", rs.getString("count"));
-            node.put("tags", rs.getString("tags"));
-            Tree.put(rs.getString("id"), node);
+            if (rs.getInt("count") > 0) {
+                HashMap node = new HashMap();
+                node.put("id", rs.getString("id"));
+                node.put("count", rs.getString("count"));
+                node.put("tags", rs.getString("tags"));
+                Tree.put(rs.getString("id"), node);
+            }
         }
 
         System.out.println(Tree.get(1));

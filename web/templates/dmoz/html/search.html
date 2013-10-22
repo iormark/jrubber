@@ -32,13 +32,13 @@ ${content.getMessage()}
         <#if (((content.getItem()[key]['animated'])!'')!='')>
         <div style="display: inline-block;position: relative">
             <a class="image img__href img__animated" value="${(content.getItem()[key]['image'])!''}" target="_blank" href="/anekdot?id=${key}">
-                <img class="border" src="http://yourmood.ru/photo_anekdot/middle_${(content.getItem()[key]['image'])!''}" alt="${content.getItem()[key]['alt']!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
+                <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['image'])!''}" alt="${content.getItem()[key]['alt']!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
                 <div class="list__info__img__hint">gif, ${content.getItem()[key]['size']!''}</div>
             </a>
         </div>
         <#else>
         <a class="image img__href" target="_blank" href="/anekdot?id=${key}">
-            <img class="border" src="http://yourmood.ru/photo_anekdot/middle_${(content.getItem()[key]['image'])!''}" alt="${content.getItem()[key]['alt']!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
+            <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['image'])!''}" alt="${content.getItem()[key]['alt']!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
         </a>
         </#if>
         ${content.getItem()[key]["readMore"]!""}

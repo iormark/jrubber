@@ -1,12 +1,12 @@
-#add input:focus, #add textarea:focus {
+#add__post input:focus, textarea:focus {
     outline:none;
 }
-#add input[type="text"], #add textarea {
+#add__post input[type="text"], textarea {
     border: 3px solid #ccc;
     padding: 2px 0;
-    border-radius: 4px;
+    border-radius: 0px;
 }
-#add .field {
+#add__post .field {
     margin-bottom: 1em;
 }
 

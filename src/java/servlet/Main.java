@@ -94,7 +94,7 @@ public class Main extends HttpServlet {
                     root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
                     leftNav.add("/block/time-addition.html");
-                    leftNav.add("/block/еtags.html");
+                    leftNav.add("/block/tags.html");
                     leftNav.add("/block/about.html");
                     leftNav.add("/block/widget.html");
                     leftNav.add("/block/ad-space.html");
@@ -104,10 +104,10 @@ public class Main extends HttpServlet {
                     q += ".html";
 
                     root.put("time_addition", block.getTimeAddition());
-                    root.put("category", block.getCategoriesLi());
+                    root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
                     leftNav.add("/block/time-addition.html");
-                    leftNav.add("/block/category.html");
+                    leftNav.add("/block/tags.html");
                     leftNav.add("/block/widget.html");
                     leftNav.add("/block/ad-space.html");
 
@@ -149,17 +149,7 @@ public class Main extends HttpServlet {
                         || args.get(0).toString().equals("kartinki")
                         || args.get(0).toString().equals("demotivatory")) {
 
-                    creator = new logic.Home(request, args, conn);
-                    RandomAnecdote = new RandomAnecdote(stmt);
-
-                    root.put("time_addition", block.getTimeAddition());
-                    root.put("category", block.getCategoriesLi());
-                    root.put("widget", block.getWidget());
-                    leftNav.add("/block/time-addition.html");
-                    leftNav.add("/block/category.html");
-                    leftNav.add("/block/about.html");
-                    leftNav.add("/block/widget.html");
-                    leftNav.add("/block/ad-space.html");
+                    response.sendRedirect("/");
 
                     q = "home.html";
 

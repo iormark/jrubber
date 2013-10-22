@@ -17,13 +17,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import javax.imageio.ImageIO;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -39,7 +42,7 @@ import org.apache.log4j.Logger;
  *
  * @author mark
  */
-@WebServlet(name = "FileUpload", urlPatterns = {"/FileUpload"})
+@WebServlet(name = "FileUpload2", urlPatterns = {"/FileUpload2"})
 public class FileUpload2 extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(FileUpload2.class);
@@ -72,6 +75,9 @@ public class FileUpload2 extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //response.sendRedirect("/add.html");
+        PrintWriter out = response.getWriter();
+        out.println("Как дела?");
+        
     }
 
     @Override
@@ -90,7 +96,7 @@ public class FileUpload2 extends HttpServlet {
             Connection conn = jndi.init();
             Statement stmt = conn.createStatement();
 
-            System.out.println(">>>>"+q);
+            System.out.println(">>>>" + q);
             switch (q) {
                 case "header":
 
@@ -101,11 +107,14 @@ public class FileUpload2 extends HttpServlet {
 
                     break;
                 case "article":
+                    System.out.println("text"+request.getParameter("key"));
                     Create create = new Create(request, response, conn, stmt);
+                    
                     String text = check.heckText(request.getParameter("text"));
-
+                    
                     create.createPost();
                     create.createPost_item(text);
+                    
                     create.createTags(check.heckTags(request.getParameter("tags")));
 
                     break;
@@ -116,11 +125,15 @@ public class FileUpload2 extends HttpServlet {
                     break;
                 case "create":
                     Create create2 = new Create(request, response, conn, stmt);
-                    create2.createPost();
-                    create2.updateItem_post();
-                    System.out.println("Tags: "+check.heckTags(request.getParameter("tags")));
-                    create2.createTags(check.heckTags(request.getParameter("tags")));
+                    HashSet tags = check.heckTags(request.getParameter("tags"));
 
+                    create2.createPost();
+                    System.out.println("Tags: " + tags);
+                    create2.updateItem_post();
+                    create2.createTags(tags);
+                    
+   
+                    
                     break;
             }
 
@@ -136,7 +149,7 @@ public class FileUpload2 extends HttpServlet {
 
             message.delete(0, Integer.MAX_VALUE);
         }
-        System.out.println(message);
+        
     }
 
     private class Create {
@@ -164,13 +177,19 @@ public class FileUpload2 extends HttpServlet {
             name = request.getParameter("name");
             email = request.getParameter("email");
             title = request.getParameter("title");
-            
-            key = Long.parseLong(request.getParameter("key"));
+             
+
+            try {
+                key = Long.parseLong(request.getParameter("key"));
+            } catch (NumberFormatException ex) {
+                message.append("<li>Ошибочка вышла, простите...</li>");
+                return;
+            }
 
             check.heckName(name);
             check.heckEmail(email);
             check.heckTitle(title);
-
+            
         }
 
         public void createPost() throws SQLException {
@@ -188,13 +207,13 @@ public class FileUpload2 extends HttpServlet {
             ps.setString(2, StringEscapeUtils.escapeHtml4(email));
             ps.setString(3, StringEscapeUtils.escapeHtml4(title));
             ps.setInt(4, 0);
-            //ps.executeUpdate();
+            ps.executeUpdate();
 
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
                 insertPostId = rs.getInt(1);
             } else {
-                message.append("<li>Ошибочка вышла, простите...</li>");
+                //message.append("<li>Ошибочка вышла, простите...</li>");
             }
 
             System.out.println("------end-------\n");
@@ -214,7 +233,7 @@ public class FileUpload2 extends HttpServlet {
             ps.setInt(1, insertPostId);
             ps.setInt(2, 0);
             ps.setString(3, util.lineFeed(text));
-            //ps.executeUpdate();
+            ps.executeUpdate();
             System.out.println("------end-------\n");
         }
 
@@ -228,7 +247,7 @@ public class FileUpload2 extends HttpServlet {
             for (int i = 0; i < ListContent.size(); i++) {
                 PreparedStatement ps = conn.prepareStatement("INSERT INTO `post_item` "
                         + "(`post`, `sort`, `text`, `image`, `img`, `alt`, `date`, `key`) "
-                        + "VALUES (?, ?, ?, ?, ?, '', NOW(), ?);");
+                        + "VALUES (?, ?, ?, ?, ?, ?, NOW(), ?);");
 
                 ps.setInt(1, 0);
                 ps.setInt(2, i);
@@ -245,8 +264,13 @@ public class FileUpload2 extends HttpServlet {
                     img = (String) ListContent.get(i).get("imgXml");
                 }
                 ps.setString(5, img);
-                ps.setString(6, (String) ListContent.get(i).get("key"));
-                //ps.executeUpdate();
+                
+                HashSet tags = check.heckTags((String) ListContent.get(i).get("tags"));
+                ps.setString(6, tags.toString().replaceAll("[\\[\\]]", ""));
+                
+                ps.setString(7, (String) ListContent.get(i).get("key"));
+                System.out.println(ps);
+                ps.executeUpdate();
             }
             System.out.println("------end-------\n");
         }
@@ -298,12 +322,13 @@ public class FileUpload2 extends HttpServlet {
         private LinkedHashMap<Integer, HashMap> ListContent = new LinkedHashMap();
         private HashMap<String, String> ListFiled = new HashMap();
         private HashMap<String, FileItem> ListFile = new HashMap();
-        private String RealPath = getServletContext().getRealPath("/").replaceAll("/ROOT", "");
+        private String realPath = getServletContext().getRealPath("/").replaceAll("/ROOT", "");
+        private String realPathLoad = "";
 
         UploaderFile(HttpServletRequest request, HttpServletResponse response,
                 Connection conn, Statement stmt, PrintWriter out) throws Exception {
-            
-            System.out.println(RealPath);
+
+            System.out.println(realPath);
 
             //проверяем является ли полученный запрос multipart/form-data
             boolean isMultipart = ServletFileUpload.isMultipartContent(request);
@@ -371,7 +396,7 @@ public class FileUpload2 extends HttpServlet {
 
                         if (!"".equals(ListFile.get("file" + i).getName())) {
 
-                            HashMap imageItem = (processUploadedFile(ListFile.get("file" + i), out, RealPath));
+                            HashMap imageItem = (processUploadedFile(ListFile.get("file" + i), out));
 
                             if (imageItem != null) {
 
@@ -379,6 +404,7 @@ public class FileUpload2 extends HttpServlet {
                                 meta.putAll(imageItem);
                                 meta.put("text", ListFiled.get("text" + i));
                                 meta.put("key", ListFiled.get("key" + i));
+                                meta.put("tags", ListFiled.get("tags" + i));
                                 ListContent.put(i, meta);
 
                                 if (!imageItem.containsKey("imgXml")) {
@@ -395,7 +421,7 @@ public class FileUpload2 extends HttpServlet {
                 if (message.length() == 0) {
                     Create create = new Create(conn, stmt);
                     create.createPost_items(ListContent);
-                    
+
                 }
 
             } catch (Exception ex) {
@@ -406,7 +432,7 @@ public class FileUpload2 extends HttpServlet {
             }
 
             //out.println("<br>--------<br>");
-            System.out.println("File: "+ListContent);
+            System.out.println("File: " + ListContent);
         }
 
         /**
@@ -416,10 +442,19 @@ public class FileUpload2 extends HttpServlet {
          * @param item
          * @throws Exception
          */
-        private HashMap processUploadedFile(FileItem item, PrintWriter out, String RealPath) throws Exception {
+        private HashMap processUploadedFile(FileItem item, PrintWriter out) throws Exception {
 
-            RealPath = RealPath+"img/13/";
-            System.out.println(RealPath);
+            Calendar calendar = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault());
+            calendar.setTime(new Date());
+
+            String loadPath = "/img/" + calendar.get(Calendar.YEAR) + "/" + calendar.get(Calendar.MONTH);
+            File myPath = new File(realPath + loadPath);
+            if (!myPath.exists()) {
+                myPath.mkdirs();
+            }
+
+            realPathLoad = myPath.toString();
+            
             HashMap<String, String> imageItem = new HashMap();
             String fileName = new File(item.getName()).getName();
 
@@ -440,7 +475,7 @@ public class FileUpload2 extends HttpServlet {
             //выбираем файлу имя пока не найдём свободное
             do {
                 nameImage = Long.toString(new Date().getTime()) + mimeType;
-                uploadetFile = new File(RealPath + "/" + nameImage);
+                uploadetFile = new File(realPathLoad + "/" + nameImage);
             } while (uploadetFile.exists());
 
             imageItem.put("original", nameImage);
@@ -448,12 +483,12 @@ public class FileUpload2 extends HttpServlet {
 
             try {
                 GifDecoder d = new GifDecoder();
-                d.read(RealPath + "/" + nameImage);
+                d.read(realPathLoad + "/" + nameImage);
                 int gif = d.getFrameCount();
 
                 //out.println("/home/mark/sites/service/yourmood/resize " + RealPath + " " + nameImage + (gif > 1 ? " [0]" : ""));
                 // если GIF анимированный передаем какой кадр взять
-                InputStream is = Runtime.getRuntime().exec("/home/mark/sites/service/yourmood/resize " + RealPath + " " + nameImage + (gif > 1 ? " [0]" : "")).getInputStream();
+                InputStream is = Runtime.getRuntime().exec("/home/mark/sites/service/yourmood/resize " + realPathLoad + " " + nameImage + (gif > 1 ? " [0]" : "")).getInputStream();
 
                 String res = "";
                 byte[] buf = new byte[512];
@@ -470,20 +505,21 @@ public class FileUpload2 extends HttpServlet {
                 String imgXml = "";
                 BufferedImage source = null;
 
-                source = ImageIO.read(new File(RealPath + "/" + nameImage));
+                source = ImageIO.read(new File(realPathLoad + "/" + nameImage));
                 imgXml = "<original "
                         + "width=\"" + source.getWidth() + "\" "
                         + "height=\"" + source.getHeight() + "\" "
                         + "size=\"" + item.getSize() + "\" "
-                        + "animated=\"" + gif + "\">"
-                        + "" + nameImage + "</original>";
+                        + "animated=\"" + gif + "\" "
+                        + "path=\"" + loadPath + "\">"
+                        + nameImage + "</original>";
 
-                source = ImageIO.read(new File(RealPath + "/middle_" + nameImage));
+                source = ImageIO.read(new File(realPathLoad + "/middle_" + nameImage));
                 imgXml += "<middle "
                         + "width=\"" + source.getWidth() + "\" "
                         + "height=\"" + source.getHeight() + "\"/>";
 
-                source = ImageIO.read(new File(RealPath + "/small_" + nameImage));
+                source = ImageIO.read(new File(realPathLoad + "/small_" + nameImage));
                 imgXml += "<small "
                         + "width=\"" + source.getWidth() + "\" "
                         + "height=\"" + source.getHeight() + "\"/>";
@@ -501,9 +537,9 @@ public class FileUpload2 extends HttpServlet {
 
             for (Map.Entry<Integer, HashMap> entry : ListContent.entrySet()) {
                 //out.println(RealPath + "/small_" + entry.getValue().get("original"));
-                new File(RealPath + "/small_" + entry.getValue().get("original")).delete();
-                new File(RealPath + "/middle_" + entry.getValue().get("original")).delete();
-                new File(RealPath + "/" + entry.getValue().get("original")).delete();
+                new File(realPathLoad + "/small_" + entry.getValue().get("original")).delete();
+                new File(realPathLoad + "/middle_" + entry.getValue().get("original")).delete();
+                new File(realPathLoad + "/" + entry.getValue().get("original")).delete();
 
             }
 

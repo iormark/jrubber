@@ -32,6 +32,7 @@ $(document).ready(function() {
     function log(str) {
         $(logout).add('<ul/>').addClass('error').html(str);
         $('<div/>').html(str).prependTo(console);
+        
     }
 
     // Вывод инфы о выбранных
@@ -156,22 +157,25 @@ $(document).ready(function() {
 
 
     $("#upload-all").click(function() {
-        log('Начинаем загрузку...');
-        
-        $.post("/FileUpload", {
+        $('#upload-all').attr('disabled', 'disabled');
+        log('Проверяем');
+
+        $.post("/FileUpload2", {
             q: "header",
-            name: $("#add input[name='name']").val(),
-            email: $("#add input[name='email']").val(),
-            title: $("#add input[name='title']").val(),
-            tags: $("#add input[name='tags']").val()
+            name: $("#add__post input[name='name']").val(),
+            email: $("#add__post input[name='email']").val(),
+            title: $("#add__post input[name='title']").val(),
+            tags: $("#add__post input[name='tags']").val()
         },
         function(response) {
             if (response.status == 'ok') {
                 uploaderFile(response);
             } else {
+                $('#upload-all').removeAttr('disabled');
                 log(response.message);
             }
         }, "json").fail(function() {
+            $('#upload-all').removeAttr('disabled');
             log("Произошла ошибка! Пожалуйста, повторите попытку...");
         });
     });
@@ -184,28 +188,33 @@ $(document).ready(function() {
             var pBar = $(uploadItem).find('.progress');
 
             if (!uploadItem.file) {
+                log('Проверяем...');
 
-                $.post("/FileUpload", {
+                $.post("/FileUpload2", {
                     q: "article",
-                    name: $("#add input[name='name']").val(),
-                    email: $("#add input[name='email']").val(),
-                    title: $("#add input[name='title']").val(),
-                    tags: $("#add input[name='tags']").val(),
+                    name: $("#add__post input[name='name']").val(),
+                    email: $("#add__post input[name='email']").val(),
+                    title: $("#add__post input[name='title']").val(),
+                    tags: $("#add__post input[name='tags']").val(),
                     text: $(uploadItem).find('textarea').val(),
-                    key: $("#add input[name='key']").val()
+                    key: $("#add__post input[name='key']").val()
                 },
                 function(response) {
                     if (response.status == 'ok') {
-                        log(response.id);
+                        log(response.message);
+                        messageEstablishment();
                     } else {
+                        $('#upload-all').removeAttr('disabled');
                         log(response.message);
                     }
                 }, "json").fail(function() {
+                    $('#upload-all').removeAttr('disabled');
                     log("Произошла ошибка! Пожалуйста, повторите попытку, \nпростите...");
                 });
                 return false;
             } else {
-
+                
+                log('Загружаем...');
                 var create = createPost();
                 if (!create)
                     return false;
@@ -215,17 +224,17 @@ $(document).ready(function() {
                     log('Файл отсеян: `' + uploadItem.file.name + '` (тип ' + uploadItem.file.type + ')');
                     return true;
                 }
-                
+
                 //alert("file");
                 new uploaderObject({
-                    name: $("#add input[name='name']").val(),
-                    email: $("#add input[name='email']").val(),
-                    title: $("#add input[name='title']").val(),
-                    tags: $("#add input[name='tags']").val(),
-                    key: $("#add input[name='key']").val(),
+                    name: $("#add__post input[name='name']").val(),
+                    email: $("#add__post input[name='email']").val(),
+                    title: $("#add__post input[name='title']").val(),
+                    tags: $("#add__post input[name='tags']").val(),
+                    key: $("#add__post input[name='key']").val(),
                     text: $(uploadItem).find('textarea').val(),
                     file: uploadItem.file,
-                    url: '/FileUpload',
+                    url: '/FileUpload2',
                     onprogress: function(percents) {
                         updateProgress(pBar, percents);
                     },
@@ -241,6 +250,7 @@ $(document).ready(function() {
                                 $(uploadItem).addClass('down__error');
                                 pBar.attr('rel', 0).text('0%').css('background', 'none');
                                 $('<ul/>').html(data.message).addClass('error').appendTo($(uploadItem).find('.out'));
+                                $('#upload-all').removeAttr('disabled');
                             }
 
                             var create = createPost();
@@ -248,6 +258,7 @@ $(document).ready(function() {
                                 return false;
 
                         } else {
+                            $('#upload-all').removeAttr('disabled');
                             log('Ошибка: ' + this.lastError.text);
                         }
                     }
@@ -261,23 +272,25 @@ $(document).ready(function() {
     function createPost() {
         updateDown();
         if (downCount == imgCount) {
-            log("Пора создавать пост" + downCount + '==' + imgCount);
+            log('Проверяем...');
 
-            $.post("/FileUpload", {
+            $.post("/FileUpload2", {
                 q: "create",
-                name: $("#add input[name='name']").val(),
-                email: $("#add input[name='email']").val(),
-                title: $("#add input[name='title']").val(),
-                tags: $("#add input[name='tags']").val(),
-                key: $("#add input[name='key']").val()
+                name: $("#add__post input[name='name']").val(),
+                email: $("#add__post input[name='email']").val(),
+                title: $("#add__post input[name='title']").val(),
+                tags: $("#add__post input[name='tags']").val(),
+                key: $("#add__post input[name='key']").val()
             },
             function(response) {
                 if (response.status == "ok") {
-                    log(response.id);
+                    log(response.message);
+                    messageEstablishment();
                 } else {
                     log(response.message);
                 }
             }, "json").fail(function() {
+                $('#upload-all').removeAttr('disabled');
                 log("Произошла ошибка! Пожалуйста, повторите попытку, \nпростите...");
             });
 
@@ -286,6 +299,14 @@ $(document).ready(function() {
         } else {
             return true;
         }
+    }
+
+    function messageEstablishment() {
+        var obj = $('#add__post');
+        obj.html('');
+        $('<h1/>').text('Спасибо, пост отправлен').appendTo(obj);
+        $('<div/>').text('Пост отправлен нашему редактору на проверку.').appendTo(obj);
+        $('<div/>').html('<a href="/">Вернуться на главную</a>').appendTo(obj);
     }
 
 

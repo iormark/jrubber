@@ -34,12 +34,7 @@ public class WidgetYandex extends Creator {
         CategoriesTree ct = null;
         Random random = new Random();
 
-        if (!"".equals(type) && !"0".equals(type)) {
-            ct = new CategoriesTree(stmt, Integer.parseInt(type));
-            type = " AND p.type IN(" + ct.getCategoriesAllId() + ")";
-        }
-
-        rs = stmt.executeQuery("SELECT MAX(id) AS max, MIN(id) AS min FROM post p WHERE p.status ='on'" + type);
+        rs = stmt.executeQuery("SELECT MAX(p.id) AS max, MIN(p.id) AS min FROM `post_item` i, post p WHERE i.post = p.id AND p.status ='on' AND i.mime_type!='video'");
         if (rs.next()) {
             max = rs.getInt("max");
             min = rs.getInt("min");
@@ -47,8 +42,8 @@ public class WidgetYandex extends Creator {
 
         rand = min + random.nextInt((max - min) + 1);
 
-        rs = stmt.executeQuery("SELECT t.name AS typeName, t.hurl, i.text, i.image, i.alt,COUNT(i.post) as CountPosts, p.* FROM type t, `post_item` i, `post` p WHERE t.id=p.type AND i.post = p.id AND p.status ='on' "
-                + "AND (p.id <=" + max + " AND p.id>=" + min + ") AND p.id>=" + rand + type + " GROUP BY i.post LIMIT 1");
+        rs = stmt.executeQuery("SELECT i.text, i.image, i.alt,COUNT(i.post) as CountPosts, p.* FROM `post_item` i, `post` p WHERE i.post = p.id AND p.status ='on' "
+                + "AND (p.id <=" + max + " AND p.id>=" + min + ") AND p.id>=" + rand + " AND i.mime_type!='video' GROUP BY i.post LIMIT 1");
         if (rs.next()) {
             HashMap<String, String> content = new HashMap();
 
@@ -58,10 +53,6 @@ public class WidgetYandex extends Creator {
                 content.put("image", rs.getString("image"));
 
             }
-
-            
-            content.put("typeHurl", rs.getString("hurl"));
-            content.put("typeName", rs.getString("typeName"));
             
             content.put("text", util.Shortening(util.bbCode(rs.getString("text")), (rs.getString("image") != null ? 150 : 400), "<br><a href=\"/anekdot?id=" + rs.getString("id") + "\" target=\"_blank\">Читать дальше</a>"));
 

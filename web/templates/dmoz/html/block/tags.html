@@ -1,8 +1,9 @@
-<div class="navhead">Поупулярные теги:</div>
+<div class="navhead">Популярные теги за 30 дней</div>
 
 <style>
-    .tagged {margin-bottom: 10px;margin-top: 5px;}
-    a.post-tag {
+    .tagged__list {margin: 1em 0;}
+    .tagged {margin-bottom: 4px;margin-top: 4px;}
+    a.tagged__tag {
         background: #F1F6EC;
         border-bottom: 1px solid #ddd;
         border-right: 1px solid #ddd;
@@ -14,24 +15,27 @@
         white-space: nowrap;
         display: inline-block;
     }
-    a.post-tag:hover {
+    a.tagged__tag:hover {
         background: #E3ECDA;
     }
+    .tagged__multiplier {
+        color: #999;
+    }
 </style>
-
+<div class="tagged__list">
 <#list tags?keys as key>
 <div class="tagged">
-    <a href="/tag/${(tags[key]['tags'])!''}" class="post-tag" title="" rel="tag">${(tags[key]["tags"])!""}</a>
-    <span class="item-multiplier">
-        <span class="item-multiplier-x">×</span>
-        <span class="item-multiplier-count">${(tags[key]["count"])!"0"}</span>   
+    <a href="/tag/${(tags[key]['tags'])!''}" class="tagged__tag" title="" rel="tag">${(tags[key]["tags"])!""}</a>
+    <span class="tagged__multiplier">
+        <span class="tagged__multiplier-x">×</span>
+        <span class="tagged__multiplier-count">${(tags[key]["count"])!"0"}</span>   
     </span>
 </div>
-
 </#list>
-
+</div>
 
 <!--
-
-SELECT t.tags, p.*, COUNT(i.id) AS CountPosts, i.text, i.alt, i.image, i.img, (SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount FROM post p, post_item i, tags t, tags_link tl WHERE p.id=i.post AND p.status='on' AND p.id=tl.post AND t.id=tl.tags AND t.id=1 GROUP BY i.post ORDER BY date desc
+http://cs311825.vk.me/v311825831/3d16/FoYYw7AxBkM.jpg
+replace `tags` (id, tags) select id, name  from type4;
+insert into `tags_link` (tags, post) select t.id, p.id  from post p, type t where p.type=t.id
 -->

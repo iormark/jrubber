@@ -8,9 +8,8 @@
     </head>
     <body onload="widget.adjustIFrameHeight();">
         <#list content.getItem()?keys as key>
-        <div class="type">
-            <span>Раздел:</span> <a href="/${(content.getItem()[key]['typeHurl'])!''}" target="_blank">${(content.getItem()[key]["typeName"])!""}</a>
-        </div>
+        <!--<div class="type">
+        </div>-->
         <div class="text">
 
             ${content.getItem()[key]["text"]!""}
@@ -26,8 +25,8 @@
         </#list>
 
         <div style="text-align: center">
-            <a class="btn-small2" href="#" onclick="javascript:widget.reload(); return false">Следующий»</a> &nbsp;
-            <a class="btn-opt" href="#" onclick="widget.showPreferences(); return false">Настройка</a>
+            <a class="btn-small2" href="#" onclick="javascript:widget.reload(); return false">Следующий»</a> 
+            <!--&nbsp; <a class="btn-opt" href="#" onclick="widget.showPreferences(); return false">Настройка</a>-->
         </div>
 
     </body>

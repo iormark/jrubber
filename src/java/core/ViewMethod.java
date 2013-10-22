@@ -34,6 +34,12 @@ public class ViewMethod {
         this.rs = rs;
         this.stmt = stmt;
     }
+    
+    public ViewMethod(ResultSet rs, Statement stmt, boolean view) {
+        this.rs = rs;
+        this.stmt = stmt;
+        this.view = view;
+    }
 
     public ViewMethod(ResultSet rs) {
         this.rs = rs;
@@ -130,9 +136,9 @@ public class ViewMethod {
 
                             break;
                         }
-                        case "CountPosts": {
-                            if (rs.getInt("CountPosts") > 1) {
-                                f = " (" + rs.getString("CountPosts") + " шт.)";
+                        case "itemCount": {
+                            if (rs.getInt("itemCount") > 1) {
+                                f = " (" + rs.getString("itemCount") + " шт.)";
                                 content.put("readMore", "<a href=\"/anekdot?id=" + rs.getString("id") + "\" target=\"_blank\" title=\"Откроется в новом окне\">Читать дальше</a>");
                             } else {
                                 f = "";
@@ -161,6 +167,7 @@ public class ViewMethod {
                                         HashMap<String, HashMap> h = xor.setDocument(rs.getString("img"));
 
                                         content.put("image", h.get("original").get("name"));
+                                        content.put("imagePath", h.get("original").containsKey("path") ? h.get("original").get("path") : "/photo_anekdot");
 
                                         content.put("width", h.get("middle").get("width"));
                                         content.put("height", h.get("middle").get("height"));
@@ -190,12 +197,36 @@ public class ViewMethod {
         return items;
     }
 
+    public HashMap getPostTags(String id) throws SQLException {
+
+        System.out.println("SELECT tl.post, t.id, t.tags FROM tags t, tags_link tl WHERE t.id=tl.tags AND tl.post IN (" + id + ")");
+        rs = stmt.executeQuery("SELECT tl.post, t.id, t.tags FROM tags t, tags_link tl WHERE t.id=tl.tags AND tl.post IN (" + id + ")");
+
+        while (rs.next()) {
+            String post = rs.getString("post");
+            HashSet node = new HashSet();
+
+            if (!tags.containsKey(post)) {
+                node.add(rs.getString("tags"));
+                tags.put(post, node);
+            } else {
+                node.add(rs.getString("tags"));
+                node.addAll(tags.get(post));
+                tags.put(post, node);
+            }
+        }
+        
+        System.out.println(tags);
+        return tags;
+    }
+    
     public HashMap getPostTags() throws SQLException {
         if (items.keySet().isEmpty()) {
             return null;
         }
-        
+
         String id_s = items.keySet().toString().replace("[", "").replace("]", "");
+        System.out.println("SELECT tl.post, t.id, t.tags FROM tags t, tags_link tl WHERE t.id=tl.tags AND tl.post IN (" + id_s + ")");
         rs = stmt.executeQuery("SELECT tl.post, t.id, t.tags FROM tags t, tags_link tl WHERE t.id=tl.tags AND tl.post IN (" + id_s + ")");
 
         while (rs.next()) {
@@ -211,6 +242,8 @@ public class ViewMethod {
                 tags.put(post, node);
             }
         }
+        
+        System.out.println(tags);
         return tags;
     }
 

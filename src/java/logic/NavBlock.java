@@ -60,9 +60,9 @@ public class NavBlock extends CreatorBlock {
 
     
     public StringBuilder getCategoriesLi() throws SQLException {
-        CategoriesTree ct = new CategoriesTree(stmt, 0, true);
-        return ct.getCategoriesLi();
-        //return null;
+        //CategoriesTree ct = new CategoriesTree(stmt, 0, true);
+        //return ct.getCategoriesLi();
+        return null;
     }
     
     public Map<String, HashMap> getTagsLi() throws SQLException {
@@ -94,7 +94,7 @@ public class NavBlock extends CreatorBlock {
 
         rand = min + random.nextInt((max - min) + 1);
 
-        rs = stmt.executeQuery("SELECT t.name AS typeName, t.hurl, i.text, i.image, i.alt,COUNT(i.id) as CountPosts, p.* FROM type t, `post_item` i, `post` p WHERE t.id=p.type AND i.post = p.id AND p.status ='on' "
+        rs = stmt.executeQuery("SELECT i.text, i.image, i.alt,COUNT(i.id) as CountPosts, p.* FROM `post_item` i, `post` p WHERE i.post = p.id AND p.status ='on' "
                 + "AND (p.id <=" + max + " AND p.id>=" + min + ") AND p.id>=" + rand + type + " GROUP BY i.post LIMIT 1");
         if (rs.next()) {
             HashMap<String, String> content = new HashMap<String, String>();
@@ -109,8 +109,6 @@ public class NavBlock extends CreatorBlock {
             }
 
 
-            content.put("typeHurl", rs.getString("hurl"));
-            content.put("typeName", rs.getString("typeName"));
             content.put("date", new SimpleDateFormat("d MMM yyyy, HH:mm:ss").format(rs.getTimestamp("date")));
 
             item.put("all", content);

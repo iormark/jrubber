@@ -11,7 +11,6 @@ div, span, object, iframe, h1, h2, h3, h4, h5, h6, pre, abbr, acronym, address, 
 }
 html {
     min-width: 928px;
-
 }
 body {
     background-color: #fff;
@@ -48,6 +47,7 @@ hr {
 img {
     border: 0px solid;
 }
+textarea {overflow: hidden;}
 
 fieldset {
     border:0;

@@ -1,17 +1,29 @@
 <link href="/templates/dmoz/css/add/add.css" rel="stylesheet" type="text/css">
 <link href="/templates/dmoz/css/add/main.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="/templates/dmoz/js/add/uploaderObject.js?1" charset="utf-8"></script>
-<script type="text/javascript" src="/templates/dmoz/js/add/interface.js?1" charset="utf-8"></script>
-<div id="add">
-    <h1>Изготовить пост</h1>
+<script type="text/javascript" src="/templates/dmoz/js/add/uploaderObject.js?2" charset="utf-8"></script>
+<script type="text/javascript" src="/templates/dmoz/js/add/interface.js?2" charset="utf-8"></script>
+<div id="add__post">
+    <h1>Изготовить пост <small>(Beta)</small></h1>
 
+    <div class="faq">
+        Изготовления поста, дело серьезное и ответственное. И подходить к нему требуется с великим чаянием и старанием.
+        <ul>
+            <li>Автор поста, должен быть.</li>
+            <li>Картинка, должна быть девственно чистой, а содержание мусора в виде логотипов, строго запрещено!</li>
+            <li>Название поста должно быть осмысленным и с большой буквы.</li>
+            <li>Помни о золотом правиле – "краткость – сестра таланта".</li>
+            <li>Не добавляй пост, который уже есть на Порке.</li>
+        </ul>
+        Следуя этим простым и не хитрым правилам, ты сможешь изготовить хороший пост невозбранно.
+    </div>
+    
     <div id="add__logout"></div>
 
     <form>
-        <div class="field"><input type="text" name="name" value="Змей"></div>
-        <div class="field"><input type="text" name="email" value="test_iormark@yandex.ru"></div>
+        <div class="field"><input type="text" name="name" placeholder="имя" value=""></div>
+        <div class="field"><input type="text" name="email" placeholder="email" value=""></div>
 
-        <div class="field"><input type="text" name="title" value="Тест - 'тес#" id="filed__title"></div>
+        <div class="field"><input type="text" name="title" placeholder="название" value="" id="filed__title"></div>
         <input type="hidden" name="key" value="${content.getFileKey()}">
     </form>
 
@@ -22,7 +34,7 @@
             <div id="content">
                 <div>Чтобы добавить картинки, выбери их в поле
                     <input type="file" name="file" id="file-field" multiple><br/>
-                    ... или просто перетащи в область ниже
+                    
                 </div>
                 <div id="img-container">
                     <ul id="img-list">
@@ -34,7 +46,7 @@
 
         <div class="field">
             <div>Теги</div>
-            <input type="text" name="tags" value="хуй, жопа" id="filed__tags">
+            <input type="text" name="tags" value="" id="filed__tags">
         </div>
 
         <div id="leftpanel">

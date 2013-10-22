@@ -67,14 +67,14 @@ public class PagingNavigation {
         String s = "";
 
         if (page > 1 && found > 0) {
-            s = "<a href=\"?" + urloption.addParam("page=" + (page - 1)) + "\">« сюда</a>";
+            s = "<a href=\"?" + urloption.addParam1_1("page=" + (page + 1) + "&q=[delete]") + "\">« сюда</a>";
         }
 
         if (page > left + 2) {
-            s += "<a href=\"?" + urloption.addParam("page=1") + "\">1</a>";
+            s += "<a href=\"?" + urloption.addParam1_1("page=1&q=[delete]") + "\">1</a>";
         }
         if (page > left + 1) {
-            s += "<a href=\"?" + urloption.addParam("page=" + (begin - 1)) + "\">...</a>";
+            s += "<a href=\"?" + urloption.addParam1_1("page=" + (begin - 1)+ "&q=[delete]") + "\">...</a>";
         }
 
         for (int i = 0; i >= begin; i--) {
@@ -84,15 +84,15 @@ public class PagingNavigation {
             if (i == page) {
                 s += "<b>" + i + "</b>";
             } else {
-                s += "<a href=\"?" + urloption.addParam("page=" + i) + "\">" + i + "</a>";
+                s += "<a href=\"?" + urloption.addParam1_1("page=" + i+ "&q=[delete]") + "\">" + i + "</a>";
             }
         }
 
         if (page < pagCount) {
             if (limit != pagCount) {
-                s += "<span><a href=\"?" + urloption.addParam("page=" + (limit + 1)) + "\">...</a></span>";
+                s += "<span><a href=\"?" + urloption.addParam1_1("page=" + (limit + 1)+ "&q=[delete]") + "\">...</a></span>";
             }
-            s += "<a href=\"?" + urloption.addParam("page=" + (page + 1)) + "\">туда »</a>";
+            s += "<a href=\"?" + urloption.addParam1_1("page=" + (page + 1)+ "&q=[delete]") + "\">туда »</a>";
         }
 
         return s;
@@ -102,11 +102,11 @@ public class PagingNavigation {
         System.out.println(page);
         String s = "";
         if (page > 1) {
-            s += "<a href=\"?" + urloption.addParam1_1("page=" + (page - 1)) + "\">« Сюда</a>";
+            s += "<a href=\"?" + urloption.addParam1_1("page=" + (page - 1)+ "&q=[delete]") + "\">« Сюда</a>";
         }
 
         if (page < pagCount) {
-            s += "<a href=\"?" + urloption.addParam1_1("page=" + (page + 1)) + "\">Туда »</a>";
+            s += "<a href=\"?" + urloption.addParam1_1("page=" + (page + 1)+ "&q=[delete]") + "\">Туда »</a>";
         }
 
         return s;

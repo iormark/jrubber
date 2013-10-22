@@ -22,7 +22,7 @@ public class Home extends Creator {
             begin = 0;
     private String typeQ = "", typeId;
     private String byLink = "";
-    private PagingNavigationSpecular pagnav;
+    private String pagnav = "";
     private UrlOption urloption;
     private Util util = new Util();
     private Connection conn;
@@ -34,7 +34,6 @@ public class Home extends Creator {
     private HttpServletRequest request = null;
     private ArrayList args;
     private CategoriesTree ct = null;
-    private CategoryBreadCrumbs cbc = null;
     private HashMap selectedTags = null;
     private String tagsID = "";
 
@@ -45,6 +44,11 @@ public class Home extends Creator {
         stmt = conn.createStatement();
 
         urloption = new UrlOption(request);
+        page = urloption.NumberReplacementInt(request.getParameter("page"), 1);
+
+        //page = page <= 0 ? 1 : page;
+        begin = page > 0 ? (page * lt) : 0;
+        begin = begin > 1000 ? 1000 : begin;
 
         String tags = request.getParameter("q") != null ? request.getParameter("q").replaceAll("[/]$", "") : "home.html";
         selectedTags = new HashMap();
@@ -61,8 +65,8 @@ public class Home extends Creator {
         }
 
         if (tagsId > 0) {
-            tagsID = " AND t.id=" + tagsId;
-        } else if(!tags.equals("home.html")) {
+            tagsID = " AND tl.tags=" + tagsId;
+        } else if (!tags.equals("home.html")) {
             return;
         }
 
@@ -74,42 +78,43 @@ public class Home extends Creator {
 //System.out.println("SELECT h.text, h.image, h.alt,COUNT(h.id) as CountPosts, hm.*, t.name AS nameType, t.name_alias AS nameAlias  FROM `type2` t, `humor` h, `humor_meta` hm WHERE t.id = hm.type_int AND h.id = hm.id AND hm.status ='on' " + CategoriesAllId + " GROUP BY h.id ORDER BY hm.date DESC LIMIT " + begin + "," + lt);
         //rs = stmt.executeQuery("SELECT h.text, h.image, h.alt,COUNT(h.id) as CountPosts, hm.*, t.name AS nameType, t.name_alias AS nameAlias, t.hurl  FROM `type2` t, `humor` h, `humor_meta` hm WHERE t.id = hm.type_int AND h.id = hm.id AND hm.status ='on' " + CategoriesAllId + " GROUP BY h.id ORDER BY hm.date DESC LIMIT " + begin + "," + lt);
 
-        rs = stmt.executeQuery("SELECT p.*, COUNT(i.id) AS CountPosts, i.text, i.alt, i.image, i.img, "
-                + "(SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount "
-                + "FROM post p, post_item i, tags t, tags_link tl "
-                + "WHERE p.id=i.post AND p.status='on' AND p.id=tl.post AND t.id=tl.tags "
-                + tagsID + " GROUP BY i.post ORDER BY date desc LIMIT 0, 10");
+        rs = stmt.executeQuery("SELECT SQL_CALC_FOUND_ROWS p.*, i.itemCount, i.text, i.image, i.img, i.alt, "
+                + "(SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) "
+                + "AS commentCount FROM tags_link tl, post p JOIN "
+                + "(SELECT post, text, image, img, alt, COUNT(*) AS itemCount FROM post_item GROUP BY post) AS i "
+                + "ON p.id=i.post WHERE p.status='on' AND p.id=tl.post " + tagsID + " ORDER BY p.date DESC LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
+
+        
         ViewMethod view = new ViewMethod(rs, stmt);
         item = view.getViewCatalog();
+        rs = stmt.executeQuery("SELECT FOUND_ROWS() as rows;");
+        if (rs.next()) {
+            found = rs.getInt("rows");
+        }
+        
         tags = view.getPostTags();
         LastModified = view.getLastModified();
-
-        pagnav = new PagingNavigationSpecular(found, request.getParameter("page"), lt, urloption);
+        
+        //pagnav = new PagingNavigationSpecular(found, request.getParameter("page"), lt, urloption);
+        PagingNavigation pnav = new PagingNavigation(found, request.getParameter("page"), lt, urloption);
+        pagnav = pnav.PagingPreviousNext();
 
     }
 
-    public HashMap getSelectedType() {
+    public HashMap getSelectedTags() {
         return selectedTags;
     }
 
     public LinkedHashMap getItem() {
         return item;
     }
-    
-    public HashMap getTags() {
+
+    public HashMap getTagsItem() {
         return tags;
     }
 
     public String PageNavig() {
-        return pagnav != null ? pagnav.PagingNavigation() : "";
-    }
-
-    public String getCategoryBreadCrumbs() {
-        if (cbc != null) {
-            return cbc.getCategoryBreadCrumbs(false);
-        } else {
-            return "";
-        }
+        return pagnav;
     }
 
     public String getByLink() {
@@ -118,9 +123,9 @@ public class Home extends Creator {
 
     @Override
     public String getMetaTitle() {
-        if (cbc != null) {
+        if (!selectedTags.isEmpty()) {
 
-            return selectedTags.get("title").toString();
+            return selectedTags.get("tags").toString();
         } else {
             return "Самое смешное";
         }
@@ -152,7 +157,7 @@ public class Home extends Creator {
 
     @Override
     public String getMetaHead() {
-        if (cbc == null) {
+        if (selectedTags.isEmpty()) {
             return "<meta name=\"description\" content=\"Начальник достал, он урод. Денег нет в кармане, не беда. В жизни самое смешное, ерунда. Анекдоты почитай и картинки посмотри, нафик брось эту работу, а начальнику въеби!\" />\n"
                     + "<meta name=\"keywords\" content=\"самое смешное, самое прикольное, самое остроумное\" />";
 

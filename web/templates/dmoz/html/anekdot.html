@@ -1,18 +1,22 @@
 <script type="text/javascript">
     $(document).ready(function() {
-        try {
-            $('body').listScroll({});
-        } catch (e) {log(e)}
-        
-        try {
-            $('#addComment').addComment({id:${content.getId()}});
-        } catch (e) {log(e)}
-    });    
-</script>
+    try {
+    $('body').listScroll({});
+    } catch (e) {log(e)}
+
+    try {
+    $('#addComment').addComment({id:${content.getId()}});
+    } catch (e) {log(e)}
+    });</script>
 
 <article>
     <div class="post_breadcrumbs">
-        ${content.getCategoryBreadCrumbs()!""}
+        
+        <#if (content.getTagsItem()[content.getId()])??>
+        <#list content.getTagsItem()[content.getId()] as tag>
+        <a href="/tag/${tag}">${tag}</a>
+        </#list>
+        </#if>
     </div>
 
 
@@ -164,8 +168,7 @@
 
                 <div>
                     <div><b>Комментарий</b> <span>*</span></div>
-                    <textarea rows="6" name="text" class="inp"></textarea>
-
+                    <textarea rows="2" name="text" class=""></textarea>
                 </div>
                 <div>
                     <input type="hidden" name="q" value="AddComment">
@@ -183,10 +186,9 @@
 <br>
 <div style="margin-left: 67px">
     <script language="Javascript">
-        var bntuniqid = 'ElIURRU1ns31OUMvk31G';
-        var bntuniqsid = '62948';
-        var async = 0;
-    </script>
+                var bntuniqid = 'ElIURRU1ns31OUMvk31G';
+                var bntuniqsid = '62948';
+                var async = 0;    </script>
     <script type="text/javascript" src="http://pralilipiped.net/viewt.js"></script>
 </div>
 <hr>
