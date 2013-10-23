@@ -61,7 +61,7 @@ public class Anecdote extends Creator {
         }
         
 
-        rs = stmt.executeQuery("SELECT i.* FROM `type` t, `post_item` i, `post` p WHERE t.id=p.type AND i.post = p.id AND p.status ='on' AND i.post = '" + id + "' ORDER BY i.sort LIMIT 100;");
+        rs = stmt.executeQuery("SELECT i.* FROM `post_item` i, `post` p WHERE i.post = p.id AND p.status ='on' AND i.post = '" + id + "' ORDER BY i.sort LIMIT 99;");
 
         ViewMethod view = new ViewMethod(rs, stmt, true);
         item = view.getViewCatalog();

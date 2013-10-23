@@ -39,7 +39,7 @@ public class TagsTree {
         ResultSet rs;
 
         //if (isCount) {
-        rs = stmt.executeQuery("SELECT t.id, t.tags, p.date, COUNT(*) as count FROM tags_link tl, tags t, post p JOIN (SELECT * FROM post WHERE date > DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)) AS p2 ON p.id=p2.id AND p.date=p2.date WHERE tl.post=p.id AND t.id=tl.tags AND p.date > DATE_SUB(CURRENT_DATE, INTERVAL 30  DAY) GROUP BY tl.tags");
+        rs = stmt.executeQuery("SELECT t.id, t.tags, p.date, COUNT(*) as count FROM tags_link tl, tags t, post p WHERE tl.post=p.id AND t.id=tl.tags AND p.date > DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY) GROUP BY tl.tags");
         //} else {
         // rs = stmt.executeQuery("SELECT `id`, `parent`, `name`, `hurl`, 0 AS count FROM `type` WHERE " + (id > 0 ? "parent=" + id + " AND " : "") + "`edit`='on';");
         //}
@@ -54,7 +54,7 @@ public class TagsTree {
             }
         }
 
-        System.out.println(Tree.get(1));
+        //System.out.println(Tree.get(1));
     }
 
     public Map<String, HashMap> getTags() {

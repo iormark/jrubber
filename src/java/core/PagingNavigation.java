@@ -99,7 +99,7 @@ public class PagingNavigation {
     }
     
     public String PagingPreviousNext() {
-        System.out.println(page);
+        
         String s = "";
         if (page > 1) {
             s += "<a href=\"?" + urloption.addParam1_1("page=" + (page - 1)+ "&q=[delete]") + "\">« Сюда</a>";

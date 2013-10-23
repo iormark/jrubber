@@ -199,7 +199,7 @@ public class ViewMethod {
 
     public HashMap getPostTags(String id) throws SQLException {
 
-        System.out.println("SELECT tl.post, t.id, t.tags FROM tags t, tags_link tl WHERE t.id=tl.tags AND tl.post IN (" + id + ")");
+        //System.out.println("SELECT tl.post, t.id, t.tags FROM tags t, tags_link tl WHERE t.id=tl.tags AND tl.post IN (" + id + ")");
         rs = stmt.executeQuery("SELECT tl.post, t.id, t.tags FROM tags t, tags_link tl WHERE t.id=tl.tags AND tl.post IN (" + id + ")");
 
         while (rs.next()) {
@@ -226,7 +226,7 @@ public class ViewMethod {
         }
 
         String id_s = items.keySet().toString().replace("[", "").replace("]", "");
-        System.out.println("SELECT tl.post, t.id, t.tags FROM tags t, tags_link tl WHERE t.id=tl.tags AND tl.post IN (" + id_s + ")");
+        //System.out.println("SELECT tl.post, t.id, t.tags FROM tags t, tags_link tl WHERE t.id=tl.tags AND tl.post IN (" + id_s + ")");
         rs = stmt.executeQuery("SELECT tl.post, t.id, t.tags FROM tags t, tags_link tl WHERE t.id=tl.tags AND tl.post IN (" + id_s + ")");
 
         while (rs.next()) {
@@ -243,7 +243,7 @@ public class ViewMethod {
             }
         }
         
-        System.out.println(tags);
+        //System.out.println(tags);
         return tags;
     }
 

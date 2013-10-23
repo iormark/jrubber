@@ -92,6 +92,7 @@ public class Blockage {
 
                     LinkedList ll2 = (LinkedList) next.get(id);
                     int dbVote = Integer.parseInt(ll2.get(0).toString());
+                    
 
                     if ((dbVote == 1 && vote == -1) || (dbVote == -1 && vote == 1)) {
                         ll.add(0, 0);
@@ -154,6 +155,7 @@ public class Blockage {
             resultJson.put(process, textJson);
             stmt.executeUpdate("insert into `blockage2` values ('" + ip + "','" + resultJson + "',NOW());");
             stmt.executeUpdate("delete from `blockage2` where `last_modified`<adddate(NOW(),INTERVAL -96 HOUR);");
+            status = true;
         }
 
 

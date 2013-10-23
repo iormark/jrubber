@@ -636,7 +636,7 @@ public class FileUpload2 extends HttpServlet {
             for (String key : tagArray) {
                 String tag = key.trim();
 
-                if (tag.matches("([a-zа-я0-9-*@(=:;)\\s]+)")) {
+                if (tag.matches("((?iu)[a-zа-я0-9-*@(=:;)\\s]+)")) {
                     String[] wordArray = tag.split("[\\s]+");
 
                     if (wordArray.length > 4) {

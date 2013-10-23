@@ -17,7 +17,7 @@ public class UrlOption {
 
     //private HttpServletRequest request;
     private URL url;
-    private LinkedHashMap<String, String> getParam = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> getParam = new LinkedHashMap();
     private static final Logger logger = Logger.getLogger(UrlOption.class);
 
     public UrlOption() {
@@ -60,7 +60,6 @@ public class UrlOption {
                 AddPar.put(mv[0], mv[1]);
             }
 
-
             if (url.getQuery() != null) {
                 String[] param = url.getQuery().split("&");
 
@@ -79,7 +78,6 @@ public class UrlOption {
                 p.putAll(AddPar);
             }
 
-
             Set<Map.Entry<String, String>> set = p.entrySet();
             for (Map.Entry<String, String> me : set) {
                 if (!me.getValue().equals("[delete]")) {
@@ -90,7 +88,7 @@ public class UrlOption {
         } catch (Exception e) {
             logger.error(e);
         }
-        
+
         return result.toString().replaceAll("&$", "");
     }
 
@@ -119,7 +117,6 @@ public class UrlOption {
             LinkedHashMap<String, String> p = new LinkedHashMap();
             String[] add_arr = add.split("=");
             String[] param = url.getQuery().split("&");
-
 
             for (int i = 0; i < param.length; i++) {
                 String[] m = param[i].split("=");
@@ -175,16 +172,13 @@ public class UrlOption {
 
         return p;
     }
-    
+
     public String addParam1_1(String add) {
-        if (url.getQuery() == null) {
-            return add;
-        }
 
         if (add == null) {
             return url.getQuery();
         }
-        
+
         StringBuilder result = new StringBuilder();
 
         try {
@@ -193,13 +187,15 @@ public class UrlOption {
             HashMap<String, String> b = new HashMap();
 
             String[] AddParam = add.split("&");
-            String[] Param = url.getQuery().split("&");
 
+            if (url.getQuery() != null) {
+                String[] Param = url.getQuery().split("&");
 
-            for (int i = 0; i < Param.length; i++) {
-                
-                String[] m = Param[i].split("=");
-                a.put(m[0], m.length == 2 ? m[1] : "");
+                for (int i = 0; i < Param.length; i++) {
+
+                    String[] m = Param[i].split("=");
+                    a.put(m[0], m.length == 2 ? m[1] : "");
+                }
             }
 
             for (int i = 0; i < AddParam.length; i++) {
@@ -209,7 +205,6 @@ public class UrlOption {
 
             a.putAll(b);
             b.clear();
-
 
             Set<Map.Entry<String, String>> set = a.entrySet();
             for (Map.Entry<String, String> me : set) {
@@ -225,7 +220,6 @@ public class UrlOption {
             logger.error(e);
         }
 
-        
         return result.toString().replaceAll("(&)$", "");
     }
 

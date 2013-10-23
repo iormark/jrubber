@@ -39,7 +39,8 @@
                 $(this).addClass('img__play');
                 $(this).find('.list__info__img__hint').hide();
             } else {
-                $(this).find('img').attr('src', 'http://yourmood.ru/photo_anekdot/middle_' + $(this).attr('value'));
+                var arr = $(this).attr('value').split(':');
+                $(this).find('img').attr('src', 'http://yourmood.ru'+arr[0]+'/middle_' +arr[1]);
                 $(this).removeClass('img__play');
                 $(this).find('.list__info__img__hint').show();
             }

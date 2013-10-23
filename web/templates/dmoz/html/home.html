@@ -75,7 +75,7 @@
             <meta itemprop="contentUrl" content="http://yourmood.ru/photo_anekdot/${content.getItem()[key]['image']!''}">
             <#if (((content.getItem()[key]['animated'])!'')!='')>
             <div style="display: inline-block;position: relative">
-                <a class="image img__href img__animated" value="${(content.getItem()[key]['image'])!''}" target="_blank" href="/anekdot?id=${key}">
+                <a class="image img__href img__animated" value="${(content.getItem()[key]['imagePath'])!''}:${(content.getItem()[key]['image'])!''}" target="_blank" href="/anekdot?id=${key}">
                     <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['image'])!''}" alt="${content.getItem()[key]['alt']!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
                     <div class="list__info__img__hint">gif, ${content.getItem()[key]['size']!''}</div>
                 </a>
