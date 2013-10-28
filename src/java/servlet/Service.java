@@ -53,7 +53,6 @@ public class Service extends HttpServlet {
 
         EditCookie editcookie = new EditCookie(request, response);
 
-
         StringBuilder message = new StringBuilder();
         JNDIConnection jndi = new JNDIConnection();
         Connection conn = jndi.init();
@@ -70,7 +69,6 @@ public class Service extends HttpServlet {
 
             String q = request.getParameter("q") != null ? request.getParameter("q") : "";
 
-
             if ("FileUpload".equals(q)) {
                 FileUpload fp = new FileUpload(request, response);
             } else if ("Quiz".equals(q)) {
@@ -81,14 +79,13 @@ public class Service extends HttpServlet {
             } else if ("rating".equals(q)) {
                 Check check = new Check(request, response, stmt);
 
-
                 String outJson = "";
 
                 String vote = request.getParameter("vote"),
                         process = request.getParameter("action"),
                         id = request.getParameter("id"),
                         lastVote = request.getParameter("lastVote");
-                int voteCount = 0;
+                String voteCount = "0";
 
                 int intVote = 0;
 
@@ -141,14 +138,18 @@ public class Service extends HttpServlet {
                 try {
                     rs = stmt.executeQuery("select `vote` from `" + process + "` where `id`=" + id + " limit 1");
                     while (rs.next()) {
-                        voteCount = rs.getInt("vote");
+                        voteCount = rs.getString("vote");
+
+                        if (rs.getInt("vote") > 0 && "comment".equals(process)) {
+                            voteCount = "+" + voteCount;
+                        }
+
                     }
                 } catch (SQLException e) {
                     out.print("{\"status\":\"good\",\"message\":\"Упс!\"}");
                     logger.error(e);
                     return;
                 }
-
 
                 if (b.getResult() != false) {
                     outJson = ("{\"status\":\"good\",\"message\":\"" + voteCount + "\"}");
@@ -158,68 +159,55 @@ public class Service extends HttpServlet {
 
                 out.print(outJson);
 
-
-
-
             } else if ("AddComment".equals(q)) {
-
 
                 if (request.getParameter("id") != null) {
 
+                    //String cname = editcookie.getCookie("name");
+                    //String cemail = editcookie.getCookie("email");
 
-                    String cname = editcookie.getCookie("name");
-                    String cemail = editcookie.getCookie("email");
-
-
-                    String name = cname != null ? cname : request.getParameter("name");
-                    String email = cemail != null ? cemail : request.getParameter("email");
+                    //String name = cname != null ? cname : request.getParameter("name");
+                    //String email = cemail != null ? cemail : request.getParameter("email");
                     /*
                      * try { CheckSpam cs = new CheckSpam(
                      * request.getRemoteAddr(), name, "", "Hello"); } catch
                      * (Exception ex) { System.out.println(ex); }
                      */
 
-
-
-
-                    if ((cname != null && request.getParameter("name") != null) || (cemail != null && request.getParameter("email") != null)) {
-                        message.append("<li>Иди на хуй, бот ебаный!!!.</li>");
-                    }
+                    //if ((cname != null && request.getParameter("name") != null) || (cemail != null && request.getParameter("email") != null)) {
+                    //    message.append("<li>Иди на хуй, бот ебаный!!!.</li>");
+                    //}
 
                     String text = request.getParameter("text");
 
+                    /*/ имя
+                     if (name != null) {
+                     if (name.equals("")) {
+                     message.append("<li>Поле Имя обязательно для заполнения.</li>");
+                     } else if (name.length() > 55) {
+                     message.append("<li>Поле Имя не должно быть таким длинным.</li>");
+                     } else if (name.length() == 1) {
+                     message.append("<li>Ваше Имя состоит из одной буквы? ну на хер!</li>");
+                     }
+                     } else {
+                     message.append("<li>Поле Имя обязательно для заполнения.</li>");
+                     }
 
 
-                    // имя
-                    if (name != null) {
-                        if (name.equals("")) {
-                            message.append("<li>Поле Имя обязательно для заполнения.</li>");
-                        } else if (name.length() > 55) {
-                            message.append("<li>Поле Имя не должно быть таким длинным.</li>");
-                        } else if (name.length() == 1) {
-                            message.append("<li>Ваше Имя состоит из одной буквы? ну на хер!</li>");
-                        }
-                    } else {
-                        message.append("<li>Поле Имя обязательно для заполнения.</li>");
-                    }
+                     // e-mail
 
-
-                    // e-mail
-
-                    if (email != null) {
-                        if (email.equals("")) {
-                            message.append("<li>Поле E-mail обязательно для заполнения.</li>");
-                        } else if (!util.checkEmail(email)) {
-                            message.append("<li>Адрес электронной почты ").append(email).append(" не корректен.</li>");
-                        }
-                    } else {
-                        message.append("<li>Поле E-mail обязательно для заполнения.</li>");
-                    }
-
-
+                     if (email != null) {
+                     if (email.equals("")) {
+                     message.append("<li>Поле E-mail обязательно для заполнения.</li>");
+                     } else if (!util.checkEmail(email)) {
+                     message.append("<li>Адрес электронной почты ").append(email).append(" не корректен.</li>");
+                     }
+                     } else {
+                     message.append("<li>Поле E-mail обязательно для заполнения.</li>");
+                     }*/
                     // text
-
                     if (text != null) {
+                        text = text.trim();
                         if (text.equals("")) {
                             message.append("<li>Поле Комментарий обязательно для заполнения.</li>");
                         } else if (text.length() > 500) {
@@ -229,11 +217,8 @@ public class Service extends HttpServlet {
                         message.append("<li>Поле Комментарий обязательно для заполнения.</li>");
                     }
 
-
-
                     String idComment = "0";
                     String status = "show";
-
 
                     if (message.length() != 0) {
                         out.println("{\"status\":\"error\",\"message\":\"" + message + "\"}");
@@ -245,17 +230,15 @@ public class Service extends HttpServlet {
                             status = "black";
                         }
 
-
-
                         text = util.lineFeed(util.specialCharactersTags(text));
 
                         try {
-                            PreparedStatement ps = conn.prepareStatement("INSERT INTO `comment` VALUES (NULL, ?, ?, ?, ?, NOW(), 0, ?)", Statement.RETURN_GENERATED_KEYS);
+                            PreparedStatement ps = conn.prepareStatement("INSERT INTO `comment` VALUES (NULL, ?, '', '', ?, NOW(), 0, ?)", Statement.RETURN_GENERATED_KEYS);
                             ps.setInt(1, Integer.parseInt(request.getParameter("id")));
-                            ps.setString(2, name);
-                            ps.setString(3, email);
-                            ps.setString(4, text);
-                            ps.setString(5, status);
+                            //ps.setString(2, name);
+                            //ps.setString(3, email);
+                            ps.setString(2, text);
+                            ps.setString(3, status);
                             ps.executeUpdate();
                             rs = ps.getGeneratedKeys();
                             if (rs != null && rs.next()) {
@@ -267,47 +250,27 @@ public class Service extends HttpServlet {
                             out.println("{\"status\":\"error\",\"message\":\"" + message + "\"}");
                         }
 
-
-
-
                     }
-
 
                     if (message.length() == 0) {
 
-
-                        message.append("<div class=\"comment\">"
-                                + "<div>"
-                                + "<div class=\"comment_head\">"
-                                + "<span class=\"author\">" + name + ",&nbsp;</span>"
-                                + "<span class=\"created\">" + (new SimpleDateFormat("d MMM yy в HH:mm:ss").format(new Date())) + "</span>"
-                                + "<div class=\"vote_comment\">"
-                                + "<div class=\"vote_up\" value=\"" + idComment + "_comment\" title=\"+1\">&nbsp;</div>"
-                                + "<span id=\"vote_" + idComment + "\" class=\"vote_count\">0</span>"
-                                + "<div class=\"vote_down\" value=\"" + idComment + "_comment\" title=\"-1\">&nbsp;</div>"
-                                + "</div>"
-                                + "</div>"
-                                + "<div class=\"text\">" + text + "</div>"
-                                + "</div>"
-                                + "</div>");
+                        message.append("Комментарий добавлен");
 
                         out.println("{\"status\":\"good\",\"message\":\"" + StringEscapeUtils.escapeEcmaScript(message.toString()).replaceAll("'", "\"") + "\"}");
-
 
                         HashMap h = new HashMap();
                         h.put("subject", "Новый отзыв в YourMood.ru");
                         h.put("to", "iormark@ya.ru");
                         h.put("url", "http://yourmood.ru/anekdot?id=" + request.getParameter("id"));
-                        h.put("name", name);
-                        h.put("email", email);
+                        h.put("name", request.getRemoteAddr());
+                        //h.put("email", email);
 
                         SendMail send = new SendMail("mail/new-comment.html", h, getServletContext().getRealPath("/"));
 
                         //editcookie.setCookie("name", name, null, 36);
                         //editcookie.setCookie("email", email, null, 36);
-
-                        editcookie.setCookie("name", name, null, 3600 * 24 * 365 * 100);
-                        editcookie.setCookie("email", email, null, 3600 * 24 * 365 * 100);
+                        //editcookie.setCookie("name", name, null, 3600 * 24 * 365 * 100);
+                        //editcookie.setCookie("email", email, null, 3600 * 24 * 365 * 100);
 
                     }
 

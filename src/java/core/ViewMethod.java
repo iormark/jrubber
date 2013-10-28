@@ -120,7 +120,7 @@ public class ViewMethod {
                         case "title": {
 
                             if (rs.getString("title").equals("")) {
-                                //f = rs.getString("name_alias") + " № " + rs.getString("id");
+                                f = "№ " + rs.getString("id");
                             } else {
                                 f = util.specialCharacters(util.Shortening(rs.getString("title") + "", 85, ""));
                             }
@@ -248,6 +248,7 @@ public class ViewMethod {
     }
 
     public Date getLastModified() {
+        System.out.println(LastModified);
         return LastModified;
     }
 }

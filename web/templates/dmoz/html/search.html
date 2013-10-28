@@ -28,7 +28,7 @@ ${content.getMessage()}
 
         <#if ((content.getItem()[key]['image']!'')!='')>
         <meta itemprop="description" content="${content.getItem()[key]['alt']!''}">
-        <meta itemprop="contentUrl" content="http://yourmood.ru/photo_anekdot/${content.getItem()[key]['image']!''}">
+        <meta itemprop="contentUrl" content="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['image']!''}">
         <#if (((content.getItem()[key]['animated'])!'')!='')>
         <div style="display: inline-block;position: relative">
             <a class="image img__href img__animated" value="${(content.getItem()[key]['imagePath'])!''}:${(content.getItem()[key]['image'])!''}" target="_blank" href="/anekdot?id=${key}">
@@ -46,10 +46,9 @@ ${content.getMessage()}
     </div>
 
     <div class="list_meta">
-        <a href="/anekdot?id=${key}#add-comments">Комментировать</a>
+        <!--<a href="/anekdot?id=${key}#add-comments">Комментировать</a>-->
         <span>Добавил(а): ${content.getItem()[key]["name"]!"Волонтер"}</span>
     </div>
-    <div style="margin: .5em 0;">&nbsp;</div>
 </article>
 </#list>
 

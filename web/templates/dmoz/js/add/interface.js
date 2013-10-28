@@ -18,6 +18,8 @@ $(document).ready(function() {
     // Контейнер, куда можно помещать файлы методом drag and drop
     var dropBox = $('#img-container');
 
+    var autocomplete = $('#filed__autocomplete');
+
     // Счетчик всех выбранных файлов и их размера
     var imgCount = 0;
     var downCount = 0;
@@ -30,9 +32,9 @@ $(document).ready(function() {
 
     // Вывод в консоль
     function log(str) {
-        $(logout).add('<ul/>').addClass('error').html(str);
+        //$(logout).add('<ul/>').addClass('error').html(str);
         $('<div/>').html(str).prependTo(console);
-        
+
     }
 
     // Вывод инфы о выбранных
@@ -82,6 +84,7 @@ $(document).ready(function() {
                 $('<textarea/>').addClass('text').attr('name', 'text').appendTo(li);
             }
 
+            $('<input/>').attr('type', 'hidden').attr('name', 'sort').attr('value', imgCountFast).appendTo(li);
             $('<div/>').text(file.name).appendTo(li);
             img = $('<img/>').appendTo(li);
             $('<div/>').addClass('progress').attr('rel', '0').text('0%').appendTo(li);
@@ -213,7 +216,7 @@ $(document).ready(function() {
                 });
                 return false;
             } else {
-                
+
                 log('Загружаем...');
                 var create = createPost();
                 if (!create)
@@ -233,6 +236,7 @@ $(document).ready(function() {
                     tags: $("#add__post input[name='tags']").val(),
                     key: $("#add__post input[name='key']").val(),
                     text: $(uploadItem).find('textarea').val(),
+                    sort: $(uploadItem).find('input[name="sort"]').val(),
                     file: uploadItem.file,
                     url: '/FileUpload2',
                     onprogress: function(percents) {
@@ -307,6 +311,10 @@ $(document).ready(function() {
         $('<h1/>').text('Спасибо, пост отправлен').appendTo(obj);
         $('<div/>').text('Пост отправлен нашему редактору на проверку.').appendTo(obj);
         $('<div/>').html('<a href="/">Вернуться на главную</a>').appendTo(obj);
+
+        $('body,html').animate({
+            scrollTop: 0
+        }, 0);
     }
 
 
@@ -316,5 +324,35 @@ $(document).ready(function() {
         log('Ваш браузер не поддерживает File API!');
     }
 
+    $("#filed__tags").keyup(function() {
+        $.getJSON(('/FileUpload2?q=autocomplete&tags=' + $(this).val()), function(data) {
+            autocomplete.html('');
+            $.each(data[1], function(key, val) {
+                $('<div/>').html(val).appendTo(autocomplete).click(function() {
+                    setTag($(this).find('.tag').text());
+                });
+            });
+        }).fail(function() {
+
+        })
+    });
+
+    function setTag(tag) {
+        var tagArray = $("#filed__tags").val().split(',');
+        tagArray[tagArray.length - 1] = ' ' + tag;
+        tag = unique(tagArray).toString() + ', ';
+        $("#filed__tags").val(tag);
+    }
+
+    function unique(arr) {
+        var obj = {};
+        for (var i = 0; i < arr.length; i++) {
+            var str = arr[i];
+            obj[str] = true;
+        }
+        return Object.keys(obj);
+    }
+
 
 });
+

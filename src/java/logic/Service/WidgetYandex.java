@@ -53,7 +53,7 @@ public class WidgetYandex extends Creator {
                 content.put("image", rs.getString("image"));
 
             }
-            
+            content.put("title", rs.getString("title"));
             content.put("text", util.Shortening(util.bbCode(rs.getString("text")), (rs.getString("image") != null ? 150 : 400), "<br><a href=\"/anekdot?id=" + rs.getString("id") + "\" target=\"_blank\">Читать дальше</a>"));
 
             content.put("date", new SimpleDateFormat("d MMM yyyy, HH:mm:ss").format(rs.getTimestamp("date")));

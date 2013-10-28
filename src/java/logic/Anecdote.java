@@ -44,7 +44,7 @@ public class Anecdote extends Creator {
         ResultSet rs = null;
         int typeId = 0;
 
-        rs = stmt.executeQuery("SELECT * FROM `post` WHERE status = 'on' AND id = '" + id + "'");
+        rs = stmt.executeQuery("SELECT * FROM `post` WHERE (status = 'new' OR status = 'on') AND id = '" + id + "'");
 
         while (rs.next()) {
             itemMeta.put("id", rs.getString("id"));
@@ -61,7 +61,7 @@ public class Anecdote extends Creator {
         }
         
 
-        rs = stmt.executeQuery("SELECT i.* FROM `post_item` i, `post` p WHERE i.post = p.id AND p.status ='on' AND i.post = '" + id + "' ORDER BY i.sort LIMIT 99;");
+        rs = stmt.executeQuery("SELECT i.* FROM `post_item` i, `post` p WHERE i.post = p.id AND (p.status = 'new' OR p.status = 'on')  AND i.post = '" + id + "' ORDER BY i.id LIMIT 99;");
 
         ViewMethod view = new ViewMethod(rs, stmt, true);
         item = view.getViewCatalog();
@@ -75,7 +75,7 @@ public class Anecdote extends Creator {
             }
         }
 
-        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT min(id) as id FROM post WHERE status='on' AND type=" + itemMeta.get("typeInt") + " AND id > " + id + ") p2 ON p2.id=p.id LIMIT 1");
+        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT min(id) as id FROM post WHERE (status = 'new' OR status = 'on')  AND id > " + id + ") p2 ON p2.id=p.id LIMIT 1");
 
         if (rs.next()) {
             HashMap batton = new HashMap();
@@ -91,7 +91,7 @@ public class Anecdote extends Creator {
             bn.put("next", batton);
         }
 
-        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT max(id) as id FROM post WHERE status='on' AND type=" + itemMeta.get("typeInt") + " AND id < " + id + ") p2 ON p2.id=p.id LIMIT 1");
+        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT max(id) as id FROM post WHERE (status = 'new' OR status = 'on')  AND id < " + id + ") p2 ON p2.id=p.id LIMIT 1");
 
         if (rs.next()) {
             HashMap batton = new HashMap();
@@ -120,7 +120,7 @@ public class Anecdote extends Creator {
                 data.put("created", util.dateFormat(rs.getTimestamp("created")));
                 data.put("time", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss+03:00").format(rs.getTimestamp("created")));
                 data.put("status", rs.getString("status"));
-                data.put("vote", rs.getInt("vote") > 0 ? "" + rs.getString("vote") : rs.getString("vote"));
+                data.put("vote", rs.getInt("vote") > 0 ? "+" + rs.getString("vote") : rs.getString("vote"));
 
                 Comment.put(rs.getString("id"), data);
 

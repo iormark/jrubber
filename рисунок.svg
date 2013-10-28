@@ -28,8 +28,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4"
-     inkscape:cx="224.55559"
-     inkscape:cy="610.26437"
+     inkscape:cx="265.90049"
+     inkscape:cy="587.53827"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -66,7 +66,7 @@
        inkscape:export-ydpi="72" />
     <text
        xml:space="preserve"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#d4cccc;fill-opacity:1;stroke:none;font-family:STIXVariants;-inkscape-font-specification:STIXVariants"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#d4cccc;fill-opacity:1;stroke:none;font-family:Monospace;-inkscape-font-specification:Monospace"
        x="139.81918"
        y="428.29996"
        id="text3755"
@@ -78,7 +78,7 @@
          id="tspan3757"
          x="139.81918"
          y="428.29996"
-         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#d4cccc;fill-opacity:1;font-family:msbm10;-inkscape-font-specification:msbm10">Порка = анекдотов</tspan></text>
+         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#d4cccc;fill-opacity:1;font-family:Monospace;-inkscape-font-specification:Monospace">Порка += анекдотов</tspan></text>
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-opacity:1"
        id="rect3927"
@@ -86,5 +86,52 @@
        height="70"
        x="135"
        y="519.36218" />
-  </g>
+    <rect
+       style="fill:#669933;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       id="rect2985-5"
+       width="220"
+       height="30"
+       x="134.75"
+       y="451.86218"
+       inkscape:export-filename="/home/mark/NetBeansProjects/YourMood/yourmood/web/templates/dmoz/image/yourmood.gif.png"
+       inkscape:export-xdpi="72"
+       inkscape:export-ydpi="72" />
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;line-height:125%;letter-spacing:0.41999996px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Free Bookman;-inkscape-font-specification:Free Bookman Light"
+       x="146.10081"
+       y="475.01019"
+       id="text3755-7"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/mark/NetBeansProjects/YourMood/yourmood/web/templates/dmoz/image/yourmood.gif.png"
+       inkscape:export-xdpi="72"
+       inkscape:export-ydpi="72"><tspan
+         sodipodi:role="line"
+         id="tspan3757-8"
+         x="146.10081"
+         y="475.01019"
+         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:0.41999996px;fill:#ffffff;fill-opacity:1;font-family:Cantarell;-inkscape-font-specification:Cantarell"># <tspan
+   style="font-style:italic;-inkscape-font-specification:Cantarell Italic"
+   id="tspan2999">fuck the World!</tspan></tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3778"
+       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Sans;font-style:normal;font-weight:normal;font-size:20px;line-height:125%;letter-spacing:0px;word-spacing:0px"><flowRegion
+         id="flowRegion3780"><rect
+           id="rect3782"
+           width="92.25"
+           height="75.25"
+           x="122.25"
+           y="439.11218" /></flowRegion><flowPara
+         id="flowPara3784" /></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3786"
+       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Sans;font-style:normal;font-weight:normal;font-size:20px;line-height:125%;letter-spacing:0px;word-spacing:0px"><flowRegion
+         id="flowRegion3788"><rect
+           id="rect3790"
+           width="214.25"
+           height="49.75"
+           x="196.25"
+           y="445.36218" /></flowRegion><flowPara
+         id="flowPara3792" /></flowRoot>  </g>
 </svg>

@@ -10,14 +10,13 @@
     });</script>
 
 <article>
-    <div class="post_breadcrumbs">
-        
-        <#if (content.getTagsItem()[content.getId()])??>
+    <#if (content.getTagsItem()[content.getId()])??>
+    <div class="tagged__post">
         <#list content.getTagsItem()[content.getId()] as tag>
-        <a href="/tag/${tag}">${tag}</a>
+        <a href="/tag/${tag}" class="tagged__tag" title="${tag}" rel="tag">${tag}</a>
         </#list>
-        </#if>
     </div>
+    </#if>
 
 
     <div class="post_head">
@@ -71,16 +70,16 @@
                 </#if>
 
                 <meta itemprop="description" content="${content.getItem()[key]['alt']!''}">
-                <meta itemprop="contentUrl" content="http://yourmood.ru/photo_anekdot/${content.getItem()[key]['image']!''}">
+                <meta itemprop="contentUrl" content="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['image']!''}">
                 <#if (((content.getItem()[key]['animated'])!'')!='')>
                 <div style="display: inline-block;position: relative">
-                    <a class="image img__href img__animated" value="${(content.getItem()[key]['imagePath'])!''}:${(content.getItem()[key]['image'])!''}" target="_blank" href="http://yourmood.ru/photo_anekdot/${content.getItem()[key]['image']!''}">
+                    <a class="image img__href img__animated" value="${(content.getItem()[key]['imagePath'])!''}:${(content.getItem()[key]['image'])!''}" target="_blank" href="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['image']!''}">
                         <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['image'])!''}" alt="${content.getItem()[key]['alt']!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
                         <div class="list__info__img__hint">gif, ${content.getItem()[key]['size']!''}</div>
                     </a>
                 </div>
                 <#else>
-                <a class="image img__href" target="_blank" href="http://yourmood.ru/photo_anekdot/${content.getItem()[key]['image']!''}">
+                <a class="image img__href" target="_blank" href="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['image']!''}">
                     <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['image'])!''}" alt="${content.getItem()[key]['alt']!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
                 </a>
                 </#if>
@@ -92,40 +91,44 @@
     </div>
 
     <div class="post_meta">
-
-
     </div>
 </article>
-
-
+<!--
 <div style="margin: 1em 5px 1em 67px;">
     <#if ((content.getBN()['next'])??)>
     <div style="float: left">
-        <span style="font-size: 16px">←</span> <a href="/anekdot?id=${(content.getBN()['next']['id'])!''}" title="${(content.getBN()['next']['title'])!''}">${(content.getBN()['next']['name'])!''}</a> &nbsp; 
+        <span style="font-size: 16px">←</span> <a href="/post?id=${(content.getBN()['next']['id'])!''}" title="${(content.getBN()['next']['title'])!''}">${(content.getBN()['next']['name'])!''}</a> &nbsp; 
     </div>
     </#if>
     &nbsp;
     <#if ((content.getBN()['back'])??)>
     <div style="float: right">
-        <a href="/anekdot?id=${(content.getBN()['back']['id'])!''}" title="${(content.getBN()['back']['title'])!''}" style="margin-left: 10px;">${(content.getBN()['back']['name'])!''}</a>  <span style="font-size: 16px">→</span>
+        <a href="/post?id=${(content.getBN()['back']['id'])!''}" title="${(content.getBN()['back']['title'])!''}" style="margin-left: 10px;">${(content.getBN()['back']['name'])!''}</a>  <span style="font-size: 16px">→</span>
     </div>
     </#if>
 </div>
+-->
 
-<div id="comments" class="getComment" style="width: 600px">
+<div id="comment__get" class="getComment" style="width: 600px">
     <#if (content.getComment()?size>0)>
-    <h2 class="navsections">Комментарии (${content.getComment()?size!"0"})</h2>
+    
+    <div class="comment_info">
+    <h3>комментариев: ${content.getComment()?size!"0"}</h3>
+    </div>
+    
+    
     <#list content.getComment()?keys as key>
-    <div class="comment">
+    <div class="comment" id="comment_${key}">
         <div>
             <div class="comment_head">
-                <span class="author">${content.getComment()[key]["name"]!""},</span>
-                <span class="created">${content.getComment()[key]["created"]!""}</span>
-                <div class="vote_comment">
-                    <div class="vote_up" value="${key!''}_comment" title="+1">&nbsp;</div>
+                <span class="vote_comment">
                     <span id="vote_${key!'0'}" class="vote_count ">${(content.getComment()[key]["vote"])!""}</span>
-                    <div class="vote_down" value="${key!''}_comment" title="-1">&nbsp;</div>
-                </div>
+                    <span class="vote_up" value="${key!''}_comment" title="+1">&nbsp;</span>
+                    
+                    <span class="vote_down" value="${key!''}_comment" title="-1">&nbsp;</span>
+                </span>
+                <span class="created">отправлено ${content.getComment()[key]["created"]!""}</span>
+                <a href="#comment_${key}">#<span></span></a>
             </div>
 
             <div class="text">
@@ -141,30 +144,8 @@
     <div id="add-comments" style="width: 600px">
         <form method="post" action="/Service" id="addComment">
             <div class="addComment">
-                <h2 class="navsections">Оставить комментарий</h2>
-
 
                 <div id="message"></div>
-
-                <div>
-                    <div><b>Ваше имя</b> <span>*</span></div>
-
-                    <#if (!content.getCName()??)>
-                    <input type="text" name="name" value="" class="inp">
-                    <#else>
-                    <input type="text" value="${content.getCName()!''}" readonly class="readonly">
-                    </#if>
-                </div>
-
-                <div>
-                    <div><b>E-mail</b> <span>*</span></div>
-
-                    <#if (!content.getCEmail()??)>
-                    <input type="text" name="email" value="" class="inp">
-                    <#else>
-                    <input type="text" value="${content.getCEmail()!''}" readonly class="readonly">
-                    </#if>
-                </div>
 
                 <div>
                     <div><b>Комментарий</b> <span>*</span></div>
@@ -173,7 +154,7 @@
                 <div>
                     <input type="hidden" name="q" value="AddComment">
                     <input type="hidden" name="id" value="${content.getId()}">
-                    <input type="submit" name="button" value="Оставить комментарий" class="btn">
+                    <input type="submit" name="button" value="Комментировать" class="btn">
                 </div>
             </div>
             <div>
@@ -184,14 +165,7 @@
 </fieldset>
 
 <br>
-<div style="margin-left: 67px">
-    <script language="Javascript">
-                var bntuniqid = 'ElIURRU1ns31OUMvk31G';
-                var bntuniqsid = '62948';
-                var async = 0;    </script>
-    <script type="text/javascript" src="http://pralilipiped.net/viewt.js"></script>
-</div>
-<hr>
+
 <script type="text/javascript" src="/templates/dmoz/js/lib.js" charset="utf-8"></script>
 
 

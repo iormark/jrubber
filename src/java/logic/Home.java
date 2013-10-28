@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class Home extends Creator {
 
+    private int serverStatus = 200;
     private long found = 0; // общее колличество найденных записей.
     private int page = 1, // текущая страница
             pageSpecular = 0,
@@ -35,13 +36,15 @@ public class Home extends Creator {
     private ArrayList args;
     private CategoriesTree ct = null;
     private HashMap selectedTags = null;
-    private String tagsID = "";
+    private String status = "on";
 
     public Home(HttpServletRequest request, ArrayList args, Connection conn) throws SQLException {
         this.conn = conn;
         this.args = args;
         this.request = request;
         stmt = conn.createStatement();
+
+        System.out.println(request.getParameter("q"));
 
         urloption = new UrlOption(request);
         page = urloption.NumberReplacementInt(request.getParameter("page"), 1);
@@ -52,10 +55,22 @@ public class Home extends Creator {
 
         String tags = request.getParameter("q") != null ? request.getParameter("q").replaceAll("[/]$", "") : "home.html";
         selectedTags = new HashMap();
+        String tagsID = "";
         int tagsId = 0;
+        status = (String) args.get(args.size() - 1);
+
+        if (!tags.equals("home.html") && (args.size() == 1 || args.size() == 3)) {
+            if (!"new".equals(status)) {
+                serverStatus = 404;
+                return;
+            }
+        } else {
+            status = "on";
+        }
 
         // по hurl определяем ид категории.
-        if (!tags.equals("home.html") && !tags.equals("") && args.size() > 1) {
+        if (!tags.equals("home.html") && !tags.equals("") && "tag".equals(args.get(0))) {
+
             rs = stmt.executeQuery("SELECT id, tags FROM tags WHERE tags='" + args.get(1) + "'");
             if (rs.next()) {
                 tagsId = rs.getInt("id");
@@ -66,15 +81,22 @@ public class Home extends Creator {
 
         if (tagsId > 0) {
             tagsID = " AND tl.tags=" + tagsId;
-        } else if (!tags.equals("home.html")) {
+        } else if (!tags.equals("home.html") && !tags.equals("new")) {
+            serverStatus = 404;
             return;
+        } else {
+            //return;
         }
 
-        setHome(request, tagsID);
+        //if (args.size() > 2) {
+        //status = args.get(args.size()-1).toString();
+        //if(!"new".equals(status)) return;
+        //}
+        setHome(request, tagsID, status);
 
     }
 
-    private void setHome(HttpServletRequest request, String tagsID) throws SQLException {
+    private void setHome(HttpServletRequest request, String tagsID, String status) throws SQLException {
 //System.out.println("SELECT h.text, h.image, h.alt,COUNT(h.id) as CountPosts, hm.*, t.name AS nameType, t.name_alias AS nameAlias  FROM `type2` t, `humor` h, `humor_meta` hm WHERE t.id = hm.type_int AND h.id = hm.id AND hm.status ='on' " + CategoriesAllId + " GROUP BY h.id ORDER BY hm.date DESC LIMIT " + begin + "," + lt);
         //rs = stmt.executeQuery("SELECT h.text, h.image, h.alt,COUNT(h.id) as CountPosts, hm.*, t.name AS nameType, t.name_alias AS nameAlias, t.hurl  FROM `type2` t, `humor` h, `humor_meta` hm WHERE t.id = hm.type_int AND h.id = hm.id AND hm.status ='on' " + CategoriesAllId + " GROUP BY h.id ORDER BY hm.date DESC LIMIT " + begin + "," + lt);
 
@@ -82,19 +104,19 @@ public class Home extends Creator {
                 + "(SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) "
                 + "AS commentCount FROM tags_link tl, post p JOIN "
                 + "(SELECT post, text, image, img, alt, COUNT(*) AS itemCount FROM post_item GROUP BY post) AS i "
-                + "ON p.id=i.post WHERE p.status='on' AND p.id=tl.post " + tagsID + " ORDER BY p.date DESC LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
+                + "ON p.id=i.post WHERE p.status='" + status + "' AND p.id=tl.post " + tagsID + " GROUP BY p.id "
+                + "ORDER BY p.date DESC LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
 
-        
         ViewMethod view = new ViewMethod(rs, stmt);
         item = view.getViewCatalog();
         rs = stmt.executeQuery("SELECT FOUND_ROWS() as rows;");
         if (rs.next()) {
             found = rs.getInt("rows");
         }
-        
+
         tags = view.getPostTags();
         LastModified = view.getLastModified();
-        
+
         //pagnav = new PagingNavigationSpecular(found, request.getParameter("page"), lt, urloption);
         PagingNavigation pnav = new PagingNavigation(found, request.getParameter("page"), lt, urloption);
         pagnav = pnav.PagingPreviousNext();
@@ -106,7 +128,7 @@ public class Home extends Creator {
     }
 
     public LinkedHashMap getItem() {
-        return item;
+        return !item.isEmpty() ? item : null;
     }
 
     public HashMap getTagsItem() {
@@ -119,6 +141,27 @@ public class Home extends Creator {
 
     public String getByLink() {
         return byLink;
+    }
+
+    public String getMenu() {
+        String tag = selectedTags.containsKey("tags") ? "<a href=\"/" + ("new".equals(status) ? "new" : "") + "\">×</a> <h1>" + selectedTags.get("tags") + "</h1>" : "";
+        String tagUrl = selectedTags.containsKey("tags") ? "/tag/" + (String) selectedTags.get("tags") +"": "/";
+        String tagUrlNew = selectedTags.containsKey("tags") ? "/tag/" + (String) selectedTags.get("tags") +"/new": "/new";
+
+        String menu = "<ul class=\"menu\">";
+
+        menu += "<li class=\"tag\" title=\"Удалить\">" + tag + "</li>";
+
+        if ("on".equals(status)) {
+            menu += "<li class=\"active\"><a href=\"" + tagUrl + "\">Лучшее</a></li>";
+            menu += "<li class=\"noactive\"><a href=\"" + tagUrlNew + "\">Новое</a></li>";
+        } else if ("new".equals(status)) {
+            menu += "<li class=\"noactive\"><a href=\"" + tagUrl + "\">Лучшее</a></li>";
+            menu += "<li class=\"active\"><a href=\"" + tagUrlNew + "\">Новое</a></li>";
+        }
+
+        menu += "</ul>";
+        return menu;
     }
 
     @Override
@@ -135,10 +178,10 @@ public class Home extends Creator {
     public int getServerStatus() {
 
         if (item.isEmpty()) {
-            return 404;
+            //return 404;
         } else {
-            return 200;
         }
+        return serverStatus;
     }
 
     @Override
@@ -158,7 +201,7 @@ public class Home extends Creator {
     @Override
     public String getMetaHead() {
         if (selectedTags.isEmpty()) {
-            return "<meta name=\"description\" content=\"Начальник достал, он урод. Денег нет в кармане, не беда. В жизни самое смешное, ерунда. Анекдоты почитай и картинки посмотри, нафик брось эту работу, а начальнику въеби!\" />\n"
+            return "<meta name=\"description\" content=\"Начальник достал, он урод. Денег нет в кармане, не беда. В жизни самое смешное, ерунда. Анекдоты почитай и картинки посмотри, на х*й брось эту работу, а начальнику въеби!\" />\n"
                     + "<meta name=\"keywords\" content=\"самое смешное, самое прикольное, самое остроумное\" />";
 
         } else {

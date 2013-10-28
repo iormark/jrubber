@@ -42,7 +42,7 @@ public class Main extends HttpServlet {
         ArrayList args = new ArrayList(Arrays.asList(q.split("/")));
 
 
-        //System.out.println(q);
+        //out.println(request.getQueryString());
 
 
         JNDIConnection jndi = new JNDIConnection();
@@ -71,7 +71,8 @@ public class Main extends HttpServlet {
             RandomAnecdote RandomAnecdote = null;
             try {
 
-                if ("home.html".equals(q) || "tag".equals(args.get(0).toString())) {
+                if ("home.html".equals(q) || "tag".equals(args.get(0).toString()) 
+                        || "new".equals(args.get(0).toString())) {
                     creator = new logic.Home(request, args, conn);
                     RandomAnecdote = new RandomAnecdote(stmt);
 
@@ -81,8 +82,8 @@ public class Main extends HttpServlet {
                     root.put("widget", block.getWidget());
                     leftNav.add("/block/time-addition.html");
                     leftNav.add("/block/tags.html");
-                    leftNav.add("/block/about.html");
                     leftNav.add("/block/widget.html");
+                    leftNav.add("/block/about.html");
                     leftNav.add("/block/ad-space.html");
                     q = "home.html";
 
@@ -95,11 +96,14 @@ public class Main extends HttpServlet {
                     root.put("widget", block.getWidget());
                     leftNav.add("/block/time-addition.html");
                     leftNav.add("/block/tags.html");
-                    leftNav.add("/block/about.html");
                     leftNav.add("/block/widget.html");
+                    leftNav.add("/block/about.html");
                     leftNav.add("/block/ad-space.html");
 
                 } else if ("anekdot".equals(q)) {
+                    response.sendRedirect("/post?id="+request.getParameter("id"));
+
+                } else if ("post".equals(q)) {
                     creator = new Anecdote(request, response, conn);
                     q += ".html";
 
@@ -125,20 +129,20 @@ public class Main extends HttpServlet {
                     creator = new Rss(stmt);
 
                     root.put("time_addition", block.getTimeAddition());
-                    root.put("category", block.getCategoriesLi());
+                    root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
                     leftNav.add("/block/time-addition.html");
-                    leftNav.add("/block/category.html");
+                    leftNav.add("/block/tags.html");
                     leftNav.add("/block/widget.html");
 
                 } else if ("catalog.html".equals(q)) {
                     creator = new Catalog(stmt);
 
                     root.put("time_addition", block.getTimeAddition());
-                    root.put("category", block.getCategoriesLi());
+                    root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
                     leftNav.add("/block/time-addition.html");
-                    leftNav.add("/block/category.html");
+                    leftNav.add("/block/tags.html");
                     leftNav.add("/block/widget.html");
 
                 } else if ("anekdoty.html".equals(q) || "kartinki.html".equals(q) || "aforizmy.html".equals(q)
@@ -153,24 +157,34 @@ public class Main extends HttpServlet {
 
                     q = "home.html";
 
-                } else if ("terms_of_use.html".equals(q)) {
+                } /*else if ("terms_of_use.html".equals(q)) {
                     creator = new TermsOfUse(stmt);
 
                     root.put("time_addition", block.getTimeAddition());
-                    root.put("category", block.getCategoriesLi());
+                    root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
                     leftNav.add("/block/time-addition.html");
-                    leftNav.add("/block/category.html");
+                    leftNav.add("/block/tags.html");
                     leftNav.add("/block/widget.html");
 
-                } else if ("link.html".equals(q)) {
+                }*/ else if ("link.html".equals(q)) {
                     creator = new Link(stmt);
 
                     root.put("time_addition", block.getTimeAddition());
-                    root.put("category", block.getCategoriesLi());
+                    root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
                     leftNav.add("/block/time-addition.html");
-                    leftNav.add("/block/category.html");
+                    leftNav.add("/block/tags.html");
+                    leftNav.add("/block/widget.html");
+
+                } else if ("wtf.html".equals(q)) {
+                    creator = new Link(stmt);
+
+                    root.put("time_addition", block.getTimeAddition());
+                    root.put("tags", block.getTagsLi());
+                    root.put("widget", block.getWidget());
+                    leftNav.add("/block/time-addition.html");
+                    leftNav.add("/block/tags.html");
                     leftNav.add("/block/widget.html");
 
                 }

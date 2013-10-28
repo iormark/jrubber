@@ -23,10 +23,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -37,6 +39,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.response.TermsResponse;
 
 /**
  *
@@ -74,82 +77,156 @@ public class FileUpload2 extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        //response.sendRedirect("/add.html");
         PrintWriter out = response.getWriter();
-        out.println("Как дела?");
-        
+
+        JNDIConnection jndi = new JNDIConnection();
+        Connection conn = jndi.init();
+        Statement stmt;
+        try {
+            stmt = conn.createStatement();
+
+            try {
+                Autocomplete auto = new Autocomplete(request, response, conn, stmt, out);
+                out.println(auto.getJson());
+            } catch (Exception ex) {
+                out.println(ex);
+            } finally {
+                jndi.close(stmt, null);
+            }
+        } catch (SQLException ex) {
+            out.println(ex);
+        }
+
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/html;charset=UTF-8");
-
-        EditCookie editcookie = new EditCookie(request, response);
-        PrintWriter out = response.getWriter();
-        String q = request.getParameter("q") != null ? request.getParameter("q") : "file";
 
         try {
-            request.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+
+            EditCookie editcookie = new EditCookie(request, response);
+            PrintWriter out = response.getWriter();
+            String q = request.getParameter("q") != null ? request.getParameter("q") : "file";
 
             // Соединение с DB
             JNDIConnection jndi = new JNDIConnection();
             Connection conn = jndi.init();
             Statement stmt = conn.createStatement();
 
-            System.out.println(">>>>" + q);
-            switch (q) {
-                case "header":
+            try {
+                request.setCharacterEncoding("UTF-8");
 
-                    check.heckName(request.getParameter("name"));
-                    check.heckEmail(request.getParameter("email"));
-                    check.heckTitle(request.getParameter("title"));
-                    check.heckTags(request.getParameter("tags"));
+                System.out.println(">>>>" + q);
+                switch (q) {
+                    case "header":
 
-                    break;
-                case "article":
-                    System.out.println("text"+request.getParameter("key"));
-                    Create create = new Create(request, response, conn, stmt);
-                    
-                    String text = check.heckText(request.getParameter("text"));
-                    
-                    create.createPost();
-                    create.createPost_item(text);
-                    
-                    create.createTags(check.heckTags(request.getParameter("tags")));
+                        check.heckName(request.getParameter("name"));
+                        check.heckEmail(request.getParameter("email"));
+                        check.heckTitle(request.getParameter("title"));
+                        check.heckTags(request.getParameter("tags"));
 
-                    break;
-                case "file":
-                    
-                    UploaderFile file = new UploaderFile(request, response, conn, stmt, out);
+                        break;
+                    case "article":
+                        System.out.println("text" + request.getParameter("key"));
+                        Create create = new Create(request, response, conn, stmt);
 
-                    break;
-                case "create":
-                    Create create2 = new Create(request, response, conn, stmt);
-                    HashSet tags = check.heckTags(request.getParameter("tags"));
+                        String text = check.heckText(request.getParameter("text"));
 
-                    create2.createPost();
-                    System.out.println("Tags: " + tags);
-                    create2.updateItem_post();
-                    create2.createTags(tags);
-                    
-   
-                    
-                    break;
+                        create.createPost();
+                        create.createPost_item(text);
+
+                        create.createTags(check.heckTags(request.getParameter("tags")));
+
+                        break;
+                    case "file":
+
+                        UploaderFile file = new UploaderFile(request, response, conn, stmt, out);
+
+                        break;
+                    case "create":
+                        Create create2 = new Create(request, response, conn, stmt);
+                        HashSet tags = check.heckTags(request.getParameter("tags"));
+
+                        create2.createPost();
+                        System.out.println("Tags: " + tags);
+                        create2.updateItem_post();
+                        create2.createTags(tags);
+
+                        break;
+                    case "autocomplete":
+                        //Autocomplete auto = new Autocomplete(request, response, out);
+
+
+                        break;
+                }
+
+            } catch (Exception ex) {
+                message.append("<li>" + ex.getMessage().trim() + "</li>");
+                logger.error("", ex);
+            } finally {
+                jndi.close(stmt, null);
+
+                if (message.length() == 0) {
+                    out.print("{\"status\":\"ok\",\"message\":\"Сохранено\"}");
+                } else {
+                    out.print("{\"status\":\"error\",\"action\":\"" + q + "\",\"message\":\"" + message.toString().trim() + "\"}");
+                }
+
+                message.delete(0, Integer.MAX_VALUE);
             }
 
-        } catch (Exception ex) {
-            message.append("<li>" + ex.getMessage().trim() + "</li>");
+        } catch (SQLException ex) {
             logger.error("", ex);
-        } finally {
-            if (message.length() == 0) {
-                out.print("{\"status\":\"ok\",\"message\":\"Сохранено\"}");
-            } else {
-                out.print("{\"status\":\"error\",\"action\":\"" + q + "\",\"message\":\"" + message.toString().trim() + "\"}");
-            }
-
-            message.delete(0, Integer.MAX_VALUE);
         }
-        
+
+    }
+
+    private class Autocomplete {
+
+        private PrintWriter out;
+        private String tags = "";
+        private List listTags = new LinkedList();
+
+        private Autocomplete(HttpServletRequest request, HttpServletResponse response, Connection conn, Statement stmt, PrintWriter out) {
+            this.out = out;
+            tags = request.getParameter("tags") != null ? request.getParameter("tags") : "";
+            if ("".equals(tags)) {
+                return;
+            }
+            String[] tagArray = tags.split(",");
+            tags = (tagArray[tagArray.length - 1]).trim();
+            try {
+                query(stmt);
+            } catch (Exception ex) {
+                logger.error("", ex);
+            }
+        }
+
+        private List query(Statement stmt) throws IOException, Exception {
+            ResultSet rs = stmt.executeQuery("SELECT t.tags, COUNT(*) AS count FROM tags t, tags_link tl WHERE t.tags LIKE '" + tags + "%' AND t.id=tl.tags GROUP BY tl.tags LIMIT 30");
+            while (rs.next()) {
+                listTags.add("<span class='tag'>" + rs.getString("tags") + "</span> × <span class='count'>" + rs.getString("count") + "</span>");
+            }
+            return listTags;
+        }
+
+        /**
+         * Json
+         *
+         * @return
+         */
+        public String getJson() {
+            String json = "[]";
+            if (!listTags.isEmpty()) {
+                json = "[\"" + tags + "\", [";
+                for (Object i : listTags) {
+                    json += "\"" + i + "\",";
+                }
+                json = json.replaceAll("[,]$", "") + "]]";
+            }
+            return json;
+        }
     }
 
     private class Create {
@@ -177,7 +254,6 @@ public class FileUpload2 extends HttpServlet {
             name = request.getParameter("name");
             email = request.getParameter("email");
             title = request.getParameter("title");
-             
 
             try {
                 key = Long.parseLong(request.getParameter("key"));
@@ -188,8 +264,8 @@ public class FileUpload2 extends HttpServlet {
 
             check.heckName(name);
             check.heckEmail(email);
-            check.heckTitle(title);
-            
+            title = check.heckTitle(title);
+
         }
 
         public void createPost() throws SQLException {
@@ -250,7 +326,7 @@ public class FileUpload2 extends HttpServlet {
                         + "VALUES (?, ?, ?, ?, ?, ?, NOW(), ?);");
 
                 ps.setInt(1, 0);
-                ps.setInt(2, i);
+                ps.setInt(2, Integer.parseInt((String) ListContent.get(i).get("sort")));
                 ps.setString(3, util.lineFeed((String) ListContent.get(i).get("text")));
 
                 String img = null;
@@ -264,10 +340,10 @@ public class FileUpload2 extends HttpServlet {
                     img = (String) ListContent.get(i).get("imgXml");
                 }
                 ps.setString(5, img);
-                
+
                 HashSet tags = check.heckTags((String) ListContent.get(i).get("tags"));
                 ps.setString(6, tags.toString().replaceAll("[\\[\\]]", ""));
-                
+
                 ps.setString(7, (String) ListContent.get(i).get("key"));
                 System.out.println(ps);
                 ps.executeUpdate();
@@ -404,6 +480,7 @@ public class FileUpload2 extends HttpServlet {
                                 meta.putAll(imageItem);
                                 meta.put("text", ListFiled.get("text" + i));
                                 meta.put("key", ListFiled.get("key" + i));
+                                meta.put("sort", ListFiled.get("sort" + i));
                                 meta.put("tags", ListFiled.get("tags" + i));
                                 ListContent.put(i, meta);
 
@@ -454,7 +531,7 @@ public class FileUpload2 extends HttpServlet {
             }
 
             realPathLoad = myPath.toString();
-            
+
             HashMap<String, String> imageItem = new HashMap();
             String fileName = new File(item.getName()).getName();
 
@@ -575,7 +652,7 @@ public class FileUpload2 extends HttpServlet {
             }
         }
 
-        public void heckTitle(String title) {
+        public String heckTitle(String title) {
             if (title != null) {
                 title = title.trim();
 
@@ -589,6 +666,8 @@ public class FileUpload2 extends HttpServlet {
             } else {
                 message.append("<li>Иди на хуй бот!</li>");
             }
+            
+            return title;
         }
 
         public String heckText(String text) {
@@ -636,7 +715,7 @@ public class FileUpload2 extends HttpServlet {
             for (String key : tagArray) {
                 String tag = key.trim();
 
-                if (tag.matches("((?iu)[a-zа-я0-9-*@(=:;)\\s]+)")) {
+                if (tag.matches("((?iu)[a-zа-яё0-9-*@(=:;)\\s]+)")) {
                     String[] wordArray = tag.split("[\\s]+");
 
                     if (wordArray.length > 4) {

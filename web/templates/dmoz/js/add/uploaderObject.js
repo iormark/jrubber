@@ -96,6 +96,7 @@ var uploaderObject = function(params) {
         f.append("tags", params.tags);
         f.append("key", params.key);
         f.append("text", params.text);
+        f.append("sort", params.sort);
         f.append("file", params.file);
 
         self.xhr.send(f);

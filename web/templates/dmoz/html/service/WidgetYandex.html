@@ -8,8 +8,11 @@
     </head>
     <body onload="widget.adjustIFrameHeight();">
         <#list content.getItem()?keys as key>
-        <!--<div class="type">
-        </div>-->
+        <#if ((content.getItem()[key]["title"]!"")!="")>
+        <div class="type">
+            <a href="http://yourmood.ru/anekdot?id=${key!''}" target="_blank">${(content.getItem()[key]["title"])!""}</a>
+        </div>
+        </#if>
         <div class="text">
 
             ${content.getItem()[key]["text"]!""}

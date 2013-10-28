@@ -1,38 +1,10 @@
-<h1>${(content.getSelectedTags()["tags"])!"Самое смешное"}
-    
-    <span style="float: right;">
-        ${content.getByLink()!''}
-    </span>
-</h1>
+${content.getMenu()!""}
+<div style="border-top: 2px solid #669933;border-bottom: 0px solid #CCCCCC;clear: both;margin-bottom: 1.5em"></div>
 
-
+<#if content.getItem()??>
 <#assign i = 0>
 <#list content.getItem()?keys as key>
 <#assign i = i+1>
-
-
-<#if (i == 500)>
-<article style="margin-left: 67px">
-    <script language="Javascript">
-        var bnbuniqid = 'N1Slq60i4p3h5t9NPphH';
-        var bnbuniqsid = '62948';
-        var async = 0;
-    </script>
-    <script type="text/javascript" src="http://morenews4.net/viewb.js"></script>
-    <div style="margin: .5em 0;">&nbsp;</div>
-</article>
-</#if>
-<#if (i == 800)>
-<article style="margin-left: 67px">
-    <script language="Javascript">
-        var bntuniqid = 'T37U4dRDUS7GfgNjCOp2';
-        var bntuniqsid = '62948';
-        var async = 0;
-    </script>
-    <script type="text/javascript" src="http://korenizvosmi.net/viewt.js"></script>
-    <div style="margin: .5em 0;">&nbsp;</div>
-</article>
-</#if>
 
 
 <article id="i__${key}" class="item__segment" <#if ((content.getItem()[key]['image']!'')!='')>itemscope itemtype="http://schema.org/ImageObject"</#if>>
@@ -45,14 +17,14 @@
         </div>
 
         <div class="list_title">
-            <a class="h2" href="/anekdot?id=${key}">${(content.getItem()[key]['title'])!''} ${(content.getItem()[key]['itemCount'])!''}</a>
+            <a class="h2" href="/post?id=${key}">${(content.getItem()[key]['title'])!''} ${(content.getItem()[key]['itemCount'])!''}</a>
         </div>
 
         <div class="list_date">
             <b title="${content.getItem()[key]['dateMore']}"><span style="color: red;">${content.getItem()[key]['date']!''}</span></b>
             <span>Добавил(а): ${content.getItem()[key]["name"]!"Волонтер"}</span>
             <#if (((content.getItem()[key]['commentCount'])!'0') > 0)>
-            <a href="/anekdot?id=${key}#comments">Комментариев ${(content.getItem()[key]['commentCount'])!''}</a>
+            <a href="/post?id=${key}#comments">Комментариев ${(content.getItem()[key]['commentCount'])!''}</a>
             </#if>
 
             <#if (content.getTagsItem()[key])??>
@@ -72,7 +44,7 @@
         <#if ((content.getItem()[key]['image']!'')!='')>
         <div class="item__image">
             <meta itemprop="description" content="${content.getItem()[key]['alt']!''}">
-            <meta itemprop="contentUrl" content="http://yourmood.ru/photo_anekdot/${content.getItem()[key]['image']!''}">
+            <meta itemprop="contentUrl" content="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['image']!''}">
             <#if (((content.getItem()[key]['animated'])!'')!='')>
             <div style="display: inline-block;position: relative">
                 <a class="image img__href img__animated" value="${(content.getItem()[key]['imagePath'])!''}:${(content.getItem()[key]['image'])!''}" target="_blank" href="/anekdot?id=${key}">
@@ -81,7 +53,7 @@
                 </a>
             </div>
             <#else>
-            <a class="image img__href" target="_blank" href="/anekdot?id=${key}">
+            <a class="image img__href" target="_blank" href="/post?id=${key}">
                 <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['image'])!''}" alt="${content.getItem()[key]['alt']!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
             </a>
             </#if>
@@ -91,20 +63,17 @@
     </div>
 
     <div class="list_meta">
-        <a href="/anekdot?id=${key}#add-comments">Комментировать</a>
+        <a href="/post?id=${key}#add-comments">Комментировать</a>
     </div>
-    <div style="margin: .5em 0;">&nbsp;</div>
+    
 </article>
 </#list>
-
-<div style="margin-left: 67px">
-    <script language="Javascript">
-        var bntuniqid = 'ElIURRU1ns31OUMvk31G';
-        var bntuniqsid = '62948';
-        var async = 0;
-    </script>
-    <script type="text/javascript" src="http://pralilipiped.net/viewt.js"></script>
+<#else>
+<div class="code">
+    Уже давно, никто не добавлял сюда ничего интересного=(
+    
 </div>
+</#if>
 
 <#if ((content.PageNavig()!"")!="")>
 <hr>
@@ -119,8 +88,8 @@
 
 <#if main=="1">
 <div class="faq">
-    <p>Все самое смешное на сайте "Юмор + Интеллект". Здесь собраны <a href="/kartinki.html">смешные картинки</a>, анекдоты и демотиваторы обновляющиеся каждый день. Коллекция курьезных, поучительных и просто очень смешных анекдотов, афоризмов, историй, которые будет приятно почитать...</p>
-    <p>Мы постарались собрать для вас самые лучшие, самые <a href="/anekdoty.html">смешные анекдоты</a> в мире, интересные истории, <a href="/aforizmy.html">афоризмы</a> и высказывания.</p>
+    <p>Все самое смешное на сайте "Юмор + Интеллект". Здесь собраны смешные картинки, анекдоты и демотиваторы обновляющиеся каждый день. Коллекция курьезных, поучительных и просто очень смешных анекдотов, афоризмов, историй, которые будет приятно почитать...</p>
+    <p>Мы постарались собрать для вас самые лучшие, самые смешные анекдоты в мире, интересные истории, афоризмы и высказывания.</p>
 </div>
 <#else>
 <#if (((content.getSelectedType()["body"])!"")!="")>

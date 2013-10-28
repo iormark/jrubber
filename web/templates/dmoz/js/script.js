@@ -66,8 +66,8 @@
             event.preventDefault();
 
             var $form = $(this),
-                    name = $form.find('input[name="name"]').val(),
-                    email = $form.find('input[name="email"]').val(),
+                    //name = $form.find('input[name="name"]').val(),
+                    //email = $form.find('input[name="email"]').val(),
                     text = $form.find('textarea[name="text"]').val(),
                     url = $form.attr('action');
             $form.find('input[name="button"]').attr("disabled", "disabled");
@@ -75,8 +75,8 @@
             $.post(url, {
                 q: options.q,
                 id: options.id,
-                name: name,
-                email: email,
+                //name: name,
+                //email: email,
                 text: text
             },
             function(data) {
@@ -85,12 +85,13 @@
                 $("#message ul").removeClass('error').removeClass('good');
                 $("#message ul").addClass(data.status);
 
+
                 var pattern = /^(good)/i;
                 if (pattern.test(data.status)) {
 
 
                     if ($('.getComment h2.navsections').length == 0) {
-                        $(".getComment").html('<h1>Комментарии (1)</h1>');
+                        //$(".getComment").html('<h1>Комментарии (1)</h1>');
                         $(".getComment").append(data.message);
                     } else {
                         $(".getComment").append(data.message);
@@ -98,7 +99,6 @@
 
                     $('.vote_up').click(function(e) {
                         e.preventDefault();
-
                         var arr = $(this).attr('value').split('_');
                         ajaxRating('top', (arr.length < 2 ? 'post' : arr[1]), arr[0]);
                     });
@@ -112,7 +112,7 @@
                     });
 
                     $form.find('textarea[name="text"]').val('');
-                    $form.find('input[name="name"],input[name="email"]').addClass("readonly").attr('readonly', true).removeAttr('name');
+                    //$form.find('input[name="name"],input[name="email"]').addClass("readonly").attr('readonly', true).removeAttr('name');
 
                 } else {
 
@@ -173,9 +173,6 @@
     });
 
     $.fn.listScroll = function(options) {
-
-
-
         var defaults = {};
         options = $.extend(defaults, options);
 
@@ -198,9 +195,7 @@
 
             }
         });
-
     }
-
 })($);
 
 function deleteItem(id) {

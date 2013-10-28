@@ -126,7 +126,7 @@ public class Add extends Creator {
 
     @Override
     public String getMetaTitle() {
-        return "Изготовление поста.";
+        return "Изготовить пост";
     }
 
     @Override

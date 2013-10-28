@@ -1,21 +1,11 @@
 <link href="/templates/dmoz/css/add/add.css" rel="stylesheet" type="text/css">
 <link href="/templates/dmoz/css/add/main.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="/templates/dmoz/js/add/uploaderObject.js?2" charset="utf-8"></script>
-<script type="text/javascript" src="/templates/dmoz/js/add/interface.js?2" charset="utf-8"></script>
+<script type="text/javascript" src="/templates/dmoz/js/add/uploaderObject.js?4" charset="utf-8"></script>
+<script type="text/javascript" src="/templates/dmoz/js/add/interface.js?4" charset="utf-8"></script>
 <div id="add__post">
-    <h1>Изготовить пост <small>(Beta)</small></h1>
-
-    <div class="faq">
-        Изготовления поста, дело серьезное и ответственное. И подходить к нему требуется с великим чаянием и старанием.
-        <ul>
-            <li>Автор поста, должен быть.</li>
-            <li>Картинка, должна быть девственно чистой, а содержание мусора в виде логотипов, строго запрещено!</li>
-            <li>Название поста должно быть осмысленным и с большой буквы.</li>
-            <li>Помни о золотом правиле – "краткость – сестра таланта".</li>
-            <li>Не добавляй пост, который уже есть на Порке.</li>
-        </ul>
-        Следуя этим простым и не хитрым правилам, ты сможешь изготовить хороший пост невозбранно.
-    </div>
+    <h1>Изготовить пост <small>(Beta)</small>
+        <a style="float: right;font-size: 14px;text-decoration: none;color:#000" href="/wtf.html">Правила сайта</a>
+    </h1>
     
     <div id="add__logout"></div>
 
@@ -45,8 +35,9 @@
         </div>
 
         <div class="field">
-            <div>Теги</div>
+            <div>Теги (укажите от 2 до 6 тегов через запятую)</div>
             <input type="text" name="tags" value="" id="filed__tags">
+            <div id="filed__autocomplete"></div>
         </div>
 
         <div id="leftpanel">

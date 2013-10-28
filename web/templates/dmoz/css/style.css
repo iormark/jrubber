@@ -4,9 +4,8 @@ div, span, object, iframe, h1, h2, h3, h4, h5, h6, pre, abbr, acronym, address, 
     padding: 0;
     border: 0;
     font-weight: normal;
-    font-style: inherit;
-    font-size: 14px;
-    font-family: "Times New Roman";
+    font-family: Arial,Liberation Sans,DejaVu Sans,sans-serif;
+    font-size: inherit;
     vertical-align: baseline;
 }
 html {
@@ -15,11 +14,11 @@ html {
 body {
     background-color: #fff;
     color: #000;
-    line-height: 1.5em;
     margin: 8px 8px 0 8px;
     text-align: center;
-    font-size: 14px;
-    font-family: "Times New Roman";
+    font-family: Arial,Liberation Sans,DejaVu Sans,sans-serif;
+    font-size: 13px;
+    line-height: 150%;
 }
 
 
@@ -32,15 +31,12 @@ h2 {
     font-size: 1.4em;
     margin-bottom: 15px;
 }
-h3,h4 {
+h3 {
     font-size: 1.3em;
 }
-.h2 {
-    font-weight: bold;
-}
-p {
-    margin-bottom: 15px;
-}
+.h2 {font-size: 1.4em;}
+h4 {font-weight: normal;font-size: 1.2em;}
+p {margin-bottom: 1em;}
 hr {
     margin: 15px 0;
 }
@@ -166,7 +162,7 @@ div.navsections {
     display: inline;
     float: left;
     height: 26px;
-    width: 210px;
+    width: 208px;
     margin: 4px 0 0 8px;
 }
 #logo img {
@@ -198,11 +194,56 @@ div.navsections {
     float: left;
 }
 
+/*menu*/
+ul.menu {padding: 0;margin: 0;list-style: none}
+ul.menu li {float: left;margin-right: 0.5em}
+ul.menu h1 {font-size: inherit; font-weight: bold; display: inline-block;margin: 0;border: 0;}
+ul.menu a {text-decoration: none;color: #666;padding: 0.5em 0.5em;}
+ul.menu li.tag {margin: 0 1em 0 0.5em}
+ul.menu li.tag a {padding: 0;}
+ul.menu li.active {background-color: #202114;border-radius: 4px 4px 0 0;
+
+                   background: #CCCCCC;
+                   background: -webkit-gradient(linear, 0% 0%,0% 100%, from(#73AB3B), to(#669933));
+                   background: -o-linear-gradient(#73AB3B, #669933);
+                   background: -moz-linear-gradient(0% 90% 90deg, #669933, #73AB3B);
+
+}
+ul.menu li.active a {color: #fff;}
+
+/*Tags*/
+.tagged__post h1 {}
+.tagged__post {margin-bottom: 1em;}
+.tagged__list {margin: 1em 0;}
+.tagged {margin-bottom: 2px;margin-top: 2px;}
+.tagged__tag {
+    background: #F1F6EC;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    padding: 3px 4px 4px 4px;
+    margin: 2px 2px 2px 0;
+    text-decoration: none;
+    font-size: 90%;
+    line-height: 1.4;
+    white-space: nowrap;
+    display: inline-block;
+    color:#666;
+    text-shadow: 0 1px 0 white;
+}
+.tagged__tag a {text-decoration: none;}
+.tagged__tag:hover {
+    background: #E3ECDA;
+}
+.tagged__multiplier {
+    color: #999;
+}
+
 /*Post*/
 .post_breadcrumbs {margin-bottom: .8em}
-.post_head {margin-bottom: .5em}
+.post_head {margin-bottom: .2em}
 .post_head h1 {border: 0;margin-bottom: .1em;}
 .post_info, .post_meta {margin-left: 67px;}
+.post_info .text {margin-top: 0.6em}
 .post_info .item__image {position: relative;margin-bottom: 1.2em;margin-top: 1em;}
 .post_date span {margin-right: 10px;}
 .post_date a {margin-right: 10px;}
@@ -233,69 +274,61 @@ div.navsections {
     left: -30px;
     background-color: #000;
     color: #fff;
-    padding: 0 5px;
-    width: 15px;
+    padding: 0 4px;
+    width: 14px;
     text-align: center;
 }
 
 /*COMMENT*/
-#comments, #add-comments {margin-left: 67px;}
+#comment__get, #add-comments {margin-left: 67px;}
+#comment__get .comment_info {border-bottom: 1px solid #ddd;margin-bottom: 1em;color:#999;}
+#comment__get h3 {font-size: small;margin-bottom: 0.5em}
 textarea {width: 99%; border-radius: 4px;}
-#comments, #add-comments {
-    margin-top: 1.5em;
-}
+#comments, #add-comments {margin-top: 1.5em;}
 #message.error { color: #C00;}
 #message.good { color: #619936;}
-.comment {
-    clear: both;
-    margin-bottom: 1.6em; 
-    border: 0px dotted #669933;
-    padding: 0px 0px 0px 0px;
-
-}
-.comment .comment_head {padding: 0 3px;clear: both;}
+.comment {clear: both;margin-bottom: 1.8em; border: 0px dotted #669933;padding: 0px 0px 0px 0px;}
+.comment .comment_head {padding: 0 3px;margin-bottom: 0.2em; aclear: both;}
 .comment .comment_head span {font-size: 13px;}
 .comment .comment_head .author { font-weight: bold; }
-.comment .comment_head .created { color:#999; font-size: 11px}
+.comment .comment_head .created { color:#999; margin-right: .5em; font-size: smaller;}
+.comment .comment_head a {font-size: smaller;text-decoration: none;font: normal 11px Tahoma, Arial, sans-serif;}
 .comment .text {padding: 0px 0px 0px 4px;}
+
 .vote_comment {
-    width: 20px;
-    height: 36px;
-    float: right;
-    margin: 0px 0 0 1em;
-    text-align: center;
+    margin: 0px 0.5em 0 0em;
     border: 0px solid #ddd;
     border-radius: 4px;
 }
-.vote_comment .vote_count {
-    color: #555;
-}
+.vote_comment .vote_count {color: #555;font-weight: bold}
 .vote_comment .vote_up {
-    display: block;
     border: 0px;
-    background-position: -6px -56px;
-    width: 100%;
-    height: 8px;
+    background-position: -10px -51px;
+    margin: 0 .1em 0 .3em;     
+    padding: 0px 5px;
+    height: 10px;
     cursor: pointer;
 }
 .vote_comment .vote_down {
-    display: block;
     border: 0px solid;
-    background-position: -6px -71px;
+    background-position: -10px -66px;
     width: 100%;
-    height: 8px;
+    padding: 0px 5px;
+    height: 10px;
     cursor: pointer;
 }
-.vote_comment .vote__error {
-    color: #C00;
-}
+.vote_comment .vote__error {color: #C00;}
 
 /*List*/
 article {
-    clear: left;
+    min-height: 80px;
+    margin-bottom: 2.2em;
 }
+.list_head a.h2 {}
 .list_head {clear: both;margin-bottom: .2em}
+.list_head .list_title {margin-bottom: 0.2em}
 .list_info {margin-left: 67px;}
+.list_info .text {margin-top: 0.6em}
 .list_info .item__image {position: relative;margin-top: 1em;}
 /*.list_info img {-webkit-user-select: none; cursor: -webkit-zoom-in;}*/
 .list_meta {margin-left: 67px;}
@@ -303,6 +336,7 @@ article {
 .list_date span {margin-right: 10px}
 .list_date a {margin-right: 10px; }
 .list_meta span {color: #999;font-size: small; margin-right: 10px}
+
 
 a.image {text-decoration: none}
 .image .list__info__img__hint {
@@ -313,7 +347,7 @@ a.image {text-decoration: none}
     margin-bottom: 0px;
     background: rgba(0,0,0,0.5);
     position: absolute;
-    margin-top: -27px;
+    margin-top: -25px;
     height: 14px;
     font-size: 0.81em;
     font-family: tahoma, arial, verdana, sans-serif, Lucida Sans;
@@ -395,7 +429,11 @@ a.image {text-decoration: none}
 }
 #search .searchNod {
     border: 1px solid #669933;
+
+    background: #fcfcfc url('../image/lupa.png') no-repeat 7px center;
     background: url('../image/lupa.png') no-repeat 7px center, -webkit-gradient(linear, 0% 0%, 0% 33%, from(#f3f3f3), to(#fcfcfc));
+    background: url('../image/lupa.png') no-repeat 7px center, -o-linear-gradient(#f3f3f3, #fcfcfc 33%);
+    background: url('../image/lupa.png') no-repeat 7px center, -moz-linear-gradient(0% 90% 90deg, #fcfcfc 66%, #f3f3f3);
     border-radius: 0.5em;
     padding-left: 25px;
     box-shadow: 0 1px 0px rgba(0, 0, 0, 0.4);
@@ -405,7 +443,7 @@ a.image {text-decoration: none}
 
 #side .navhead {
     display: block;
-    padding: 2px 5px;
+    
     color: #FFF;
     background: #669933;
 }
@@ -413,15 +451,18 @@ a.image {text-decoration: none}
     text-decoration: none;
 }
 #side .time-addition {
-    text-align: center;
-    margin-bottom: 1em;
-    padding-left: 5px;
-    background-color: #F1F6EC;
-    border:1px solid #ddd;
-    border-top: 0;
+    padding-bottom: 0.2em;
+    margin-bottom: 2em;
+    /*text-align: center;
+    background: #F1F6EC;
+    border:1px solid #ddd;*/
+    border-bottom:1px dashed #ddd;
 }
 #side .time-addition span {
-    font-size: 24px;
+    font-size: 36px;
+    font-weight: bold;
+    color: #444;
+    line-height: 80%;
 }
 
 
@@ -455,7 +496,13 @@ span.catalog {
     color: #fff;
     text-align: left;
     width: 100%;
+    font-size: 110%;
+    padding: 0.1em 0;
 }
+#ft a {
+    font-size: 110%;
+}
+
 #ft .float-l, #ft .copy { padding: 0 10px; }
 #ft .float-r { float: right; padding: 0 10px; }
 #ft-bar {
@@ -466,7 +513,6 @@ span.catalog {
     margin-top: 8px;
     color: #666;
     font-size: 13px;
-    font-family: sans-serif, Arial, Helvetica;
     color: #666666;
 }
 
