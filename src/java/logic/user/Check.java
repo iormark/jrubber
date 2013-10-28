@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 public class Check {
 
     private boolean check = false;
-    String UserID = "", UserHash = "", UserName = "", UserEmail = "";
+    String UserID = "", UserHash = "", UserLogin = "", UserEmail = "";
     private ResultSet rs = null;
 
     public Check(HttpServletRequest request, HttpServletResponse response, Statement stmt) throws Exception {
@@ -31,7 +31,7 @@ public class Check {
             if (rs.next()) {
                 if (UserHash.equals(rs.getString("hash"))) {
                     check = true;
-                    UserName = rs.getString("name");
+                    UserLogin = rs.getString("login");
                     UserEmail = rs.getString("email");
                 }
             }
@@ -58,8 +58,8 @@ public class Check {
         return UserHash != null ? UserHash : "0";
     }
     
-    public String getUserName() {
-        return UserName != null ? UserName : "Волонтер";
+    public String getUserLogin() {
+        return UserLogin != null ? UserLogin : "Волонтер";
     }
     
     public String getUserEmail() {

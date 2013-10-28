@@ -1,0 +1,16 @@
+<div class="user__block">
+    <div class="user__menu">
+        <div class="user__image">
+            
+        </div>
+        <b>${(user.getUserLogin())!""} <a href="/user?q=signout">выход</a></b>
+        <ul>
+            <li>Рейтинг: 0</li>
+            <li><a href="/edit">Мои настройки</a></li>
+            <li><a href="/id/${(user.getUserLogin())!''}">Мои новости</a></li>
+            <li><a href="/comment">Мои комментарии</a></li>
+            <li><a href="/fave">Закладки</a></li>
+        </ul>
+        
+    </div>
+</div>

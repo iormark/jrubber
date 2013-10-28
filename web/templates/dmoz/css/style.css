@@ -14,7 +14,7 @@ html {
 body {
     background-color:#fff;
     color: #000;
-    margin: 8px 8px 0 8px;
+    margin: 0px 0px 0 0px;
     text-align: center;
     font-family: Arial,Liberation Sans,DejaVu Sans,sans-serif;
     font-size: 13px;
@@ -47,7 +47,7 @@ textarea {overflow: hidden;}
 
 fieldset {
     border:0;
-    border-top: 1px solid #669933;
+    border-top: 0px solid #669933;
 }
 .readonly {
     border: 0;
@@ -145,10 +145,10 @@ div.navsections {
     width: 100%;
 }
 #hd {
-    background-color: #669933;
+    background-color: #578843;
     height: 34px;
     width: 100%;
-    border-bottom: 5px solid #CCCCCC;
+    border-bottom: 5px solid #ddd;
     margin-bottom: 1em;
     z-index: 9999;
 }
@@ -201,15 +201,23 @@ ul.menu h1 {font-size: inherit; font-weight: bold; display: inline-block;margin:
 ul.menu a {text-decoration: none;color: #666;padding: 0.5em 0.5em;}
 ul.menu li.tag {margin: 0 1em 0 0.5em}
 ul.menu li.tag a {padding: 0;}
-ul.menu li.active {background-color: #202114;border-radius: 4px 4px 0 0;
-
-                   background: #CCCCCC;
-                   background: -webkit-gradient(linear, 0% 0%,0% 100%, from(#73AB3B), to(#669933));
-                   background: -o-linear-gradient(#73AB3B, #669933);
-                   background: -moz-linear-gradient(0% 90% 90deg, #669933, #73AB3B);
-
+ul.menu li.active {
+    border: 1px solid;
+    border-bottom: 0;
+    background-color: #202114;border-radius: 4px 4px 0 0;
+    background: -webkit-gradient(linear, center top, center bottom, from(#67AE55), to(#578843));
+    background: -webkit-linear-gradient(top, #67AE55, #578843);
+    background: -moz-linear-gradient(center top , rgb(103, 174, 85), rgb(87, 136, 67)) repeat scroll 0% 0% rgb(105, 167, 78);
+    box-shadow: inset 0 1px 1px #A4E388;
+    border-color: #3B6E22 #3B6E22 #2C5115;
+}
+ul.menu li.active:hover {
+    background:-webkit-gradient(linear, center top, center bottom, from(#79bc64), to(#578843));
+    background:-webkit-linear-gradient(top, #79bc64, #578843);
+    background: -moz-linear-gradient(center top , #79bc64, #578843) repeat scroll 0% 0% rgb(105, 167, 78);
 }
 ul.menu li.active a {color: #fff;}
+.menu__line {border-top: 2px solid #578843;clear: both;margin-bottom: 1.5em}
 
 /*Tags*/
 .tagged__post h1 {}
@@ -443,7 +451,7 @@ a.image {text-decoration: none}
 
 #side .navhead {
     display: block;
-    
+
     color: #FFF;
     background: #669933;
 }
@@ -491,7 +499,7 @@ span.catalog {
     padding-top: 5px;
 }
 #ft {
-    background-color: #693;
+    background-color: #578843;
     clear: both;
     color: #fff;
     text-align: left;

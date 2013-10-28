@@ -78,19 +78,7 @@ public class User extends HttpServlet {
                  */
 
 
-                if ("login".equals(q)) {
-
-                    creator = new logic.user.Login(request, response, stmt);
-
-                    if (check.getCheck()) {
-                        response.sendRedirect("/user?q=home");
-                    }
-
-                } else if ("register".equals(q) && !check.getCheck()) {
-
-                    creator = new logic.user.Register(request, response, stmt);
-
-                } else if ("password".equals(q) && !check.getCheck()) {
+                if ("password".equals(q) && !check.getCheck()) {
                     //creator = new logic.user.Password(request, response, stmt, memory);
                 } else if ("reset".equals(q) && check.getCheck()) {
                     //creator = new logic.user.Reset(check.getUserID(), request, response, stmt, memory.getCfg());
@@ -138,7 +126,6 @@ public class User extends HttpServlet {
                     EditCookie editcookie = new EditCookie(request, response);
                     editcookie.setCookie("user_id", "", null, 0);
                     editcookie.setCookie("user_hash", "", null, 0);
-
                     response.sendRedirect("/");
 
                     return;

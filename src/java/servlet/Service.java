@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import logic.Service.FileUpload;
 import logic.user.Check;
+import logic.user.Login;
+import logic.user.Register;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -59,6 +61,7 @@ public class Service extends HttpServlet {
         Statement stmt = null;
         ResultSet rs = null;
 
+        
         try {
             try {
                 stmt = conn.createStatement();
@@ -71,6 +74,12 @@ public class Service extends HttpServlet {
 
             if ("FileUpload".equals(q)) {
                 FileUpload fp = new FileUpload(request, response);
+            } else if ("login".equals(q)) {
+                Login login = new Login(request, response, stmt);
+                out.println(login.getMessage());
+            } else if ("register".equals(q)) {
+                Register register = new Register(request, response, conn, stmt);
+                out.println(register.getMessage());
             } else if ("Quiz".equals(q)) {
 
                 out.println(request.getParameter("id") + " ; " + request.getParameter("myPochta"));
@@ -165,7 +174,6 @@ public class Service extends HttpServlet {
 
                     //String cname = editcookie.getCookie("name");
                     //String cemail = editcookie.getCookie("email");
-
                     //String name = cname != null ? cname : request.getParameter("name");
                     //String email = cemail != null ? cemail : request.getParameter("email");
                     /*
@@ -173,11 +181,9 @@ public class Service extends HttpServlet {
                      * request.getRemoteAddr(), name, "", "Hello"); } catch
                      * (Exception ex) { System.out.println(ex); }
                      */
-
                     //if ((cname != null && request.getParameter("name") != null) || (cemail != null && request.getParameter("email") != null)) {
                     //    message.append("<li>Иди на хуй, бот ебаный!!!.</li>");
                     //}
-
                     String text = request.getParameter("text");
 
                     /*/ имя
@@ -271,14 +277,13 @@ public class Service extends HttpServlet {
                         //editcookie.setCookie("email", email, null, 36);
                         //editcookie.setCookie("name", name, null, 3600 * 24 * 365 * 100);
                         //editcookie.setCookie("email", email, null, 3600 * 24 * 365 * 100);
-
                     }
 
                 }
 
             }
         } catch (Exception e) {
-            out.println("{\"status\":\"good\",\"message\":\"<li>Упс! Уже чиним. " + e + "</li>\"}");
+            out.println("{\"status\":\"good\",\"message\":\"Упс! Уже чиним. " + e + "\"}");
             logger.error("", e);
 
         } finally {

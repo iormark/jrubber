@@ -10,7 +10,7 @@
         //$('img').last().load(function() {
 
 
-        $('textarea').autosize(); 
+        $('textarea').autosize();
 
 
 
@@ -40,11 +40,13 @@
                 $(this).find('.list__info__img__hint').hide();
             } else {
                 var arr = $(this).attr('value').split(':');
-                $(this).find('img').attr('src', 'http://yourmood.ru'+arr[0]+'/middle_' +arr[1]);
+                $(this).find('img').attr('src', 'http://yourmood.ru' + arr[0] + '/middle_' + arr[1]);
                 $(this).removeClass('img__play');
                 $(this).find('.list__info__img__hint').show();
             }
         });
+        
+        
 
     });
 
@@ -122,8 +124,7 @@
 
                 $form.find('input[name="button"]').removeAttr("disabled");
 
-            }, "json"
-                    );
+            }, "json");
         });
     }
 
@@ -196,6 +197,7 @@
             }
         });
     }
+
 })($);
 
 function deleteItem(id) {

@@ -87,7 +87,7 @@
        x="135"
        y="519.36218" />
     <rect
-       style="fill:#669933;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       style="fill:#578843;fill-opacity:1;fill-rule:evenodd;stroke:none"
        id="rect2985-5"
        width="220"
        height="30"
@@ -98,7 +98,7 @@
        inkscape:export-ydpi="72" />
     <text
        xml:space="preserve"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;line-height:125%;letter-spacing:0.41999996px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Free Bookman;-inkscape-font-specification:Free Bookman Light"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;line-height:125%;letter-spacing:1.95px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Free Bookman;-inkscape-font-specification:Free Bookman Light"
        x="146.10081"
        y="475.01019"
        id="text3755-7"
@@ -110,9 +110,7 @@
          id="tspan3757-8"
          x="146.10081"
          y="475.01019"
-         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:0.41999996px;fill:#ffffff;fill-opacity:1;font-family:Cantarell;-inkscape-font-specification:Cantarell"># <tspan
-   style="font-style:italic;-inkscape-font-specification:Cantarell Italic"
-   id="tspan2999">fuck the World!</tspan></tspan></text>
+         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:1.95px;fill:#ffffff;fill-opacity:1;font-family:Cantarell;-inkscape-font-specification:Cantarell"># Hello, World!</tspan></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot3778"

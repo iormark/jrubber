@@ -37,14 +37,10 @@ public class Main extends HttpServlet {
 
         PrintWriter out = response.getWriter();
 
-
         String q = request.getParameter("q") != null ? request.getParameter("q") : "home.html";
         ArrayList args = new ArrayList(Arrays.asList(q.split("/")));
 
-
         //out.println(request.getQueryString());
-
-
         JNDIConnection jndi = new JNDIConnection();
         Connection conn = jndi.init();
         Statement stmt = null;
@@ -57,29 +53,31 @@ public class Main extends HttpServlet {
                 return;
             }
 
-            
-
-            //Check check = new Check(request, response, stmt);
-
+            Check check = new Check(request, response, stmt);
             Creator creator = null;
-            NavBlock block = new NavBlock(request, stmt);
+            NavBlock block = new NavBlock(request, stmt, check);
 
             HashMap root = new HashMap();
             LinkedHashSet leftNav = new LinkedHashSet();
             LinkedHashSet rightNav = new LinkedHashSet();
 
-            RandomAnecdote RandomAnecdote = null;
             try {
 
-                if ("home.html".equals(q) || "tag".equals(args.get(0).toString()) 
+                if ("home.html".equals(q) || "tag".equals(args.get(0).toString())
                         || "new".equals(args.get(0).toString())) {
                     creator = new logic.Home(request, args, conn);
-                    RandomAnecdote = new RandomAnecdote(stmt);
-
+                    
+                    //root.put("user", check);
                     root.put("time_addition", block.getTimeAddition());
-                    //root.put("category", block.getCategoriesLi());
                     root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
+
+                    //if (check.getCheck()) {
+                    //    leftNav.add("/block/user-menu.html");
+                    //} else {
+                    //    leftNav.add("/block/user-form.html");
+                    //}
+                    
                     leftNav.add("/block/time-addition.html");
                     leftNav.add("/block/tags.html");
                     leftNav.add("/block/widget.html");
@@ -101,15 +99,23 @@ public class Main extends HttpServlet {
                     leftNav.add("/block/ad-space.html");
 
                 } else if ("anekdot".equals(q)) {
-                    response.sendRedirect("/post?id="+request.getParameter("id"));
+                    response.sendRedirect("/post?id=" + request.getParameter("id"));
 
                 } else if ("post".equals(q)) {
                     creator = new Anecdote(request, response, conn);
                     q += ".html";
 
+                    root.put("user", check);
                     root.put("time_addition", block.getTimeAddition());
                     root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
+                    
+                    if (check.getCheck()) {
+                        leftNav.add("/block/user-menu.html");
+                    } else {
+                        leftNav.add("/block/user-form.html");
+                    }
+                    
                     leftNav.add("/block/time-addition.html");
                     leftNav.add("/block/tags.html");
                     leftNav.add("/block/widget.html");
@@ -158,16 +164,16 @@ public class Main extends HttpServlet {
                     q = "home.html";
 
                 } /*else if ("terms_of_use.html".equals(q)) {
-                    creator = new TermsOfUse(stmt);
+                 creator = new TermsOfUse(stmt);
 
-                    root.put("time_addition", block.getTimeAddition());
-                    root.put("tags", block.getTagsLi());
-                    root.put("widget", block.getWidget());
-                    leftNav.add("/block/time-addition.html");
-                    leftNav.add("/block/tags.html");
-                    leftNav.add("/block/widget.html");
+                 root.put("time_addition", block.getTimeAddition());
+                 root.put("tags", block.getTagsLi());
+                 root.put("widget", block.getWidget());
+                 leftNav.add("/block/time-addition.html");
+                 leftNav.add("/block/tags.html");
+                 leftNav.add("/block/widget.html");
 
-                }*/ else if ("link.html".equals(q)) {
+                 }*/ else if ("link.html".equals(q)) {
                     creator = new Link(stmt);
 
                     root.put("time_addition", block.getTimeAddition());
@@ -189,35 +195,23 @@ public class Main extends HttpServlet {
 
                 }
 
-
-
-
             } catch (Exception e) {
                 out.println(e);
                 return;
             }
 
-
-
-
-
             if (creator == null) {
-                response.sendError(404);
+                //response.sendError(404);
                 return;
             }
-
 
             if (creator.getServerStatus() != 200) {
-                response.sendError(creator.getServerStatus());
+                //response.sendError(creator.getServerStatus());
                 return;
             }
 
-
-
             // Last-Modified
-
             //out.println(">>"+new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US).format(creator.getLastModified()) + " GMT");
-
             try {
                 if (creator.getLastModified() != null) {
 
@@ -232,16 +226,11 @@ public class Main extends HttpServlet {
             } catch (Exception e) {
             }
 
-
             root.put("main", request.getParameter("q") == null && request.getParameter("page") == null ? "1" : "0");
-
 
             root.put("content_tpl", q);
 
-
             root.put("title", creator.getMetaTitle() + " &mdash; YourMood.Ru ");
-
-
 
             if (creator != null) {
                 root.put("content", creator);
@@ -260,18 +249,13 @@ public class Main extends HttpServlet {
                 root.put("block_bottom", RandomAnecdote);
             }
 
-
             root.put("footer_tpl", "footer.html");
-
 
             try {
                 new Templating().getTemplating(getServletContext().getRealPath("/")).process(root, out);
             } catch (Exception e) {
                 out.println("Упс! Что то сломалось(" + e);
             }
-
-
-
 
         } catch (Exception e) {
             out.println("Упс! Что то сломалось(" + e);

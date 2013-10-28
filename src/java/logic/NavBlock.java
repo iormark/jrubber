@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
+import logic.user.Check;
 
 /**
  *
@@ -18,14 +19,24 @@ public class NavBlock extends CreatorBlock {
 
     private HttpServletRequest request = null;
     private Statement stmt = null;
+    private Check check = null;
     private ResultSet rs = null;
     private Properties cfg = new Properties();
     private Util util = new Util();
     private String TypeTitle = null;
 
-    public NavBlock(HttpServletRequest request, Statement stmt) {
+    public NavBlock(HttpServletRequest request, Statement stmt, Check check) {
         this.stmt = stmt;
         this.request = request;
+        this.check = check;
+    }
+    
+    public HashMap getUserMenu() {
+        HashMap content = new HashMap();
+        
+        
+        
+        return content;
     }
 
     public String getTimeAddition() {
