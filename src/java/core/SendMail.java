@@ -18,25 +18,18 @@ import javax.mail.internet.*;
  * @author mark
  */
 public class SendMail {
-    
+
     public SendMail(String template, HashMap root, String RealPath) throws Exception {
-        
+
         sendEmail(template, root, RealPath);
     }
-    
+
     private void sendEmail(String template, HashMap root, String RealPath) throws Exception {
-        
+
         String content = "";
-        
-        try {
-            content = new Templating().getTemplating(template, root, RealPath);
-        } catch (TemplateException e) {
-            
-        } finally {
-            
-        }
-        
-        
+
+        content = new Templating().getTemplating(template, root, RealPath);
+
         //Properties props = new Properties();
         Properties mailProps = new Properties();
 
@@ -53,8 +46,6 @@ public class SendMail {
                 //return (new PasswordAuthentication("balamutior", "FDfdgg6fhDF"));
             }
         });
-
-
 
         MimeMessage msg = new MimeMessage(session);
 

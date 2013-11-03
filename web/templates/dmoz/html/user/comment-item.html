@@ -1,0 +1,40 @@
+<#list content?keys as key>
+<div class="comment" id="comment_${key}">
+    <div class='message hide'></div>
+    <div>
+        <div class="comment_head">
+            <span class="vote_comment">
+                <span id="vote_${key!'0'}" class="vote_count ">${(content[key]["vote"])!""}</span>
+                <span class="vote_up" value="${key!''}_comment" title="+1">&nbsp;</span>
+                <span class="vote_down" value="${key!''}_comment" title="-1">&nbsp;</span>
+            </span>
+            <span class="created"><a href="/${content[key]['login']!''}">${content[key]["login"]!""}</a></span>
+            <span class="created">отправлено ${content[key]["created"]!""}</span>
+            <a href="#comment_${key}">#<span></span></a>
+        </div>
+
+        <div class="comment__value">
+            <div class="comment__text">${content[key]["comment"]!""}</div>
+            <#if ((content[key]['user_auth']==content[key]["user_id"])!false)>
+            <div class="buttons">
+                <div class="button edit__button" value="${key}">редактировать</div>
+                <div class="button delete__button" value="${key}">удалить</div>
+            </div>
+            </#if>
+        </div>
+
+        <#if ((content[key]['user_auth']==content[key]["user_id"])!false)>
+        <div class="comment__edit form__edit" style="display: none">
+            <div class="comment__text"><textarea rows="2" name="text"></textarea></div>
+            <div class="buttons">
+                <div class="button save__button" value="${key}">сохранить</div>
+                <div class="button cancel__button" value="${key}">отмена</div>
+            </div>
+            <input type="hidden" name="id" value="${key}">
+            <input type="hidden" name="post" value="${content[key]['post']!''}">
+        </div>
+        </#if>
+    </div>
+</div>
+</#list>
+

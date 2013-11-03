@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
  *
  * @author mark
  */
-@WebServlet(name = "ServiceTmp", urlPatterns = {"/ServiceTmp"})
+@WebServlet(name = "ServiceTmp", urlPatterns = {"/svc/ServiceTmp"})
 public class ServiceTmp extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(ServiceTmp.class);

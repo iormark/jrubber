@@ -160,10 +160,10 @@ $(document).ready(function() {
 
 
     $("#upload-all").click(function() {
-        $('#upload-all').attr('disabled', 'disabled');
+        //$('#upload-all').attr('disabled', 'disabled');
         log('Проверяем');
 
-        $.post("/FileUpload2", {
+        $.post("/svc/FileUpload2", {
             q: "header",
             name: $("#add__post input[name='name']").val(),
             email: $("#add__post input[name='email']").val(),
@@ -174,7 +174,7 @@ $(document).ready(function() {
             if (response.status == 'ok') {
                 uploaderFile(response);
             } else {
-                $('#upload-all').removeAttr('disabled');
+                //$('#upload-all').removeAttr('disabled');
                 log(response.message);
             }
         }, "json").fail(function() {
@@ -191,15 +191,15 @@ $(document).ready(function() {
             var pBar = $(uploadItem).find('.progress');
 
             if (!uploadItem.file) {
-                log('Проверяем...');
 
-                $.post("/FileUpload2", {
+                $.post("/svc/FileUpload2", {
                     q: "article",
                     name: $("#add__post input[name='name']").val(),
                     email: $("#add__post input[name='email']").val(),
                     title: $("#add__post input[name='title']").val(),
                     tags: $("#add__post input[name='tags']").val(),
                     text: $(uploadItem).find('textarea').val(),
+                    video: $("#add__post input[name='video']").val(),
                     key: $("#add__post input[name='key']").val()
                 },
                 function(response) {
@@ -207,7 +207,7 @@ $(document).ready(function() {
                         log(response.message);
                         messageEstablishment();
                     } else {
-                        $('#upload-all').removeAttr('disabled');
+                        //$('#upload-all').removeAttr('disabled');
                         log(response.message);
                     }
                 }, "json").fail(function() {
@@ -236,9 +236,10 @@ $(document).ready(function() {
                     tags: $("#add__post input[name='tags']").val(),
                     key: $("#add__post input[name='key']").val(),
                     text: $(uploadItem).find('textarea').val(),
+                    video: $("#add__post input[name='video']").val(),
                     sort: $(uploadItem).find('input[name="sort"]').val(),
                     file: uploadItem.file,
-                    url: '/FileUpload2',
+                    url: '/svc/FileUpload2',
                     onprogress: function(percents) {
                         updateProgress(pBar, percents);
                     },
@@ -251,10 +252,11 @@ $(document).ready(function() {
                             if (data.status == 'ok') {
                                 $(uploadItem).addClass('down');
                             } else if (data.status == 'error') {
-                                $(uploadItem).addClass('down__error');
-                                pBar.attr('rel', 0).text('0%').css('background', 'none');
-                                $('<ul/>').html(data.message).addClass('error').appendTo($(uploadItem).find('.out'));
-                                $('#upload-all').removeAttr('disabled');
+                                //$(uploadItem).addClass('down__error');
+                                updateProgress(pBar, 0);
+                                //$('<ul/>').html(data.message).addClass('error').appendTo($(uploadItem).find('.out'));
+                                log('Ошибка: `' + uploadItem.file.name + '` (' + data.message + ')');
+                                //$('#upload-all').removeAttr('disabled');
                             }
 
                             var create = createPost();
@@ -278,11 +280,12 @@ $(document).ready(function() {
         if (downCount == imgCount) {
             log('Проверяем...');
 
-            $.post("/FileUpload2", {
+            $.post("/svc/FileUpload2", {
                 q: "create",
                 name: $("#add__post input[name='name']").val(),
                 email: $("#add__post input[name='email']").val(),
                 title: $("#add__post input[name='title']").val(),
+                video: $("#add__post input[name='video']").val(),
                 tags: $("#add__post input[name='tags']").val(),
                 key: $("#add__post input[name='key']").val()
             },
@@ -309,8 +312,7 @@ $(document).ready(function() {
         var obj = $('#add__post');
         obj.html('');
         $('<h1/>').text('Спасибо, пост отправлен').appendTo(obj);
-        $('<div/>').text('Пост отправлен нашему редактору на проверку.').appendTo(obj);
-        $('<div/>').html('<a href="/">Вернуться на главную</a>').appendTo(obj);
+        $('<div/>').html('<a href="/">Ваша новость в разделе новое.</a>').appendTo(obj);
 
         $('body,html').animate({
             scrollTop: 0
@@ -325,7 +327,7 @@ $(document).ready(function() {
     }
 
     $("#filed__tags").keyup(function() {
-        $.getJSON(('/FileUpload2?q=autocomplete&tags=' + $(this).val()), function(data) {
+        $.getJSON(('/svc/FileUpload2?q=autocomplete&tags=' + $(this).val()), function(data) {
             autocomplete.html('');
             $.each(data[1], function(key, val) {
                 $('<div/>').html(val).appendTo(autocomplete).click(function() {

@@ -14,27 +14,30 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import logic.user.Comment;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author mark
  */
-public class Anecdote extends Creator {
+public class Post extends Creator {
 
     private int gid = 0, imageLength = 0, next = 0, back = 0;
     private String id = "0";
     private HashMap<String, String> itemMeta = new HashMap();
     private LinkedHashMap<String, HashMap> item = new LinkedHashMap();
     private HashMap<String, HashSet> tags = new HashMap();
-    private LinkedHashMap<String, HashMap> Comment = new LinkedHashMap();
+    private LinkedHashMap<String, HashMap> Comment = null;
     private HashMap<String, HashMap> bn = new LinkedHashMap();
-    private Util util = new Util();
+    private static Util util = new Util();
     private UrlOption urloption;
     private Date LastModified = null;
     private EditCookie editcookie;
     private Connection conn;
+    private static final Logger logger = Logger.getLogger(Post.class);
 
-    public Anecdote(HttpServletRequest request, HttpServletResponse response, Connection conn) throws SQLException, Exception {
+    public Post(HttpServletRequest request, HttpServletResponse response, Connection conn) throws SQLException, Exception {
 
         Statement stmt = conn.createStatement();
 
@@ -44,11 +47,11 @@ public class Anecdote extends Creator {
         ResultSet rs = null;
         int typeId = 0;
 
-        rs = stmt.executeQuery("SELECT * FROM `post` WHERE (status = 'new' OR status = 'on') AND id = '" + id + "'");
+        rs = stmt.executeQuery("SELECT * FROM users u, post p WHERE u.id=p.user AND p.status IN('new','on') AND p.id = '" + id + "'");
 
         while (rs.next()) {
             itemMeta.put("id", rs.getString("id"));
-            itemMeta.put("name", rs.getString("name"));
+            itemMeta.put("login", rs.getString("login"));
             itemMeta.put("title", rs.getString("title"));
             itemMeta.put("vote", rs.getInt("vote") > 0 ? "" + rs.getString("vote") : rs.getString("vote"));
 
@@ -57,14 +60,13 @@ public class Anecdote extends Creator {
             if (LastModified == null) {
                 LastModified = rs.getTimestamp("last_modified");
             }
-
         }
-        
 
-        rs = stmt.executeQuery("SELECT i.* FROM `post_item` i, `post` p WHERE i.post = p.id AND (p.status = 'new' OR p.status = 'on')  AND i.post = '" + id + "' ORDER BY i.id LIMIT 99;");
+        rs = stmt.executeQuery("SELECT i.id, i.post, i.text, i.image, i.img, i.video, i.alt, i.status FROM `post_item` i WHERE  i.post = '" + id + "' ORDER BY i.sort LIMIT 99;");
 
-        ViewMethod view = new ViewMethod(rs, stmt, true);
+        ViewMethod view = new ViewMethod(rs, stmt, true, false);
         item = view.getViewCatalog();
+        System.out.println(item);
         tags = view.getPostTags(id);
 
         for (Map.Entry<String, HashMap> entry : item.entrySet()) {
@@ -109,23 +111,10 @@ public class Anecdote extends Creator {
 
         // отзывы 
         try {
-
-            rs = stmt.executeQuery("SELECT * FROM `comment`c WHERE post='" + id + "' AND status='show'");
-
-            for (int i = 0; rs.next(); i++) {
-                HashMap data = new HashMap();
-                data.put("name", rs.getString("name"));
-                data.put("email", rs.getString("email"));
-                data.put("comment", rs.getString("comment"));
-                data.put("created", util.dateFormat(rs.getTimestamp("created")));
-                data.put("time", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss+03:00").format(rs.getTimestamp("created")));
-                data.put("status", rs.getString("status"));
-                data.put("vote", rs.getInt("vote") > 0 ? "+" + rs.getString("vote") : rs.getString("vote"));
-
-                Comment.put(rs.getString("id"), data);
-
-            }
+            Comment comment = new Comment(stmt, id);
+            Comment = comment.getComment();
         } catch (Exception e) {
+            logger.error(e);
         }
 
         editcookie = new EditCookie(request, response);

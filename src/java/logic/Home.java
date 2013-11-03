@@ -1,12 +1,19 @@
 package logic;
 
-import core.*;
+import core.CategoriesTree;
+import core.PagingNavigation;
+import core.UrlOption;
+import core.Util;
+import core.ViewMethod;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -97,15 +104,11 @@ public class Home extends Creator {
     }
 
     private void setHome(HttpServletRequest request, String tagsID, String status) throws SQLException {
-//System.out.println("SELECT h.text, h.image, h.alt,COUNT(h.id) as CountPosts, hm.*, t.name AS nameType, t.name_alias AS nameAlias  FROM `type2` t, `humor` h, `humor_meta` hm WHERE t.id = hm.type_int AND h.id = hm.id AND hm.status ='on' " + CategoriesAllId + " GROUP BY h.id ORDER BY hm.date DESC LIMIT " + begin + "," + lt);
+
         //rs = stmt.executeQuery("SELECT h.text, h.image, h.alt,COUNT(h.id) as CountPosts, hm.*, t.name AS nameType, t.name_alias AS nameAlias, t.hurl  FROM `type2` t, `humor` h, `humor_meta` hm WHERE t.id = hm.type_int AND h.id = hm.id AND hm.status ='on' " + CategoriesAllId + " GROUP BY h.id ORDER BY hm.date DESC LIMIT " + begin + "," + lt);
 
-        rs = stmt.executeQuery("SELECT SQL_CALC_FOUND_ROWS p.*, i.itemCount, i.text, i.image, i.img, i.alt, "
-                + "(SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) "
-                + "AS commentCount FROM tags_link tl, post p JOIN "
-                + "(SELECT post, text, image, img, alt, COUNT(*) AS itemCount FROM post_item GROUP BY post) AS i "
-                + "ON p.id=i.post WHERE p.status='" + status + "' AND p.id=tl.post " + tagsID + " GROUP BY p.id "
-                + "ORDER BY p.date DESC LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
+        rs = stmt.executeQuery("SELECT SQL_CALC_FOUND_ROWS u.login, p.*, i.itemCount, pi.text, pi.image, pi.img, pi.alt, pi.video, (SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount FROM users u, post p, tags_link tl, post_item pi JOIN (SELECT id, post, COUNT(*) AS itemCount, MIN(sort) AS sortMin FROM post_item GROUP BY post) AS i ON pi.post=i.post AND pi.sort=i.sortMin WHERE u.id=p.user AND tl.post=p.id AND p.id=pi.post AND p.status='" + status + "' " + tagsID + " GROUP BY p.id ORDER BY p.svc_date DESC LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
+        
 
         ViewMethod view = new ViewMethod(rs, stmt);
         item = view.getViewCatalog();

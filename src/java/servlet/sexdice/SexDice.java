@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author mark
  */
-@WebServlet(name = "SexDice", urlPatterns = {"/SexDice"})
+@WebServlet(name = "SexDice", urlPatterns = {"/svc/SexDice"})
 public class SexDice extends HttpServlet {
 
     synchronized protected void processRequest(HttpServletRequest request, HttpServletResponse response)

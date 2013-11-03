@@ -3,6 +3,7 @@
  */
 package servlet;
 
+import logic.add.*;
 import core.EditCookie;
 import core.GifDecoder;
 import core.JNDIConnection;
@@ -34,24 +35,24 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import logic.user.Check;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.response.TermsResponse;
 
 /**
  *
  * @author mark
  */
-@WebServlet(name = "FileUpload2", urlPatterns = {"/FileUpload2"})
-public class FileUpload2 extends HttpServlet {
+@WebServlet(name = "FileUpload3", urlPatterns = {"/svc/FileUpload3"})
+public class FileUpload3 extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(FileUpload2.class);
     private Util util = new Util();
-    private StringBuilder message = new StringBuilder();
-    private Check check = new Check();
+    private String message = "";
+    private CheckRequest checkRequest = null;
     private static HashMap censure = new HashMap();
 
     {
@@ -113,30 +114,41 @@ public class FileUpload2 extends HttpServlet {
             JNDIConnection jndi = new JNDIConnection();
             Connection conn = jndi.init();
             Statement stmt = conn.createStatement();
+            Check check = new Check(request, response, stmt);
+
+            if (!check.getCheck()) {
+                out.print("{\"status\":\"error\",\"message\":\"Отказанно в доступе!\"}");
+                return;
+            }
 
             try {
                 request.setCharacterEncoding("UTF-8");
+
+                checkRequest = new CheckRequest(request);
 
                 System.out.println(">>>>" + q);
                 switch (q) {
                     case "header":
 
-                        check.heckName(request.getParameter("name"));
-                        check.heckEmail(request.getParameter("email"));
-                        check.heckTitle(request.getParameter("title"));
-                        check.heckTags(request.getParameter("tags"));
+                        //checkRequest.heckName(request.getParameter("name"));
+                        //checkRequest.heckEmail(request.getParameter("email"));
+                        checkRequest.heckTitle(request.getParameter("title"));
+                        checkRequest.heckVideo();
+                        checkRequest.heckTags(request.getParameter("tags"));
 
                         break;
                     case "article":
-                        System.out.println("text" + request.getParameter("key"));
-                        Create create = new Create(request, response, conn, stmt);
+                        System.out.println("text" + request.getParameter("text"));
+                        Create create = new Create(request, response, conn, stmt, check);
 
-                        String text = check.heckText(request.getParameter("text"));
+                        checkRequest.heckTitle(request.getParameter("title"));
+                        String text = checkRequest.heckText();
+                        String video = checkRequest.heckVideo();
 
-                        create.createPost();
-                        create.createPost_item(text);
+                        create.createPost(video, false);
+                        create.createPost_item(text, video, 0);
 
-                        create.createTags(check.heckTags(request.getParameter("tags")));
+                        create.createTags(checkRequest.heckTags(request.getParameter("tags")));
 
                         break;
                     case "file":
@@ -145,10 +157,11 @@ public class FileUpload2 extends HttpServlet {
 
                         break;
                     case "create":
-                        Create create2 = new Create(request, response, conn, stmt);
-                        HashSet tags = check.heckTags(request.getParameter("tags"));
+                        Create create2 = new Create(request, response, conn, stmt, check);
+                        //video = checkRequest.heckVideo();
+                        HashSet tags = checkRequest.heckTags(request.getParameter("tags"));
 
-                        create2.createPost();
+                        create2.createPost("", true);
                         System.out.println("Tags: " + tags);
                         create2.updateItem_post();
                         create2.createTags(tags);
@@ -162,7 +175,7 @@ public class FileUpload2 extends HttpServlet {
                 }
 
             } catch (Exception ex) {
-                message.append("<li>" + ex.getMessage().trim() + "</li>");
+                message = ("<li>" + ex.getMessage().trim() + "</li>");
                 logger.error("", ex);
             } finally {
                 jndi.close(stmt, null);
@@ -173,10 +186,12 @@ public class FileUpload2 extends HttpServlet {
                     out.print("{\"status\":\"error\",\"action\":\"" + q + "\",\"message\":\"" + message.toString().trim() + "\"}");
                 }
 
-                message.delete(0, Integer.MAX_VALUE);
+                message = "";
             }
 
         } catch (SQLException ex) {
+            logger.error("", ex);
+        } catch (Exception ex) {
             logger.error("", ex);
         }
 
@@ -234,9 +249,9 @@ public class FileUpload2 extends HttpServlet {
         private Connection conn = null;
         private Statement stmt = null;
 
-        private String name = null;
-        private String email = null;
+        private String userID = "0";
         private String title = null;
+        private String video = null;
         private long key = 0;
 
         private int insertPostId = 0;
@@ -246,29 +261,26 @@ public class FileUpload2 extends HttpServlet {
             this.stmt = stmt;
         }
 
-        public Create(HttpServletRequest request, HttpServletResponse response, Connection conn, Statement stmt) throws SQLException {
+        public Create(HttpServletRequest request, HttpServletResponse response, Connection conn, Statement stmt, Check check) throws SQLException {
 
             this.conn = conn;
             this.stmt = stmt;
 
-            name = request.getParameter("name");
-            email = request.getParameter("email");
+            userID = check.getUserID();
             title = request.getParameter("title");
 
             try {
                 key = Long.parseLong(request.getParameter("key"));
             } catch (NumberFormatException ex) {
-                message.append("<li>Ошибочка вышла, простите...</li>");
+                message = ("<li>Ошибочка вышла, простите...</li>");
                 return;
             }
 
-            check.heckName(name);
-            check.heckEmail(email);
-            title = check.heckTitle(title);
-
+            title = checkRequest.heckTitle(title);
+            
         }
 
-        public void createPost() throws SQLException {
+        public void createPost(String video, boolean isVideo) throws SQLException {
             if (message.length() != 0) {
                 return;
             }
@@ -276,26 +288,36 @@ public class FileUpload2 extends HttpServlet {
             System.out.println("------start-------");
             System.out.println("Query post");
             PreparedStatement ps = conn.prepareStatement("INSERT INTO `post` "
-                    + "(`name`, `email`, `title`, `date`, `type`) "
-                    + "VALUES (?, ?, ?, NOW(), ?);", Statement.RETURN_GENERATED_KEYS);
+                    + "(`user`, `name`, `email`, `title`, `date`, `type`, status) "
+                    + "VALUES (?, '', '', ?, NOW(), ?, 'del')", Statement.RETURN_GENERATED_KEYS);
 
-            ps.setString(1, StringEscapeUtils.escapeHtml4(name));
-            ps.setString(2, StringEscapeUtils.escapeHtml4(email));
-            ps.setString(3, StringEscapeUtils.escapeHtml4(title));
-            ps.setInt(4, 0);
+            ps.setString(1, userID);
+            ps.setString(2, StringEscapeUtils.escapeHtml4(title));
+            ps.setInt(3, 0);
             ps.executeUpdate();
 
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
                 insertPostId = rs.getInt(1);
             } else {
-                //message.append("<li>Ошибочка вышла, простите...</li>");
+                //message = ("<li>Ошибочка вышла, простите...</li>");
+            }
+
+            int postCount = 0;
+
+            rs = stmt.executeQuery("SELECT COUNT(*) AS postCount FROM post_item WHERE post='" + insertPostId + "' AND img IS NOT NULL GROUP BY post");
+            if (rs.next()) {
+                postCount = rs.getInt("postCount");
+            }
+
+            if (isVideo) {
+                createPost_item("", video, 99);
             }
 
             System.out.println("------end-------\n");
         }
 
-        public void createPost_item(String text) throws SQLException {
+        public void createPost_item(String text, String video, int sort) throws SQLException {
             if (message.length() != 0) {
                 return;
             }
@@ -303,12 +325,13 @@ public class FileUpload2 extends HttpServlet {
             System.out.println("------start-------");
             System.out.println("Query post_item");
             PreparedStatement ps = conn.prepareStatement("INSERT INTO `post_item` "
-                    + "(`post`, `sort`, `text`, `image`, `img`, `alt`, `date`, `key`) "
-                    + "VALUES (?, ?, ?, null, null, '', NOW(), null);");
+                    + "(`post`, `sort`, `text`, `image`, `img`, `video`, `alt`, `date`, `key`) "
+                    + "VALUES (?, ?, ?, null, null, ?, '', NOW(), null);");
 
             ps.setInt(1, insertPostId);
-            ps.setInt(2, 0);
+            ps.setInt(2, sort);
             ps.setString(3, util.lineFeed(text));
+            ps.setString(4, video);
             ps.executeUpdate();
             System.out.println("------end-------\n");
         }
@@ -341,7 +364,7 @@ public class FileUpload2 extends HttpServlet {
                 }
                 ps.setString(5, img);
 
-                HashSet tags = check.heckTags((String) ListContent.get(i).get("tags"));
+                HashSet tags = checkRequest.heckTags((String) ListContent.get(i).get("tags"));
                 ps.setString(6, tags.toString().replaceAll("[\\[\\]]", ""));
 
                 ps.setString(7, (String) ListContent.get(i).get("key"));
@@ -504,7 +527,7 @@ public class FileUpload2 extends HttpServlet {
             } catch (Exception ex) {
                 logger.error("", ex);
                 System.out.println("File - " + ex);
-                message.append("<li>" + ex.getMessage() + "</li>");
+                message = ("<li>" + ex.getMessage() + "</li>");
                 deleteFile(out);
             }
 
@@ -541,7 +564,7 @@ public class FileUpload2 extends HttpServlet {
             if (mimeType.equals(".jpeg") || mimeType.equals(".gif")
                     || mimeType.equals(".png") || mimeType.equals(".jpg")) {
             } else {
-                message.append("<li>Файл не является изображением.</li>");
+                message = ("<li>Файл не является изображением.</li>");
                 deleteFile(out);
                 return null;
             }
@@ -575,7 +598,7 @@ public class FileUpload2 extends HttpServlet {
                 }
 
                 if (!"".equals(res)) {
-                    message.append("<li>" + res.trim() + "</li>");
+                    message = ("<li>" + res.trim() + "</li>");
                     return imageItem;
                 }
 
@@ -605,7 +628,7 @@ public class FileUpload2 extends HttpServlet {
 
             } catch (Exception ex) {
                 logger.error("", ex);
-                message.append("<li>Ошибка при загрузке изображения!</li>");
+                message = ("<li>Ошибка при загрузке изображения!</li>");
             }
             return imageItem;
         }
@@ -626,69 +649,91 @@ public class FileUpload2 extends HttpServlet {
     /**
      * Проверка тайтла.
      */
-    private class Check {
+    private class CheckRequest {
+
+        String text = null;
+        String video = null;
+
+        public CheckRequest(HttpServletRequest request) {
+            text = request.getParameter("text");
+            text = text != null ? text.trim() : "";
+            video = request.getParameter("video");
+            video = video != null ? video.trim() : "";
+        }
 
         public void heckName(String name) {
             if (name != null) {
                 if (name.equals("")) {
-                    message.append("<li>Имя обязательно для заполнения.</li>");
+                    message = ("<li>Имя обязательно для заполнения.</li>");
                 } else if (name.length() > 55) {
-                    message.append("<li>Имя не может быть более 55 символов.</li>");
+                    message = ("<li>Имя не может быть более 55 символов.</li>");
                 } else if (name.length() == 1) {
-                    message.append("<li>Имя должно быть не менее 2 символов.</li>");
+                    message = ("<li>Имя должно быть не менее 2 символов.</li>");
                 }
             } else {
-                message.append("<li>Иди на хуй бот!</li>");
+                message = ("<li>Иди на хуй бот!</li>");
             }
         }
 
         public void heckEmail(String email) {
             if (email != null) {
                 if (!util.checkEmail(email)) {
-                    message.append("<li>Адрес электронной почты ").append(email).append(" не корректен.</li>");
+                    message = ("<li>Адрес электронной почты " + email + " не корректен.</li>");
                 }
             } else {
-                message.append("<li>Иди на хуй бот!</li>");
+                message = ("<li>Иди на хуй бот!</li>");
             }
         }
 
         public String heckTitle(String title) {
             if (title != null) {
                 title = title.trim();
-
                 if (title.length() > 255) {
-                    message.append("<li>Название не может быть более 255 символов.</li>");
-                } else if (title.length() > 5) {
+                    message = ("<li>Название не более 255 символов.</li>");
+                } else if (title.length() >= 6) {
                     title = (String.valueOf(title.charAt(0)).toUpperCase()).concat(title.substring(1));
-                } else if (title.length() > 1 && title.length() <= 5) {
-                    message.append("<li>Названия может не быть! Если есть, то не менее 5 символов.</li>");
+                } else if ((title.length() < 6)) {
+                    message = ("<li>Название не менее 6 символов.</li>");
                 }
             } else {
-                message.append("<li>Иди на хуй бот!</li>");
+                message = ("<li>Иди на хуй бот!</li>");
             }
-            
+
             return title;
         }
 
-        public String heckText(String text) {
-            if (text != null) {
+        public String heckText() {
+            if (video.equals("")) {
                 if (text.equals("")) {
-                    message.append("<li>Постить пустоту запрещено!</li>");
-                } else if (text.length() <= 5) {
-                    message.append("<li>Слишком короткий текст!</li>");
+                    message = ("<li>Постить пустоту запрещено!</li>");
+                } else if (text.length() <= 6) {
+                    message = ("<li>Слишком короткий текст!</li>");
                 } else if (text.length() > 10000) {
-                    message.append("<li>У нас тут, не Википедия!</li>");
+                    message = ("<li>У нас тут, не Википедия!</li>");
                 }
-            } else {
-                message.append("<li>Постить пустоту запрещено!</li>");
+            }
+            //message = ("<li>=" + text + "</li>");
+            return text;
+        }
+
+        public String heckVideo() {
+
+            if (video.equals("") && text.equals("")) {
+                message = ("<li>Постить пустоту запрещено!2</li>");
+            } else if (!video.equals("")) {
+                 if (video.length() > 255) {
+                    message = ("<li>URL должен быть не более 255 символов.</li>");
+                } else if (!util.checkURLconnect(video)) {
+                    message = ("<li>Сервер по указанному URL не отвечает!</li>");
+                } 
             }
 
-            return text;
+            return video;
         }
 
         private HashSet heckTags(String tags) {
             if (tags == null) {
-                message.append("<li>Иди на хуй бот!</li>");
+                message = ("<li>Иди на хуй бот!</li>");
                 return null;
             }
 
@@ -696,19 +741,19 @@ public class FileUpload2 extends HttpServlet {
             HashSet tagsMap = new HashSet();
 
             if (tags.length() > 120) {
-                message.append("<li>Общая длина тегов не может превышать 240 символов</li>");
+                message = ("<li>Общая длина тегов не может превышать 240 символов</li>");
                 return null;
             }
 
             String[] tagArray = tags.split(",");
 
             if (tagArray.length < 2) {
-                message.append("<li>Добавьте несколько тегов</li>");
+                message = ("<li>Добавьте несколько тегов</li>");
                 return null;
             }
 
             if (tagArray.length > 6) {
-                message.append("<li>Всего разрешено 6 тегов</li>");
+                message = ("<li>Всего разрешено 6 тегов</li>");
                 return null;
             }
 
@@ -719,17 +764,17 @@ public class FileUpload2 extends HttpServlet {
                     String[] wordArray = tag.split("[\\s]+");
 
                     if (wordArray.length > 4) {
-                        message.append("<li>Один тег не может содержать более 4-х слов!</li>");
+                        message = ("<li>Один тег не может содержать более 4-х слов!</li>");
                         break;
                     }
 
                     if (tag.length() > 30) {
-                        message.append("<li>Один тег не может превышать 30 символов!</li>");
+                        message = ("<li>Один тег не может превышать 30 символов!</li>");
                         break;
                     }
 
                     if (tag.length() <= 1) {
-                        message.append("<li>Тег не может состоять из 1-го символа!</li>");
+                        message = ("<li>Тег не может состоять из 1-го символа!</li>");
                         break;
                     }
 
@@ -741,7 +786,7 @@ public class FileUpload2 extends HttpServlet {
 
                     tagsMap.add(words.trim());
                 } else {
-                    message.append("<li>Недопустимые символы в тегах!</li>");
+                    message = ("<li>Недопустимые символы в тегах!</li>");
                     break;
                 }
 

@@ -1,0 +1,56 @@
+
+<h2>Мои настройки</h2>
+<div class="edit">
+
+    <div class="edit__general">
+        <form method="post" action="/svc/edit" class="wagon">
+            
+            <div class="edit__row clear_fix">
+                <div class="edit__label">E-mail:</div>
+                <div class="edit__field">
+                    <input type="text" name="email" value="${(user.getUserMap()['email'])!''}">
+                </div>
+            </div>
+
+            <div class="edit__row clear_fix">
+                <div class="edit__label">Пол:</div>
+                <div class="edit__field">
+                    <select name="sex">
+                        <option value="0"></option>
+                        <option value="1" <#if ((user.getUserMap()['sex'])!"")=="1">selected</#if>>женский</option>
+                        <option value="2" <#if ((user.getUserMap()['sex'])!"")=="2">selected</#if>>мужской</option>
+                    </select>
+                </div>
+            </div>
+
+            <#if !content.getHash()??>
+            <div class="edit__row clear_fix">
+                <div class="edit__label">Текущий пароль:</div>
+                <div class="edit__field">
+                    <input type="password" name="password">
+                </div>
+            </div>
+            <#else>
+            <input type="hidden" name="hash" value="${(content.getHash()!'')}">
+            </#if>
+
+            <div class="edit__row clear_fix">
+                <div class="edit__label">Новый пароль:</div>
+                <div class="edit__field">
+                    <input type="password" name="password_new">
+                </div>
+            </div>
+
+            <div class="pedit_controls_separator"></div>
+
+            <div class="edit__submit clear_fix">
+                <div class="edit__label"></div>
+                <div class="edit__field">
+                    <input type="submit" name="button" value="Сохранить" class="btn">
+                    <input type="hidden" name="q" value="edit">
+                </div>
+            </div>
+            <div class="message hide"></div>
+        </form>
+    </div>
+</div>

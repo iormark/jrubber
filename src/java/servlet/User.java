@@ -5,7 +5,6 @@ package servlet;
 
 import core.EditCookie;
 import core.JNDIConnection;
-import core.Templating;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
@@ -13,37 +12,36 @@ import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import logic.Creator;
 import logic.user.Check;
+import logic.user.Login;
+import logic.user.Password;
+import logic.user.Register;
 import org.apache.log4j.Logger;
 
 /**
  *
  * @author mark
  */
-@WebServlet(name = "User", urlPatterns = {"/user"})
+@WebServlet(name = "User", urlPatterns = {"/svc/user"})
 public class User extends HttpServlet {
 
-    //private Memory memory = new Memory();
-    private static final Logger logger = Logger.getLogger(Main.class);
+    private static final Logger logger = Logger.getLogger(User.class);
+    
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
 
-
         String q = request.getParameter("q") != null ? request.getParameter("q") : "home";
-
-
 
         JNDIConnection jndi = new JNDIConnection();
         Connection conn = jndi.init();
@@ -61,66 +59,59 @@ public class User extends HttpServlet {
                 return;
             }
 
-            Creator creator = null;
-
-
             try {
 
                 Check check = new Check(request, response, stmt);
 
                 //out.println(check.getUser());
-
-
                 /*
                  * if (!check.getCheck()) { out.println("У вас нет прав для
                  * просмотра!"); } else { out.println("Вы авторизированны)");
-                }
+                 }
                  */
+                if ("login".equals(q)) {
 
+                    Login login = new Login(request, response, stmt);
+                    out.println(login.getMessage());
 
-                if ("password".equals(q) && !check.getCheck()) {
-                    //creator = new logic.user.Password(request, response, stmt, memory);
-                } else if ("reset".equals(q) && check.getCheck()) {
-                    //creator = new logic.user.Reset(check.getUserID(), request, response, stmt, memory.getCfg());
+                } else if ("register".equals(q)) {
+
+                    Register register = new Register(request, response, conn, stmt);
+                    out.println(register.getMessage());
+
+                } else if ("password".equals(q) && !check.getCheck()) {
+
+                    Password password = new Password(request, response, stmt);
+                    out.println(password.getMessage());
+
                 } else if ("redirect".equals(q) && !check.getCheck()) {
 
                     MessageDigest md = MessageDigest.getInstance("MD5");
                     String UserID = request.getParameter("id");
                     String UserHash = request.getParameter("hash");
 
-                    ResultSet rs = stmt.executeQuery("SELECT * FROM `users` WHERE `id` = '" + UserID + "'");
+                    ResultSet rs = stmt.executeQuery("SELECT * FROM `users` WHERE `id` = '" + UserID + "' AND hash='" + UserHash + "'");
                     if (rs.next()) {
 
-                        if (!UserHash.equals(rs.getString("hash"))) {
-                            response.sendError(404);
-                        } else {
+                        UserHash = Long.toString(new Date().getTime());
 
-                            UserHash = Long.toString(new Date().getTime());
+                        md.reset();
+                        md.update(UserHash.getBytes(), 0, UserHash.length());
+                        UserHash = new BigInteger(1, md.digest()).toString(16);
 
-                            md.reset();
-                            md.update(UserHash.getBytes(), 0, UserHash.length());
-                            UserHash = new BigInteger(1, md.digest()).toString(16);
+                        stmt.executeUpdate("UPDATE `users` SET `hash` = '" + UserHash + "' WHERE `id` = " + UserID + ";");
 
+                        EditCookie editcookie = new EditCookie(request, response);
+                        editcookie.setCookie("user_id", UserID, null, 3600 * 24 * 3);
+                        editcookie.setCookie("user_hash", UserHash, null, 3600 * 24 * 3);
 
-                            stmt.executeUpdate("UPDATE `users` SET `hash` = '" + UserHash + "' WHERE `id` = " + UserID + ";");
-
-
-                            EditCookie editcookie = new EditCookie(request, response);
-                            editcookie.setCookie("user_id", UserID, null, 3600 * 24 * 3);
-                            editcookie.setCookie("user_hash", UserHash, null, 3600 * 24 * 3);
-
-
-                            response.sendRedirect("/user?q=reset");
-
-                        }
-
+                        response.sendRedirect("/edit?hash=" + UserHash);
 
                     } else {
                         response.sendError(404);
 
                     }
 
-                    return;
                 } else if ("signout".equals(q) && check.getCheck()) {
 
                     EditCookie editcookie = new EditCookie(request, response);
@@ -128,58 +119,18 @@ public class User extends HttpServlet {
                     editcookie.setCookie("user_hash", "", null, 0);
                     response.sendRedirect("/");
 
-                    return;
-                } else if (q.startsWith("home") && check.getCheck()) {
-                    creator = new logic.user.Home();
+                } else {
+                    response.sendRedirect("/");
                 }
-                /*
-                 * else if (q.startsWith("profile/reset/") && !check.getCheck())
-                 * {
-                 *
-                 * creator = new logic.user.Profile(request, response, stmt,
-                 * memory); q = "profile";
-                 *
-                 * }
-                 */
-            } catch (Exception e) {
 
+            } catch (Exception e) {
                 logger.error("", e);
-                response.sendError(500);
-                return;
-            }
-
-
-            if (creator == null) {
-                response.sendRedirect("/user?q=login");
-                return;
-            }
-
-            if (creator.getServerStatus() != 200) {
-                response.sendError(creator.getServerStatus());
-                return;
-            }
-
-
-            //root.put("memory", memory);
-
-            root.put("content_tpl", "" + q + ".html");
-            root.put("title", creator.getMetaTitle() + " | ");
-            root.put("content", creator);
-
-            root.put("footer", new SimpleDateFormat("yyyy").format(new Date()));
-
-
-            try {
-
-                new Templating().getTemplating(getServletContext().getRealPath("/"), "user/index.html").process(root, out);
-
-            } catch (Exception e) {
-                out.println(e);
+                //response.sendError(500);
             }
 
         } catch (Exception e) {
             logger.error("", e);
-            response.sendError(500);
+            //response.sendError(500);
         } finally {
             jndi.close(stmt, null);
         }

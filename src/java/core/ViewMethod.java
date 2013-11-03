@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  *
@@ -28,26 +29,28 @@ public class ViewMethod {
     private HashMap<String, HashSet> tags = new HashMap();
     private Util util = new Util();
     private XmlOptionReader xor = new XmlOptionReader();
-    boolean view = false; //true-в крточке
+    boolean view = false, comment = false; //true-в крточке
 
     public ViewMethod(ResultSet rs, Statement stmt) {
         this.rs = rs;
         this.stmt = stmt;
     }
-    
-    public ViewMethod(ResultSet rs, Statement stmt, boolean view) {
+
+    public ViewMethod(ResultSet rs, Statement stmt, boolean view, boolean comment) {
         this.rs = rs;
         this.stmt = stmt;
         this.view = view;
+        this.comment = comment;
     }
 
     public ViewMethod(ResultSet rs) {
         this.rs = rs;
     }
 
-    public ViewMethod(ResultSet rs, boolean view) {
+    public ViewMethod(ResultSet rs, boolean view, boolean comment) {
         this.rs = rs;
         this.view = view;
+        this.comment = comment;
     }
 
     public LinkedHashMap getViewCatalog() throws SQLException {
@@ -69,6 +72,7 @@ public class ViewMethod {
             HashMap content = new HashMap();
 
             for (int j = 1; j < (numColumns + 1); j++) {
+
                 if (colNames[j] != null) {
                     Object f;
                     switch (rsm.getColumnType(j)) {
@@ -105,88 +109,101 @@ public class ViewMethod {
                         }
                     }
 
-                    switch (colNames[j]) {
-                        case "last_modified": {
-                            if (LastModified == null) {
-                                LastModified = rs.getTimestamp("last_modified");
-                            }
-                            break;
+                    if ("last_modified".equals(colNames[j])) {
+                        if (LastModified == null) {
+                            LastModified = rs.getTimestamp("last_modified");
                         }
-                        case "date": {
-                            f = util.dateFormat(rs.getTimestamp("date"));
-                            content.put("dateMore", new SimpleDateFormat("d MMM yy, HH:mm:ss").format(rs.getTimestamp("date")));
-                            break;
-                        }
-                        case "title": {
 
-                            if (rs.getString("title").equals("")) {
-                                f = "№ " + rs.getString("id");
-                            } else {
-                                f = util.specialCharacters(util.Shortening(rs.getString("title") + "", 85, ""));
-                            }
+                    } else if ("date".equals(colNames[j])) {
+                        f = util.dateFormat(rs.getTimestamp("date"));
+                        content.put("dateMore", new SimpleDateFormat("d MMM yy, HH:mm:ss").format(rs.getTimestamp("date")));
 
-                            break;
-                        }
-                        case "text": {
-                            if (view) {
-                                f = util.bbCode(rs.getString("text") + "");
-                            } else {
-                                f = util.Shortening(util.bbCode(rs.getString("text") + ""), 1000, "<br><a href=\"/anekdot?id=" + rs.getString("id") + "\" target=\"_blank\" title=\"Откроется в новом окне\">Читать дальше</a>");
-                            }
+                    } else if ("title".equals(colNames[j])) {
 
-                            break;
+                        if (rs.getString("title").equals("")) {
+                            f = "№ " + rs.getString("id");
+                        } else {
+                            f = util.specialCharacters(util.Shortening(rs.getString("title") + "", 85, ""));
                         }
-                        case "itemCount": {
-                            if (rs.getInt("itemCount") > 1) {
-                                f = " (" + rs.getString("itemCount") + " шт.)";
-                                content.put("readMore", "<a href=\"/anekdot?id=" + rs.getString("id") + "\" target=\"_blank\" title=\"Откроется в новом окне\">Читать дальше</a>");
-                            } else {
+
+                    } else if ("text".equals(colNames[j])) {
+                        if (view) {
+                            f = util.lineFeed(StringEscapeUtils.escapeHtml4(rs.getString("text")) + "");
+                        } else {
+                            f = util.Shortening(util.lineFeed(StringEscapeUtils.escapeHtml4(rs.getString("text")) + ""), 1000, "<br><a href=\"/anekdot?id=" + rs.getString("id") + "\" target=\"_blank\" title=\"Откроется в новом окне\">Читать дальше</a>");
+                        }
+
+                    } else if ("itemCount".equals(colNames[j])) {
+                        if (rs.getInt("itemCount") > 1) {
+                            f = " (" + rs.getString("itemCount") + " шт.)";
+                            content.put("readMore", "<a href=\"/anekdot?id=" + rs.getString("id") + "\" target=\"_blank\" title=\"Откроется в новом окне\">Читать дальше</a>");
+                        } else {
+                            f = "";
+                        }
+
+                    } else if ("vote".equals(colNames[j])) {
+                        f = rs.getInt("vote") > 0 ? (comment ? "+" : "") + rs.getString("vote") : rs.getString("vote");
+
+                    } else if ("image".equals(colNames[j])) {
+                        if (rs.getString("image") != null) {
+                            if (!rs.getString("image").equals("")) {
+                                content.put("alt", util.Shortening(util.specialCharactersTags(rs.getString("alt")), 255, ""));
+                                f = rs.getString("image");
+                            }
+                        }
+
+                    } else if ("img".equals(colNames[j])) {
+                        if (rs.getString("img") != null) {
+                            if (!rs.getString("img").equals("")) {
+
+                                try {
+                                    xor.setField(new String[]{"original", "middle"});
+                                    HashMap<String, HashMap> h = xor.setDocument(rs.getString("img"));
+
+                                    content.put("image", h.get("original").get("name"));
+                                    content.put("imagePath", h.get("original").containsKey("path") ? h.get("original").get("path") : "/photo_anekdot");
+
+                                    content.put("width", h.get("middle").get("width"));
+                                    content.put("height", h.get("middle").get("height"));
+
+                                    int gif = Integer.parseInt(h.get("original").get("animated").toString());
+                                    content.put("animated", gif > 0 ? "img__animated" : "");
+
+                                    long size = Long.parseLong(h.get("original").get("size").toString());
+                                    content.put("size", util.sizeFormat(size));
+                                } catch (Exception ex) {
+                                    System.out.println(ex);
+                                }
+                            }
+                        }
+
+                    } else if ("video".equals(colNames[j])) {
+                        if (rs.getString("video") != null) {
+                            if (!rs.getString("video").equals("")) {
+                                f = ("<iframe width=\"600\" height=\"400\" src=\"//" + rs.getString("video") + "\" frameborder=\"0\" allowfullscreen></iframe>");
+                            }
+                        } else {
+                            f = null;
+                        }
+                    } else if ("status".equals(colNames[j])) {
+
+                        String state = rs.getString("status");
+                        if (state != null) {
+                            if ("on".equals(state)) {
                                 f = "";
+                            } else if ("off".equals(state)) {
+                                f = "выключен";
+                            } else if ("black".equals(state)) {
+                                f = "спам";
+                            } else if ("check".equals(state)) {
+                                f = "ожидает проверки";
                             }
-                            break;
+                        } else {
+                            f = null;
                         }
-                        case "vote": {
-                            f = rs.getInt("vote") > 0 ? "" + rs.getString("vote") : rs.getString("vote");
-                            break;
-                        }
-                        case "image": {
-                            if (rs.getString("image") != null) {
-                                if (!rs.getString("image").equals("")) {
-                                    content.put("alt", util.Shortening(util.specialCharactersTags(rs.getString("alt")), 255, ""));
-                                    f = rs.getString("image");
-                                }
-                            }
-                            break;
-                        }
-                        case "img": {
-                            if (rs.getString("img") != null) {
-                                if (!rs.getString("img").equals("")) {
-
-                                    try {
-                                        xor.setField(new String[]{"original", "middle"});
-                                        HashMap<String, HashMap> h = xor.setDocument(rs.getString("img"));
-
-                                        content.put("image", h.get("original").get("name"));
-                                        content.put("imagePath", h.get("original").containsKey("path") ? h.get("original").get("path") : "/photo_anekdot");
-
-                                        content.put("width", h.get("middle").get("width"));
-                                        content.put("height", h.get("middle").get("height"));
-
-                                        int gif = Integer.parseInt(h.get("original").get("animated").toString());
-                                        content.put("animated", gif > 0 ? "img__animated" : "");
-
-                                        long size = Long.parseLong(h.get("original").get("size").toString());
-                                        content.put("size", util.sizeFormat(size));
-                                    } catch (Exception ex) {
-                                        System.out.println(ex);
-                                    }
-                                }
-                            }
-                            break;
-                        }
-
                     }
 
+                    //System.out.println(colNames[j]+"="+f);
                     content.put(colNames[j], f);
                     content.remove("img");
                 }
@@ -215,11 +232,10 @@ public class ViewMethod {
                 tags.put(post, node);
             }
         }
-        
-        System.out.println(tags);
+
         return tags;
     }
-    
+
     public HashMap getPostTags() throws SQLException {
         if (items.keySet().isEmpty()) {
             return null;
@@ -242,13 +258,13 @@ public class ViewMethod {
                 tags.put(post, node);
             }
         }
-        
+
         //System.out.println(tags);
         return tags;
     }
 
     public Date getLastModified() {
-        System.out.println(LastModified);
+
         return LastModified;
     }
 }

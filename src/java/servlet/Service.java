@@ -42,7 +42,7 @@ import org.json.simple.parser.JSONParser;
  *
  * @author mark
  */
-@WebServlet(name = "Service", urlPatterns = {"/Service"})
+@WebServlet(name = "Service", urlPatterns = {"/svc/Service"})
 public class Service extends HttpServlet {
 
     private Util util = new Util();
@@ -61,7 +61,6 @@ public class Service extends HttpServlet {
         Statement stmt = null;
         ResultSet rs = null;
 
-        
         try {
             try {
                 stmt = conn.createStatement();
@@ -70,23 +69,20 @@ public class Service extends HttpServlet {
                 return;
             }
 
+            Check check = new Check(request, response, stmt);
+
             String q = request.getParameter("q") != null ? request.getParameter("q") : "";
 
             if ("FileUpload".equals(q)) {
+
                 FileUpload fp = new FileUpload(request, response);
-            } else if ("login".equals(q)) {
-                Login login = new Login(request, response, stmt);
-                out.println(login.getMessage());
-            } else if ("register".equals(q)) {
-                Register register = new Register(request, response, conn, stmt);
-                out.println(register.getMessage());
-            } else if ("Quiz".equals(q)) {
+
+            } else  if ("Quiz".equals(q)) {
 
                 out.println(request.getParameter("id") + " ; " + request.getParameter("myPochta"));
 
                 stmt.executeUpdate("UPDATE `quiz` SET `value` = `value`+1 WHERE `id` = '" + request.getParameter("id") + "' AND `alias` = '" + request.getParameter("myPochta") + "' LIMIT 1;");
             } else if ("rating".equals(q)) {
-                Check check = new Check(request, response, stmt);
 
                 String outJson = "";
 
@@ -94,17 +90,10 @@ public class Service extends HttpServlet {
                         process = request.getParameter("action"),
                         id = request.getParameter("id"),
                         lastVote = request.getParameter("lastVote");
-                String voteCount = "0";
+                String voteLink = "0";
+                boolean status = false;
 
                 int intVote = 0;
-
-                HttpSession session = request.getSession(true);
-
-                JSONObject resultJson = new JSONObject();
-
-                JSONParser parser = new JSONParser();
-
-                JSONArray list = new JSONArray();
 
                 switch (vote) {
                     case "top":
@@ -117,40 +106,83 @@ public class Service extends HttpServlet {
                         break;
                 }
 
-                ContainerFactory containerFactory = new ContainerFactory() {
+                Blockage b = null;
 
-                    @Override
-                    public List creatArrayContainer() {
-                        return new LinkedList();
+                // авторизован
+                if (check.getCheck()) {
+
+                    int dbVote = 0;
+
+                    // Определям наличие лайка
+                    rs = stmt.executeQuery("SELECT `vote` FROM `vote_link` WHERE user=" + check.getUserID() + " AND `link`=" + id + " AND process='" + process + "' LIMIT 1");
+                    while (rs.next()) {
+                        dbVote = rs.getInt("vote");
                     }
 
-                    @Override
-                    public Map createObjectContainer() {
-                        return new LinkedHashMap();
+                    if ((dbVote == 1 && intVote == -1) || (dbVote == -1 && intVote == 1)) {
+                        voteLink = "0";
+                        status = true;
+                    } else if (dbVote == 0) {
+                        voteLink = vote;
+                        status = true;
+ 
                     }
-                };
 
-                Blockage b = new Blockage(request.getRemoteAddr(), process, id, intVote, "blockage", stmt, out);
+                    if (status) {
+                        stmt.executeUpdate("INSERT IGNORE `vote_link` (user,link,vote,process) "
+                                + "VALUES (" + check.getUserID() + "," + id + "," + vote + ",'" + process + "') "
+                                + "ON DUPLICATE KEY UPDATE vote=" + voteLink + ";");
+                    }
 
-                if (b.getResult() != false || check.getCheck()) {
+                    //out.println(dbVote + " " + status+" = "+vote);
 
-                    try {
+                } else {
+
+                    HttpSession session = request.getSession(true);
+
+                    JSONObject resultJson = new JSONObject();
+
+                    JSONParser parser = new JSONParser();
+
+                    JSONArray list = new JSONArray();
+
+                    ContainerFactory containerFactory = new ContainerFactory() {
+
+                        @Override
+                        public List creatArrayContainer() {
+                            return new LinkedList();
+                        }
+
+                        @Override
+                        public Map createObjectContainer() {
+                            return new LinkedHashMap();
+                        }
+                    };
+
+                    b = new Blockage(request.getRemoteAddr(), process, id, intVote, "blockage", stmt, out);
+
+                    if (b.getResult()) {
+                        status = true;
+                    }
+                }
+
+                try {
+                    if (status || check.getUserID().equals("1")) {
                         stmt.executeUpdate("update `" + process + "` set `vote`=`vote`" + vote + " where `id`=" + id + " limit 1");
-                    } catch (SQLException e) {
-                        out.print("{\"status\":\"error\",\"message\":\"Упс!\"}");
-                        logger.error(e);
-                        return;
                     }
-
+                } catch (Exception e) {
+                    out.print("{\"status\":\"error\",\"message\":\"Упс! " + e + "\"}");
+                    logger.error(e);
+                    return;
                 }
 
                 try {
                     rs = stmt.executeQuery("select `vote` from `" + process + "` where `id`=" + id + " limit 1");
                     while (rs.next()) {
-                        voteCount = rs.getString("vote");
+                        vote = rs.getString("vote");
 
                         if (rs.getInt("vote") > 0 && "comment".equals(process)) {
-                            voteCount = "+" + voteCount;
+                            vote = "+" + vote;
                         }
 
                     }
@@ -160,15 +192,15 @@ public class Service extends HttpServlet {
                     return;
                 }
 
-                if (b.getResult() != false) {
-                    outJson = ("{\"status\":\"good\",\"message\":\"" + voteCount + "\"}");
-                } else {
-                    outJson = ("{\"status\":\"error\",\"message\":\"" + voteCount + "\"}");
-                }
+                //if (status) {
+                outJson = ("{\"status\":\"good\",\"message\":\"" + vote + "\"}");
+                //} else {
+                //    outJson = ("{\"status\":\"error\",\"message\":\"" + voteAction + "\"}");
+                //}
 
                 out.print(outJson);
 
-            } else if ("AddComment".equals(q)) {
+            } else if ("AddComment3523523".equals(q)) {
 
                 if (request.getParameter("id") != null) {
 

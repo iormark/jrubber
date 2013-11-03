@@ -43,7 +43,7 @@ public class WidgetYandex extends Creator {
         rand = min + random.nextInt((max - min) + 1);
 
         rs = stmt.executeQuery("SELECT i.text, i.image, i.alt,COUNT(i.post) as CountPosts, p.* FROM `post_item` i, `post` p WHERE i.post = p.id AND p.status ='on' "
-                + "AND (p.id <=" + max + " AND p.id>=" + min + ") AND p.id>=" + rand + " AND i.mime_type!='video' GROUP BY i.post LIMIT 1");
+                + "AND (p.id <=" + max + " AND p.id>=" + min + ") AND p.id>=" + rand + " AND i.video is null GROUP BY i.post LIMIT 1");
         if (rs.next()) {
             HashMap<String, String> content = new HashMap();
 

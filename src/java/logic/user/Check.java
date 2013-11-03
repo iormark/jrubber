@@ -6,6 +6,7 @@ package logic.user;
 import core.EditCookie;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,8 +16,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class Check {
 
+    private HashMap userMap = new HashMap();
     private boolean check = false;
-    String UserID = "", UserHash = "", UserLogin = "", UserEmail = "";
+    private String UserID = "", UserHash = "", UserLogin = "", UserEmail = "", password = "";
+    private int rating = 0;
     private ResultSet rs = null;
 
     public Check(HttpServletRequest request, HttpServletResponse response, Statement stmt) throws Exception {
@@ -27,12 +30,21 @@ public class Check {
 
         if (UserID != null && UserHash != null) {
 
-            rs = stmt.executeQuery("SELECT * FROM `users` WHERE `id` = '" + UserID + "'");
+            rs = stmt.executeQuery("SELECT * FROM `users` WHERE `id` = '" + UserID + "' AND status='on' LIMIT 1");
             if (rs.next()) {
                 if (UserHash.equals(rs.getString("hash"))) {
                     check = true;
                     UserLogin = rs.getString("login");
                     UserEmail = rs.getString("email");
+                    rating = rs.getInt("rating");
+                    
+                    userMap.put("login", rs.getString("login"));
+                    userMap.put("email", rs.getString("email"));
+                    userMap.put("sex", rs.getString("sex"));
+                    userMap.put("created", rs.getDate("created"));
+                    userMap.put("rating", rs.getString("rating"));
+                    userMap.put("hash", rs.getString("hash"));
+                    
                 }
             }
 
@@ -50,6 +62,10 @@ public class Check {
         return check;
     }
 
+    public HashMap getUserMap() {
+        return userMap;
+    }
+    
     public String getUserID() {
         return UserID != null ? UserID : "0";
     }
@@ -64,5 +80,13 @@ public class Check {
     
     public String getUserEmail() {
         return UserEmail != null ? UserEmail : "@";
+    }
+    
+    public int getRating() {
+        return rating;
+    }
+    
+    public String getPassword() {
+        return password != null ? password : "";
     }
 }

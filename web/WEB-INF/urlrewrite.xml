@@ -16,7 +16,7 @@
 
 
     <rule>
-        <from>^/(post|wtf[.]html|search|(rand[.]html|add[.]html|anekdot|rss[.]html|catalog[.]html|anekdoty[.]html|kartinki|kartinki[/](.+)|demotivatory|demotivatory[/](.+)|aforizmy[.]html|rasskazy[.]html|mysli[-]velikikh[.]html|interesno[.]html|video|video[/](.+)|krik[-]dushi[.]html|stishki[.]html|stishki[.]html)|terms_of_use[.]html|link[.]html)$</from>
+        <from>^/(post|feed|wtf[.]html|search|anekdot|rss[.]html|catalog[.]html|anekdoty[.]html|kartinki|kartinki[/](.+)|demotivatory|demotivatory[/](.+)|aforizmy[.]html|rasskazy[.]html|mysli[-]velikikh[.]html|interesno[.]html|video|video[/](.+)|krik[-]dushi[.]html|stishki[.]html|stishki[.]html|terms_of_use[.]html|link[.]html)$</from>
         <to>/index.html?q=$1</to>
     </rule>
     
@@ -30,6 +30,10 @@
         <to>/index.html?q=$1</to>
     </rule>
     
+    <rule>
+        <from>^/([a-z_0-9]+)$</from>
+        <to>/index.html?q=$1</to>
+    </rule>
 
 </urlrewrite>
 

@@ -1,28 +1,39 @@
 <div class="user__block">
     <ul class="menu">
-        <li class="active"><a href="">Авторизация</a></li>
-        <li class="noactive"><a href="">Присоединиться</a></li>
+        <li class="active"><a href="#login">Авторизация</a></li>
+        <li class="noactive"><a href="#register">Присоединиться</a></li>
     </ul>
     <div style="clear: both"></div>
     
     <div class="user__forms user__login">
-        <form method="post" action="/Service?q=login">
+        <form method="post" action="/svc/user?q=login" class="wagon">
             <fieldset>
                 <input type="text" name="email" placeholder="E-mail">
                 <input type="password" name="password" placeholder="И пароль">
                 <input type="submit" name="button" value="Войти" class="btn">
+                <a href="#password" id="user__password">Забыли пароль?</a>
                 <div class="message hide"></div>
             </fieldset>
         </form>
     </div>
     
-    <div class="user__forms user__register">
-        <form method="post" action="/Service?q=register">
+    <div class="user__forms user__register" style="display: none;">
+        <form method="post" action="/svc/user?q=register" class="wagon">
             <fieldset>
                 <input type="text" name="login" placeholder="Логин">
                 <input type="text" name="email" placeholder="E-mail">
                 <input type="password" name="password" placeholder="И пароль">
-                <input type="submit" name="button" value="Отправить" class="btn">
+                <input type="submit" name="button" value="Создать" class="btn">
+                <div class="message hide"></div>
+            </fieldset>
+        </form>
+    </div>
+    
+    <div class="user__forms user__password">
+        <form method="post" action="/svc/user?q=password" class="wagon">
+            <fieldset>
+                <input type="text" name="email" placeholder="E-mail">
+                <input type="submit" name="button" value="Вспомнить" class="btn">
                 <div class="message hide"></div>
             </fieldset>
         </form>

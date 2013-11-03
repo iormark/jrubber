@@ -12,3 +12,6 @@ Disallow: /*utm_medium=
 Disallow: /live
 Host: yourmood.ru
 Sitemap: http://yourmood.ru/sitemap.xml
+
+
+#SELECT COUNT(*) FROM users u, post p WHERE u.id=p.user AND u.status='on' AND p.status ='on' AND p.vote>20

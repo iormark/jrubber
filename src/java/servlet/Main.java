@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import logic.*;
 import logic.user.Check;
+import logic.user.Feed;
 
 /**
  *
@@ -66,18 +67,18 @@ public class Main extends HttpServlet {
                 if ("home.html".equals(q) || "tag".equals(args.get(0).toString())
                         || "new".equals(args.get(0).toString())) {
                     creator = new logic.Home(request, args, conn);
-                    
-                    //root.put("user", check);
+
+                    root.put("user", check);
                     root.put("time_addition", block.getTimeAddition());
                     root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
 
-                    //if (check.getCheck()) {
-                    //    leftNav.add("/block/user-menu.html");
-                    //} else {
-                    //    leftNav.add("/block/user-form.html");
-                    //}
-                    
+                    if (check.getCheck()) {
+                        leftNav.add("/block/user-menu.html");
+                    } else {
+                        leftNav.add("/block/user-form.html");
+                    }
+
                     leftNav.add("/block/time-addition.html");
                     leftNav.add("/block/tags.html");
                     leftNav.add("/block/widget.html");
@@ -92,6 +93,14 @@ public class Main extends HttpServlet {
                     root.put("time_addition", block.getTimeAddition());
                     root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
+
+                    root.put("user", check);
+                    if (check.getCheck()) {
+                        leftNav.add("/block/user-menu.html");
+                    } else {
+                        leftNav.add("/block/user-form.html");
+                    }
+
                     leftNav.add("/block/time-addition.html");
                     leftNav.add("/block/tags.html");
                     leftNav.add("/block/widget.html");
@@ -102,38 +111,49 @@ public class Main extends HttpServlet {
                     response.sendRedirect("/post?id=" + request.getParameter("id"));
 
                 } else if ("post".equals(q)) {
-                    creator = new Anecdote(request, response, conn);
+
+                    creator = new Post(request, response, conn);
                     q += ".html";
 
                     root.put("user", check);
                     root.put("time_addition", block.getTimeAddition());
                     root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
-                    
+
                     if (check.getCheck()) {
                         leftNav.add("/block/user-menu.html");
                     } else {
                         leftNav.add("/block/user-form.html");
                     }
-                    
+
                     leftNav.add("/block/time-addition.html");
                     leftNav.add("/block/tags.html");
                     leftNav.add("/block/widget.html");
                     leftNav.add("/block/ad-space.html");
 
-                } else if ("add.html".equals(q)) {
+                } else if ("add".equals(q) && check.getCheck()) {
                     creator = new Add(request, response, stmt, getServletContext().getRealPath("/"));
 
                     root.put("time_addition", block.getTimeAddition());
                     root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
+
+                    root.put("user", check);
+                    if (check.getCheck()) {
+                        leftNav.add("/block/user-menu.html");
+                    } else {
+                        leftNav.add("/block/user-form.html");
+                    }
+
                     leftNav.add("/block/time-addition.html");
                     leftNav.add("/block/tags.html");
                     leftNav.add("/block/widget.html");
+                    q += ".html";
 
                 } else if ("rss.html".equals(q)) {
                     creator = new Rss(stmt);
 
+                    root.put("user", check);
                     root.put("time_addition", block.getTimeAddition());
                     root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
@@ -144,6 +164,7 @@ public class Main extends HttpServlet {
                 } else if ("catalog.html".equals(q)) {
                     creator = new Catalog(stmt);
 
+                    root.put("user", check);
                     root.put("time_addition", block.getTimeAddition());
                     root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
@@ -176,6 +197,7 @@ public class Main extends HttpServlet {
                  }*/ else if ("link.html".equals(q)) {
                     creator = new Link(stmt);
 
+                    root.put("user", check);
                     root.put("time_addition", block.getTimeAddition());
                     root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
@@ -186,6 +208,7 @@ public class Main extends HttpServlet {
                 } else if ("wtf.html".equals(q)) {
                     creator = new Link(stmt);
 
+                    root.put("user", check);
                     root.put("time_addition", block.getTimeAddition());
                     root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
@@ -193,6 +216,75 @@ public class Main extends HttpServlet {
                     leftNav.add("/block/tags.html");
                     leftNav.add("/block/widget.html");
 
+                } else if ("edit".equals(q)) {
+                    if (check.getCheck()) {
+                        creator = new logic.Edit(request, args, stmt, check);
+
+                        root.put("user", check);
+                        root.put("time_addition", block.getTimeAddition());
+                        root.put("tags", block.getTagsLi());
+                        root.put("widget", block.getWidget());
+
+                        if (check.getCheck()) {
+                            leftNav.add("/block/user-menu.html");
+                        } else {
+                            leftNav.add("/block/user-form.html");
+                        }
+
+                        leftNav.add("/block/time-addition.html");
+                        leftNav.add("/block/tags.html");
+                        leftNav.add("/block/widget.html");
+                        leftNav.add("/block/about.html");
+                        leftNav.add("/block/ad-space.html");
+                        q = "edit.html";
+                    } else {
+                        response.sendRedirect("/");
+                    }
+
+                } else if ("feed".equals(q)) {
+                    if (check.getCheck()) {
+                        creator = new Feed(request, args, stmt, check);
+
+                        root.put("time_addition", block.getTimeAddition());
+                        root.put("tags", block.getTagsLi());
+                        root.put("widget", block.getWidget());
+
+                        root.put("user", check);
+                        if (check.getCheck()) {
+                            leftNav.add("/block/user-menu.html");
+                        } else {
+                            leftNav.add("/block/user-form.html");
+                        }
+
+                        leftNav.add("/block/time-addition.html");
+                        leftNav.add("/block/tags.html");
+                        leftNav.add("/block/widget.html");
+                        leftNav.add("/block/about.html");
+                        leftNav.add("/block/ad-space.html");
+                        q = "user/feed-comment.html";
+                    } else {
+                        response.sendRedirect("/");
+                    }
+                } else {
+                    creator = new logic.user.Home(request, args, conn);
+
+                    root.put("time_addition", block.getTimeAddition());
+                    root.put("tags", block.getTagsLi());
+                    root.put("widget", block.getWidget());
+
+                    root.put("user", check);
+                    if (check.getCheck()) {
+                        leftNav.add("/block/user-menu.html");
+                    } else {
+                        leftNav.add("/block/user-form.html");
+                    }
+
+                    leftNav.add("/block/time-addition.html");
+                    leftNav.add("/block/tags.html");
+                    leftNav.add("/block/widget.html");
+                    leftNav.add("/block/about.html");
+                    leftNav.add("/block/ad-space.html");
+                    q = "user/index.html";
                 }
 
             } catch (Exception e) {
@@ -201,12 +293,12 @@ public class Main extends HttpServlet {
             }
 
             if (creator == null) {
-                //response.sendError(404);
+                response.sendError(404);
                 return;
             }
 
             if (creator.getServerStatus() != 200) {
-                //response.sendError(creator.getServerStatus());
+                response.sendError(creator.getServerStatus());
                 return;
             }
 
@@ -245,10 +337,9 @@ public class Main extends HttpServlet {
             root.put("rightNav", rightNav);
             //}
 
-            if (RandomAnecdote != null) {
-                root.put("block_bottom", RandomAnecdote);
-            }
-
+            //if (RandomAnecdote != null) {
+            //root.put("block_bottom", RandomAnecdote);
+            //}
             root.put("footer_tpl", "footer.html");
 
             try {

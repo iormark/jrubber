@@ -10,26 +10,26 @@
         //$('img').last().load(function() {
 
 
+
         $('textarea').autosize();
 
 
-
-
         //Vote
-        $('.vote_up').click(function(e) {
+        $(document).on('click', '.vote_up', function(e) {
             e.preventDefault();
 
             var arr = $(this).attr('value').split('_');
             ajaxRating('top', (arr.length < 2 ? 'post' : arr[1]), arr[0]);
         });
 
-        $('.vote_down').click(function(e) {
+        $(document).on('click', '.vote_down', function(e) {
             e.preventDefault();
             //if(confirm('Вы уверены в том, что хотите понизить рейтинг данного поста?')){
             var arr = $(this).attr('value').split('_');
             ajaxRating('down', (arr.length < 2 ? 'post' : arr[1]), arr[0]);
             //}
         });
+
 
         $('.img__href.img__animated').click(function(e) {
             e.preventDefault();
@@ -45,8 +45,8 @@
                 $(this).find('.list__info__img__hint').show();
             }
         });
-        
-        
+
+
 
     });
 
@@ -158,12 +158,13 @@
          return false; 
          });*/
 
-        $('input, select, textarea').focus(function() {
+        $(document).on('focus', 'input, select, textarea', function(e) {
             focus = false;
         });
-        $('input, select, textarea').blur(function() {
+        $(document).on('blur', 'input, select, textarea', function(e) {
             focus = true;
         });
+
         $(document).keyup(function(c) {
             if (c.which == 82 && focus) {
                 $('body,html').animate({
@@ -184,8 +185,7 @@
         });
         $(document).keyup(function(c) {
             if ((87 == c.which || 83 == c.which) && focus) {
-                for (var d = $(document).scrollTop(), a = 0; a < b.length && !(b[a][0] + b[a][1] > d + 55); a++)
-                    ;
+                for (var d = $(document).scrollTop(), a = 0; a < b.length && !(b[a][0] + b[a][1] > d + 55); a++);
                 a = 83 == c.which ? ++a : --a;
                 0 > a && (a = 0);
                 a >= b.length && (a = b.length - 1);
@@ -208,10 +208,10 @@ function deleteItem(id) {
 function ajaxRating(vote, action, id) {
     //var load = new Array('сек.','жопа','~','сек.','~','сек.','~','cиське','~');
     //$('#rating_'+id).html(load[randomNumber(0, load.length-1)]);
-    //alert('/Service?q=rating&vote='+vote+'&action='+action+'&id='+id+'&lastVote='+$('#vote_'+id).html());
+    //alert('/svc/Service?q=rating&vote=' + vote + '&action=' + action + '&id=' + id + '&lastVote=' + $('#vote_' + id).html());
 
     $.ajax({
-        url: '/Service?q=rating&vote=' + vote + '&action=' + action + '&id=' + id + '&lastVote=' + $('#vote_' + id).html(),
+        url: '/svc/Service?q=rating&vote=' + vote + '&action=' + action + '&id=' + id + '&lastVote=' + $('#vote_' + id).html(),
         dataType: 'json',
         type: 'GET',
         timeout: 5000,
@@ -232,8 +232,14 @@ function ajaxRating(vote, action, id) {
     });
 }
 
-function log(out) {
-    $('#out__error').prepend(out);
+function log(out, obj) {
+    obj = obj != null ? obj : '#out__error';
+    $(obj).html(out).fadeIn(500);
+    setTimeout(function() {
+        $(obj).fadeOut(500);
+    }, 4000);
+
+    return false;
 }
 
 function confurmSubmit() {

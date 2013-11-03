@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>${title!""}</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link type="text/css" href="/templates/dmoz/css/style.csse" rel="stylesheet" charset="utf-8"/>
-        <script type="text/javascript" src="/scriptiki/jquery-1.8.1.min.js" charset="utf-8"></script>
-    </head>
-    <body>
-        <div id="auth">
-            <#include "${content_tpl}">
-        </div>
-    </body>
-</html>
+<div class="user__page">
+    <h2>${(content.getUser()["login"])!""}</h2>
+    <div>на сайте c ${(content.getUser()["created"])!""}</div>
+    <div>рейтинг ${(content.getUser()["rating"])!""}</div>
+    <div>добавил постов ${(content.getUser()["countPost"])!"0"}</div>
+</div>
+
+<#include "../item.html">

@@ -22,9 +22,9 @@
     <div class="post_head">
 
         <div class="vote">
-            <div class="vote_up" value="${(content.getItemMeta()['id'])!''}" title="+1">&nbsp;</div>
-            <span id="vote_${(content.getItemMeta()['id'])!'0'}" class="vote_count ">${(content.getItemMeta()["vote"])!""}</span>
-            <div class="vote_down" value="${(content.getItemMeta()['id'])!''}" title="-1">&nbsp;</div>
+            <div class="vote_up" value="${(content.getId())!''}" title="+1">&nbsp;</div>
+            <span id="vote_${(content.getId())!'0'}" class="vote_count ">${(content.getItemMeta()["vote"])!""}</span>
+            <div class="vote_down" value="${(content.getId())!''}" title="-1">&nbsp;</div>
         </div>
 
         <div class="post_title">
@@ -33,9 +33,9 @@
 
         <div class="post_date">
             <span style="color: red;">${(content.getItemMeta()["created"])!""}</span>
-            <span class="author">Добавил(а): ${(content.getItemMeta()["name"])!"Волонтер"}</span>
+            Добавил(а): <a href="/${(content.getItemMeta()['login'])!''}">${(content.getItemMeta()["login"])!"Волонтер"}</a>
             <div id="share">
-                <a href="#ddd" onclick="return false"><span>Отправить<span></span></a>
+                <a href="#ddd" onclick="return false"><span>Отправить</span></a>
                 <ul>
                     <li><a href="#" title="Рассказать друзьям в Контакте" class="vkontakte" rel="nofollow">В контакте</a>&nbsp;</li>
                     <li><a href="#" title="Рассказать друзьям в Facebook" class="facebook" rel="nofollow">Facebook</a>&nbsp;</li>
@@ -46,7 +46,6 @@
                     <li><a href="#" title="Рассказать друзьям в Twitter" class="twitter" rel="nofollow">Twitter</a></li>
                 </ul>
             </div>
-
         </div>
     </div>
 
@@ -85,6 +84,10 @@
                 </#if>
             </div>
             </#if>
+            
+            <#if ((content.getItem()[key]['video']!'')!='')>
+             <div class="text">${(content.getItem()[key]['video'])!''}&nbsp;</div>
+            </#if>
 
         </div>
         </#list>
@@ -109,61 +112,7 @@
 </div>
 -->
 
-<div id="comment__get" class="getComment" style="width: 600px">
-    <#if (content.getComment()?size>0)>
-    
-    <div class="comment_info">
-    <h3>комментариев: ${content.getComment()?size!"0"}</h3>
-    </div>
-    
-    
-    <#list content.getComment()?keys as key>
-    <div class="comment" id="comment_${key}">
-        <div>
-            <div class="comment_head">
-                <span class="vote_comment">
-                    <span id="vote_${key!'0'}" class="vote_count ">${(content.getComment()[key]["vote"])!""}</span>
-                    <span class="vote_up" value="${key!''}_comment" title="+1">&nbsp;</span>
-                    
-                    <span class="vote_down" value="${key!''}_comment" title="-1">&nbsp;</span>
-                </span>
-                <span class="created">отправлено ${content.getComment()[key]["created"]!""}</span>
-                <a href="#comment_${key}">#<span></span></a>
-            </div>
-
-            <div class="text">
-                ${content.getComment()[key]["comment"]!""}
-            </div>
-        </div>
-    </div>
-    </#list>
-    </#if>
-</div>
-
-<fieldset class="noBorder">
-    <div id="add-comments" style="width: 600px">
-        <form method="post" action="/Service" id="addComment">
-            <div class="addComment">
-
-                <div id="message"></div>
-
-                <div>
-                    <div><b>Комментарий</b> <span>*</span></div>
-                    <textarea rows="2" name="text" class=""></textarea>
-                </div>
-                <div>
-                    <input type="hidden" name="q" value="AddComment">
-                    <input type="hidden" name="id" value="${content.getId()}">
-                    <input type="submit" name="button" value="Комментировать" class="btn">
-                </div>
-            </div>
-            <div>
-
-            </div>
-        </form>
-    </div>
-</fieldset>
-
+<#include "/user/comment.html">
 <br>
 
 <script type="text/javascript" src="/templates/dmoz/js/lib.js" charset="utf-8"></script>

@@ -57,7 +57,7 @@
     
     <error-page>
         <error-code>404</error-code>
-        <location>/templates/default/html/fuck/sexdice/index.html</location>
+        <location>/templates/dmoz/html/fuck/sexdice/index.html</location>
     </error-page>
     
     <!--<security-constraint>

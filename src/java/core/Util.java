@@ -4,9 +4,14 @@
  */
 package core;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.IDN;
+import java.net.URL;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
 
 /**
@@ -14,6 +19,45 @@ import java.util.Locale;
  * @author mark
  */
 public class Util {
+
+    private static HashSet notLogin = new HashSet();
+
+    {
+        notLogin.add("search");
+        notLogin.add("searching");
+        notLogin.add("edits");
+        notLogin.add("links");
+        notLogin.add("catalog");
+        notLogin.add("category");
+        notLogin.add("catalogs");
+        notLogin.add("password");
+        notLogin.add("users");
+        notLogin.add("yourmood");
+        notLogin.add("terms_of_use");
+        notLogin.add("tagged");
+        notLogin.add("register");
+        notLogin.add("login");
+        notLogin.add("logins");
+        notLogin.add("signout");
+        notLogin.add("anekdot");
+        notLogin.add("anekdoty");
+        notLogin.add("aforizm");
+        notLogin.add("kartinka");
+        notLogin.add("comment");
+        notLogin.add("index");
+        notLogin.add("reset");
+        notLogin.add("about");
+        notLogin.add("widget");
+        notLogin.add("default");
+        notLogin.add("share");
+        notLogin.add("posts");
+        notLogin.add("robot");
+        notLogin.add("robots");
+        notLogin.add("sitemap");
+        notLogin.add("upload");
+        notLogin.add("servlet");
+        notLogin.add("porka");
+    }
 
     /**
      * Если строка длинее заданной длины этот метод обрезает с учотом новых
@@ -66,7 +110,6 @@ public class Util {
         long minute = (((time) / (1000 * 60)) % 60);
         String string = "";
 
-
         if (day == 0) {
 
             if (hour > 0) {
@@ -83,6 +126,44 @@ public class Util {
             } else {
                 if (minute > 0) {
                     string = minute + " мин назад";
+                } else {
+                    string = "Только что";
+                }
+            }
+        } else {
+            string = new SimpleDateFormat("d MMM yy в HH:mm").format(create);
+        }
+
+        return string;
+    }
+
+    public String dateFormat2(Date create) {
+        if (create == null) {
+            return "";
+        }
+
+        long time = System.currentTimeMillis() - create.getTime();
+        long day = (time / (1000 * 60 * 60 * 24));
+        long hour = (time / (1000 * 60 * 60));
+        long minute = (((time) / (1000 * 60)) % 60);
+        String string = "";
+
+        if (day == 0) {
+
+            if (hour > 0) {
+                if (hour == 1) {
+                    string = "Час ";
+                } else if (hour == 21) {
+                    string = hour + " час ";
+                } else if ((hour >= 2 && hour <= 4) || (hour >= 22 && hour <= 24)) {
+                    string = hour + " часa ";
+                } else if (hour >= 5 && hour <= 20) {
+                    string = hour + " часов ";
+                }
+                string = string + "";
+            } else {
+                if (minute > 0) {
+                    string = minute + " мин";
                 } else {
                     string = "Только что";
                 }
@@ -129,7 +210,7 @@ public class Util {
             size /= 1024;
         }
 
-        return (sizename <= 1 ? Math.round(size)+"" : round(size, 1)+"") + (sizenames[sizename]);
+        return (sizename <= 1 ? Math.round(size) + "" : round(size, 1) + "") + (sizenames[sizename]);
     }
 
     private float round(float number, int scale) {
@@ -139,6 +220,69 @@ public class Util {
         }
         float tmp = number * pow;
         return (float) (int) ((tmp - (int) tmp) >= 0.5f ? tmp + 1 : tmp) / pow;
+    }
+
+    /**
+     * Проверка домтупности логина.
+     *
+     * @param login
+     * @return
+     */
+    public boolean reachLogin(String login) {
+        boolean result = false;
+
+        if (login == null) {
+            return result;
+        }
+
+        if (!notLogin.contains(login)) {
+            result = true;
+        }
+
+        return result;
+    }
+
+    /**
+     * Проверка коректности логина.
+     *
+     * @param password
+     * @return
+     */
+    public boolean checkLogin(String login) {
+        boolean result = false;
+
+        if (login == null) {
+            return result;
+        }
+
+        if (login.matches("(?iu)[a-z_0-9]{5,36}")) {
+            result = true;
+        }
+
+        return result;
+    }
+
+    public boolean checkURLconnect(String string) {
+        URL url = null;
+        HttpURLConnection connection = null;
+        try {
+            url = new URL("http://" + string);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.connect();
+
+            if (connection.getResponseCode() != 200) {
+                url = new URL("https://" + string);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                if (connection.getResponseCode() != 200) {
+                    return false;
+                }
+            }
+        } catch (IOException ex) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -188,7 +332,11 @@ public class Util {
      * @return
      */
     public String lineFeed(String str) {
-        return str.replaceAll("[\n]", "<br>");
+        if (str != null) {
+            return str.replaceAll("[\n]", "<br>");
+        } else {
+            return "";
+        }
     }
 
     /**

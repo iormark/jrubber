@@ -24,7 +24,7 @@
          * Настройка AJAX
          */
         $.ajaxSetup({
-            url: '/SexDice', 
+            url: '/svc/SexDice', 
             type: 'get', 
             dataType: 'html',
             timeout: 7000,
@@ -319,11 +319,11 @@
     var server = {
         onSuccess: function(data) {
             var rand = Math.floor(Math.random()*99999999);
-            $('body').css('background', 'url(/SexDice?q=photo&r='+rand+') right 10px no-repeat'); 
+            $('body').css('background', 'url(/svc/SexDice?q=photo&r='+rand+') right 10px no-repeat'); 
         },
             
         onError: function(data) {
-            alert("Error!");
+            //alert("Error!");
         }
     }
 })($);

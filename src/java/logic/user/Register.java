@@ -12,10 +12,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.HashSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import logic.Creator;
-import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  *
@@ -37,14 +36,15 @@ public class Register {
 
         // имя
         if (login != null) {
+            login = login.trim();
             if (login.equals("")) {
                 message = ("{\"status\":\"error\",\"message\":\"Придумайте пожалуйста себе логин.\"}");
                 return;
-            } else if (login.length() > 36) {
-                message = ("{\"status\":\"error\",\"message\":\"Придумайте себе логин покороче.\"}");
+            } else if (!util.checkLogin(login)) {
+                message = ("{\"status\":\"error\",\"message\":\"Логин должен содержать от 5 до 36 латинских букв, цифр или знаков: <b>_</b>\"}");
                 return;
-            } else if (login.length() < 2) {
-                message = ("{\"status\":\"error\",\"message\":\"Придумайте себе логин подлинее.\"}");
+            } else if (!util.reachLogin(login)) {
+                message = ("{\"status\":\"error\",\"message\":\"Этот логин недоступен.\"}");
                 return;
             } else {
                 rs = stmt.executeQuery("SELECT * FROM `users` WHERE `login` = '" + login + "'");
@@ -59,6 +59,7 @@ public class Register {
         }
 
         if (email != null) {
+            email = email.trim();
             if (email.equals("")) {
                 message = ("{\"status\":\"error\",\"message\":\"Необходимо указать e-mail адрес.\"}");
                 return;
@@ -79,11 +80,12 @@ public class Register {
 
         // пароль
         if (password != null) {
+            password = password.trim();
             if (password.equals("")) {
                 message = ("{\"status\":\"error\",\"message\":\"Придумайте пожалуйста себе пароль.\"}");
                 return;
             } else if (!util.checkPassword(password)) {
-                message = ("{\"status\":\"error\",\"message\":\"Пароль должен содержать от 5 до 20 символов. Можно использовать латинские буквы, цифры и символы из списка:<strong>! @ # $ % ^ &amp; * ( ) _ - + : ; , .</strong>\"}");
+                message = ("{\"status\":\"error\",\"message\":\"Пароль должен содержать от 5 до 20 символов. Можно использовать латинские буквы, цифры и символы из списка: <b>! @ # $ % ^ &amp; * ( ) _ - + : ; , .</b>\"}");
                 return;
             }
         } else {
@@ -98,13 +100,13 @@ public class Register {
             md.reset();
             md.update(md5Hash.getBytes(), 0, md5Hash.length());
             md5Hash = new BigInteger(1, md.digest()).toString(16);
-/**/
+            /**/
             // добовляем нового пользователя
             PreparedStatement ps = conn.prepareStatement("INSERT INTO `users` (`id`, `email`, `login`, `password`, `hash`, `created`) "
                     + "VALUES (NULL, ?, ?, MD5('" + password + "'), '" + md5Hash + "', NOW())", Statement.RETURN_GENERATED_KEYS);
 
-            ps.setString(1, login);
-            ps.setString(2, email);
+            ps.setString(1, email);
+            ps.setString(2, login);
             ps.executeUpdate();
 
             ResultSet rs = ps.getGeneratedKeys();
@@ -117,11 +119,9 @@ public class Register {
             }
 
             //stmt.executeUpdate("UPDATE `users` SET `hash` = '" + md5Hash + "' WHERE `id` = " + LastInsertID + ";");
-
             EditCookie editcookie = new EditCookie(request, response);
             editcookie.setCookie("user_id", Integer.toString(LastInsertID), null, 3600 * 24 * 90);
             editcookie.setCookie("user_hash", md5Hash, null, 3600 * 24 * 90);
-            
 
             message = ("{\"status\":\"redirect\",\"message\":\"" + login + "\"}");
         }

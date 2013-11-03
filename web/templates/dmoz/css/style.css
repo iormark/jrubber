@@ -7,9 +7,10 @@ div, span, object, iframe, h1, h2, h3, h4, h5, h6, pre, abbr, acronym, address, 
     font-family: Arial,Liberation Sans,DejaVu Sans,sans-serif;
     font-size: inherit;
     vertical-align: baseline;
+    line-height: 150%;
 }
 html {
-    min-width: 928px;
+    min-width: 950px;
 }
 body {
     background-color:#fff;
@@ -20,7 +21,13 @@ body {
     font-size: 13px;
     line-height: 150%;
 }
-
+.clear_fix:after {
+    content: '.';
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
 
 h1, h2.navsections {
     font-size: 1.4em;
@@ -43,8 +50,18 @@ hr {
 img {
     border: 0px solid;
 }
-textarea {overflow: hidden;}
-
+textarea {
+    border: 2px solid #ccc;
+    padding: 0 2px;
+    overflow: hidden;
+    font-weight: normal;
+    font-family: Arial,Liberation Sans,DejaVu Sans,sans-serif;
+    font-size: inherit;
+    vertical-align: baseline;
+    line-height: 150%;
+    width: 99%;
+    resize: none;
+}
 fieldset {
     border:0;
     border-top: 0px solid #669933;
@@ -184,14 +201,15 @@ div.navsections {
     float: right;
     width: 22%;
     min-width: 230px;
-
+    margin-right: .5em;
     margin-bottom: 1em;
     font-size: small;
 }
 #mainContent {
-    width: 74%;
+    width: 66%;
     position: relative;
     float: left;
+    margin-left: .5em;
 }
 
 /*menu*/
@@ -288,21 +306,20 @@ ul.menu li.active a {color: #fff;}
 }
 
 /*COMMENT*/
-#comment__get, #add-comments {margin-left: 67px;}
+#comment__get, #comment__add {margin-left: 67px;}
 #comment__get .comment_info {border-bottom: 1px solid #ddd;margin-bottom: 1em;color:#999;}
 #comment__get h3 {font-size: small;margin-bottom: 0.5em}
-textarea {width: 99%; border-radius: 4px;}
-#comments, #add-comments {margin-top: 1.5em;}
+#comments, #comment__add {margin-top: 1.5em;}
 #message.error { color: #C00;}
 #message.good { color: #619936;}
 .comment {clear: both;margin-bottom: 1.8em; border: 0px dotted #669933;padding: 0px 0px 0px 0px;}
 .comment .comment_head {padding: 0 3px;margin-bottom: 0.2em; aclear: both;}
 .comment .comment_head span {font-size: 13px;}
-.comment .comment_head .author { font-weight: bold; }
+.comment .comment_head .login { margin-right: .5em; font-size: smaller; }
 .comment .comment_head .created { color:#999; margin-right: .5em; font-size: smaller;}
 .comment .comment_head a {font-size: smaller;text-decoration: none;font: normal 11px Tahoma, Arial, sans-serif;}
-.comment .text {padding: 0px 0px 0px 4px;}
-
+.comment .comment__text {word-wrap: break-word;overflow: hidden;width: 600px;}
+.comment textarea {width: 592px;}
 .vote_comment {
     margin: 0px 0.5em 0 0em;
     border: 0px solid #ddd;
@@ -326,6 +343,7 @@ textarea {width: 99%; border-radius: 4px;}
     cursor: pointer;
 }
 .vote_comment .vote__error {color: #C00;}
+#comment__add .reply_to {float: left; color:#999;margin: 1px;}
 
 /*List*/
 article {

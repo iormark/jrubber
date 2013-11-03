@@ -1,12 +1,41 @@
-.user__block {margin-bottom: 2em;}
+.user__page {margin-bottom: 2em;background-color: #edeff4; padding: 1em;border-radius: 0px}
+.user__page h2 {margin-bottom: 0;}
+
+
+
 
 /*user_block*/
+.user__block {margin-bottom: 2em;}
+.user__block a {color: #666;}
 .user__menu {border: 1px solid #ddd; padding: 1em;border-radius: 6px}
-.user__image {border: 1px solid #ddd;width: 60px;height: 60px;float: right}
+.user__photo {border: 0px solid #ddd;width: 80px;height: 80px;float: left}
 .user__menu ul {list-style: none;margin: 0;padding: 0}
+
+/*profile*/
+.edit {background-color: #edeff4;width: 100%;float: left}
+.edit__general {float:left;margin: 1em 0 0 0;width: 100%;}
+.edit select, .edit input {display: block;margin: 0;margin-bottom: 1em;}
+.edit input[type="text"], .edit input[type="password"] {
+    border: 1px solid #ddd;
+    padding: .2em;
+}
+.edit__row {clear: both;width: 100%;}
+.edit__label {color: #555;width: 195px;padding: 1px 10px 0 0;text-align: right;float: left;}
+.edit__field {float: left;width: 220px}
+.edit__submit {margin: 1em 0 0 0;}
+.pedit_controls_separator {
+    margin-top: 1em;
+    height: 0px;
+    border-top: 1px solid #E0E0E0;
+    border-bottom: 1px solid #FFF;
+}
+
+
+
 
 
 /*login/register*/
+.user__register, .user__password {display: none;}
 .user__forms {background-color: #edeff4;padding: 1em;border-radius: 0 0 6px 6px;}
 .user__block input[type="text"], .user__block input[type="password"] {
     width: 182px;
@@ -36,15 +65,21 @@
     box-shadow: inset 0 1px 1px #A4E388;
     border-color: #3B6E22 #3B6E22 #2C5115;
 }
-.user__block input[type="submit"]:hover{
+.user__block input[type="submit"]:hover {
     background:-webkit-gradient(linear, center top, center bottom, from(#79bc64), to(#578843));
     background:-webkit-linear-gradient(top, #79bc64, #578843);
     background: -moz-linear-gradient(center top , #79bc64, #578843) repeat scroll 0% 0% rgb(105, 167, 78);
 }
+.user__block input[type="submit"]:disabled {
+    background: #69A74E;
+    box-shadow:none;
+}
+
+#user__password {margin-left: .6em}
 
 /*Message*/
-.user__block .message.hide { display: none; }
-.user__block .message {
+.message.hide { display: none; }
+.message {
     background-color: #F8F8BA;
     border: 1px solid #f90;
     font-size: 16px;

@@ -10,8 +10,8 @@
     <div id="add__logout"></div>
 
     <form>
-        <div class="field"><input type="text" name="name" placeholder="имя" value=""></div>
-        <div class="field"><input type="text" name="email" placeholder="email" value=""></div>
+        <!--<div class="field"><input type="text" name="name" placeholder="имя" value=""></div>
+        <div class="field"><input type="text" name="email" placeholder="email" value=""></div>-->
 
         <div class="field"><input type="text" name="title" placeholder="название" value="" id="filed__title"></div>
         <input type="hidden" name="key" value="${content.getFileKey()}">
@@ -34,6 +34,13 @@
             </div>
         </div>
 
+        <#if ( user.getRating()> 200 )>
+        <div class="field">
+            <div>Видео (Coub): URL (без http's), пример: <code>www.youtube.com/video...</code></div>
+            <input type="text" name="video" value="" id="filed__video">
+        </div>
+        </#if>
+        
         <div class="field">
             <div>Теги (укажите от 2 до 6 тегов через запятую)</div>
             <input type="text" name="tags" value="" id="filed__tags">

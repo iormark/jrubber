@@ -9,7 +9,29 @@
 #add__post .field {
     margin-bottom: 1em;
 }
-
-#filed__title, #filed__tags {
+#filed__title, #filed__tags, #filed__video {
     width: 99%;
+}
+#img-list li div.progress {
+    width: 150px;
+    border: 1px solid #888888;
+    height: 18px;
+    text-align: center;
+    background-image: url('pbar_bgr.png');
+    background-repeat: no-repeat;
+    background-position: -150px center;
+}
+#filed__autocomplete {
+    cursor: pointer;
+    list-style: none;
+    font-size: 90%;
+}
+#filed__autocomplete div {
+    width: 99%;
+    background: #F1F6EC;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    padding: 1px 2px 1px 2px;
+    margin: 2px 2px 2px 0;
+    color: #002bb8;
 }
