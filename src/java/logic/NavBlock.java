@@ -3,6 +3,7 @@ package logic;
 import core.CategoriesTree;
 import core.TagsTree;
 import core.Util;
+import core.ViewMethod;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import logic.user.Check;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  *
@@ -43,10 +45,10 @@ public class NavBlock extends CreatorBlock {
         String datetime = null;
 
         try {
-            rs = stmt.executeQuery("SELECT date FROM `post` WHERE status='on' ORDER BY `date` DESC LIMIT 1");
+            rs = stmt.executeQuery("SELECT svc_date FROM `post` WHERE status='on' ORDER BY `date` DESC LIMIT 1");
             if (rs.next()) {
                 Calendar c = new GregorianCalendar();
-                c.setTimeInMillis(rs.getTimestamp("date").getTime());
+                c.setTimeInMillis(rs.getTimestamp("svc_date").getTime());
                 c.add(Calendar.MINUTE,61);
 
                 //datetime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(c.getTime());
@@ -95,9 +97,8 @@ public class NavBlock extends CreatorBlock {
         int n = (int) Math.floor(Math.random() * cat.length);
 
         ct = new CategoriesTree(stmt, cat[n]);
-        String type = " AND p.type IN(" + ct.getCategoriesAllId() + ")";
 
-        rs = stmt.executeQuery("SELECT MAX(id) AS max, MIN(id) AS min FROM post p WHERE p.status ='on'" + type);
+        rs = stmt.executeQuery("SELECT MAX(p.id) AS max, MIN(p.id) AS min FROM `post_item` i, post p WHERE i.post = p.id AND p.status ='on' AND (i.image is not null AND i.video is null)" );
         if (rs.next()) {
             max = rs.getInt("max");
             min = rs.getInt("min");
@@ -105,14 +106,22 @@ public class NavBlock extends CreatorBlock {
 
         rand = min + random.nextInt((max - min) + 1);
 
-        rs = stmt.executeQuery("SELECT i.text, i.image, i.alt,COUNT(i.id) as CountPosts, p.* FROM `post_item` i, `post` p WHERE i.post = p.id AND p.status ='on' "
-                + "AND (p.id <=" + max + " AND p.id>=" + min + ") AND p.id>=" + rand + type + " GROUP BY i.post LIMIT 1");
+        rs = stmt.executeQuery("SELECT i.text, i.image, i.img, i.alt,COUNT(i.id) as CountPosts, p.* FROM `post_item` i, `post` p WHERE i.post = p.id AND p.status ='on' "
+                + "AND (p.id <=" + max + " AND p.id>=" + min + ") AND p.id>=" + rand +" GROUP BY i.post LIMIT 1");
+        
+        
+        Properties props = new Properties();
+        props.setProperty("textSize", "200");
+        ViewMethod view = new ViewMethod(rs, props);
+        item = view.getViewCatalog();
+
+        /*
         if (rs.next()) {
             HashMap<String, String> content = new HashMap<String, String>();
 
 
             content.put("id", rs.getString("id"));
-            content.put("text", util.Shortening(util.bbCode(rs.getString("text")), 400, "<br><a href=\"/anekdot?id=" + rs.getString("id") + "\" target=\"_blank\">Читать дальше</a>"));
+            content.put("text", util.Shortening(util.lineFeed(util.bbCode(StringEscapeUtils.escapeHtml4(rs.getString("text")) + "")), 400, "<br><a href=\"/post?id=" + rs.getString("id") + "\" target=\"_blank\">Читать дальше</a>"));
 
             if (rs.getString("image") != null) {
                 content.put("alt", util.specialCharactersTags(rs.getString("alt")));
@@ -123,7 +132,7 @@ public class NavBlock extends CreatorBlock {
             content.put("date", new SimpleDateFormat("d MMM yyyy, HH:mm:ss").format(rs.getTimestamp("date")));
 
             item.put("all", content);
-        }
+        }*/
 
 
         return item;

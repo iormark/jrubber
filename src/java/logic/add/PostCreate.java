@@ -50,6 +50,7 @@ public class PostCreate {
 
         userID = check.getUserID();
         title = request.getParameter("title");
+        title = (String.valueOf(title.charAt(0)).toUpperCase()).concat(title.substring(1));
         text = request.getParameter("text");
         video = request.getParameter("video");
 

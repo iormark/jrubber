@@ -7,10 +7,18 @@ ${content.getMessage()}
 <article class="item__segment" <#if ((content.getItem()[key]['image']!'')!='')>itemscope itemtype="http://schema.org/ImageObject"</#if>>
     <div class="list_head">
 
-        <div class="vote">
-            <div class="vote_up" value="${key}" title="+1">&nbsp;</div>
-            <span id="vote_${key}" class="vote_count ">${(content.getItem()[key]["vote"])!""}</span>
-            <div class="vote_down" value="${key}" title="-1">&nbsp;</div>
+        <div class="post__opts">
+            <div class="vote">
+                <div class="vote_up" value="${key}" title="+1">&nbsp;</div>
+                <span id="vote_${key}" class="vote_count ">${(content.getItem()[key]["vote"])!""}</span>
+                <div class="vote_down" value="${key}" title="-1">&nbsp;</div>
+            </div>
+            <!--<div class="comment__count">
+                <a class="comment" href="/post?id=${key}#add-comment" target="_blank">
+                    <span class="icon"></span>
+                    <span>${(content.getItem()[key]['commentCount'])!'0'}</span>
+                </a>
+            </div>-->
         </div>
 
         <div class="list_title">
@@ -56,11 +64,11 @@ ${content.getMessage()}
 
 
 <#if ((content.PageNavig()!"")!="")>
-<hr>
+
 <div class="pagNav">
     <p>${content.PageNavig()}</p>
 </div>
-<hr>
+
 </#if>
 
 

@@ -12,9 +12,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import logic.user.Comment;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -23,6 +25,7 @@ import org.apache.log4j.Logger;
  */
 public class Post extends Creator {
 
+    private int serverStatus = 200;
     private int gid = 0, imageLength = 0, next = 0, back = 0;
     private String id = "0";
     private HashMap<String, String> itemMeta = new HashMap();
@@ -37,7 +40,7 @@ public class Post extends Creator {
     private Connection conn;
     private static final Logger logger = Logger.getLogger(Post.class);
 
-    public Post(HttpServletRequest request, HttpServletResponse response, Connection conn) throws SQLException, Exception {
+    public Post(HttpServletRequest request, HttpServletResponse response, Connection conn) throws Exception {
 
         Statement stmt = conn.createStatement();
 
@@ -61,10 +64,17 @@ public class Post extends Creator {
                 LastModified = rs.getTimestamp("last_modified");
             }
         }
+        
+        if(itemMeta.isEmpty()) {
+            serverStatus = 404;
+            return;
+        }
 
         rs = stmt.executeQuery("SELECT i.id, i.post, i.text, i.image, i.img, i.video, i.alt, i.status FROM `post_item` i WHERE  i.post = '" + id + "' ORDER BY i.sort LIMIT 99;");
 
-        ViewMethod view = new ViewMethod(rs, stmt, true, false);
+        Properties props = new Properties();
+        props.setProperty("textSize", "0");
+        ViewMethod view = new ViewMethod(rs, stmt, props);
         item = view.getViewCatalog();
         System.out.println(item);
         tags = view.getPostTags(id);
@@ -88,7 +98,7 @@ public class Post extends Creator {
                 } else {
                     batton.put("name", util.Shortening(rs.getString("title"), 35, ""));
                 }
-                batton.put("title", rs.getString("title"));
+                batton.put("title", StringEscapeUtils.escapeHtml4(rs.getString("title")));
             }
             bn.put("next", batton);
         }
@@ -104,7 +114,7 @@ public class Post extends Creator {
                 } else {
                     batton.put("name", util.Shortening(rs.getString("title"), 35, ""));
                 }
-                batton.put("title", rs.getString("title"));
+                batton.put("title", StringEscapeUtils.escapeHtml4(rs.getString("title")));
             }
             bn.put("back", batton);
         }
@@ -119,6 +129,11 @@ public class Post extends Creator {
 
         editcookie = new EditCookie(request, response);
 
+    }
+    
+    public String varMenu() {
+        
+        return "Комментарии";
     }
 
     public HashMap getItemMeta() {
@@ -202,11 +217,9 @@ public class Post extends Creator {
     @Override
     public int getServerStatus() {
 
-        if (item.isEmpty()) {
-            return 404;
-        } else {
-            return 200;
-        }
+        
+            return serverStatus;
+        
     }
 
     @Override

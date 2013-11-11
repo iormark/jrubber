@@ -13,7 +13,7 @@
 
         $('form.wagon').submit(function(e) {
             e.preventDefault();
-            
+
             var fields = {};
             var form = $(this);
             var x = new Date();
@@ -81,7 +81,7 @@
             Edit.reply_selected('comment', $(this).attr('value'));
         });
 
-
+        Edit.anchor_selected(this);
     });
 
 
@@ -198,7 +198,7 @@
 
         },
         create: function(action) {
-            var form = $('#' + action + '__add');
+            var form = $('#add-' + action + '');
             var get = $('#' + action + '__get');
             var fields = {};
             var x = new Date();
@@ -245,7 +245,7 @@
         },
         reply: function(action, id) {
             var form = $('#' + action + '_' + id);
-            var add = $('#' + action + '__add');
+            var add = $('#add-' + action + '');
 
 
             var login = form.find('.login a').text();
@@ -269,6 +269,34 @@
             form.css('opacity', '0')
             $(form).animate({opacity: "1"}, 500);
 
+        },
+        anchor_selected: function(obj) {
+
+            if (typeof($(obj).attr('href')) != 'undefined') {
+                var url = (document.location.href).split('#');
+                document.location.href = url[0] + '' + $(obj).attr('href');
+            }
+
+            var selected = $(window.location.hash);
+
+            if (window.location.hash == '') {
+                selected = $($(obj).attr('href'));
+            }
+            
+            if (typeof(selected.offset()) != 'undefined') {
+                $('body,html').animate({
+                    scrollTop: selected.offset().top - ($(window).height() / 2)
+                }, 100);
+            }
+            var hash = (window.location.hash).split('_');
+
+            if (hash[0] == '#comment') {
+                var selected = $(window.location.hash);
+                selected.css('opacity', '.1')
+                $(selected).animate({opacity: "1"}, 4000);
+
+            }
         }
     }
+
 })($);

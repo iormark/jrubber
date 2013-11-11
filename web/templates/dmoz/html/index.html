@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>${title!'Юмор + Интеллект'}</title>
+        <title>${title!'Юмор + Интеллект'} &mdash; YourMood.Ru</title>
         <meta charset="utf-8">
-        <link href="/templates/dmoz/css/style.css?17" rel="stylesheet" type="text/css">
-        <link href="/templates/dmoz/css/default.css?12" rel="stylesheet" type="text/css">
-        <link href="/templates/dmoz/css/user.css?2" rel="stylesheet" type="text/css">
-        <script type="text/javascript" src="/scriptiki/jquery-1.10.2.min.js" charset="utf-8"></script>
-        <script type="text/javascript" src="/templates/dmoz/js/user.js?3" charset="utf-8"></script>
-        <script type="text/javascript" src="/templates/dmoz/js/script.js?16" charset="utf-8"></script>
-        <script type="text/javascript" src="//vk.com/js/api/openapi.js?62"></script>
+        <link href="/templates/dmoz/css/default.css?15" rel="stylesheet" type="text/css">
+        <link href="/templates/dmoz/css/style.css?24" rel="stylesheet" type="text/css">
+        <link href="/templates/dmoz/css/user.css?4" rel="stylesheet" type="text/css">
+        <script src="/scriptiki/jquery-1.10.2.min.js"></script>
+        <script src="/templates/dmoz/js/user.js?4"></script>
+        <script src="/templates/dmoz/js/script.js?18"></script>
         <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
-        <link rel="alternate" type="application/rss+xml" title="Юмор + Интеллект" href="/xml/all.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Самое интересное" href="/xml/all.xml" />
 
         ${head!''}
 
@@ -23,26 +22,39 @@
     <body>
         <!--[if lt IE 7]>  
             <div class="IE" style="top: 0;left: 0;width: 100%;position: fixed;background: #273132;z-index: 1;color: #fff;text-align: center;font-size: 20px;padding: 10px;">
-                Пользователь IE! Идите на ХУЙ! с таким браузером. Он настолько дыряв, что ваши вирусы могут просочиться через него к нам.</div>
+                Пользователь IE! Для нормальной работы сайта нужен новый браузер.</div>
             <div style="height: 50px;clear: both"></div>
         <![endif]-->
+        
 
 
         <div id="doc">
             <header>
-                <div id="hd">
-                    <a id="logo" href="/" title="Fuck The World!">
-                        <img height="24" width="176" border="0" src="/templates/dmoz/image/yourmood.gif.png" alt="YourMood: Юмор, Анекдоты, Картинки">
+                <div id="hd" class="fixed">
+                    <a id="logo" href="/" title="Нямка :)">
+                        <img height="24" width="176" border="0" src="/templates/dmoz/image/yourmood.gif.png" alt="YourMood: ВСЕ самое интересное и вкусное.">
                     </a>
-                    <span id="hotkeys" title="Горячие клавиши">[S], [W], [R]</span>
+
+                    <#if (content.getMenu())??>
+                    ${content.getMenu()!""}
+                    <#else>
+                    <ul class="menu">
+                        <#if (content.varMenu())??>
+                        <li class="active"><a href="">${content.varMenu()!""}</a></li>
+                        </#if>
+                        <li class="noactive"><a href="/">Лучшее</a></li>
+                        <li class="noactive"><a href="/new">Свежее</a></li>
+                    </ul>
+                    </#if>
+
+
 
                     <div id="search">
                         <form class="center" action="/" method="get">
-                            <a href="/rss.html" title="Rss-подписка, виджеты, сообщества.">Rss</a>&nbsp;
-                            <a href="/link.html" title="Наши ссылки">Link</a>
+                            <a href="/wtf.html" title="Правила">Правила сайта</a>
                             &nbsp;<span style="color: rgba(0, 0, 0, 0.4);">|</span>&nbsp;
-                            <a href="/?q=search&luck=true" title="Мне повезет!" rel="nofollow">Мне повезет!</a>
-                            <input size="23" name="key" value="${(content.getKey())!''}" title="Поиск" placeholder="Поиск" tabindex="1" class="searchNod">
+                            <a href="/?q=search&luck=true" title="Мне повезет!" rel="nofollow">Мне повезет!</a>&nbsp;
+                            <input size="19" name="key" value="${(content.getKey())!''}" title="Поиск" placeholder="Поиск" tabindex="1" class="searchNod">
                             <input type="submit" value="Поиск" class="btn">
                             <input type="hidden" name="q" value="search">
                             <input type="hidden" name="page" value="1">
@@ -51,7 +63,7 @@
                 </div>
             </header>
 
-            <div style="max-width: 1300px;margin: 0 auto;">
+            <div style="max-width: 1300px;margin:55px 0 auto;" id="docs">
 
                 <div id="mainContent">
                     <div style="width: 700px;margin: 0 1% 0 auto;border:0px solid">
@@ -69,7 +81,22 @@
                 </div>
 
                 <div id="side">
-                    <div style="width: 230px">
+                    <div style="width: 250px">
+
+                        <#if ((content.getBN()['next'])??) || ((content.getBN()['back'])??)>
+                        <div class="post-control">
+                            <ul class="left">
+                                <#if ((content.getBN()['next'])??)>
+                                <li><a class="tagged__tag" href="/post?id=${(content.getBN()['next']['id'])!''}" title="${(content.getBN()['next']['title'])!''}">« Назад</a></li>
+                                </#if>
+                                <#if ((content.getBN()['back'])??)>
+                                <li><a class="tagged__tag" href="/post?id=${(content.getBN()['back']['id'])!''}" title="${(content.getBN()['back']['title'])!''}">Вперед »</a></li>
+                                </#if>
+                            </ul>
+                        </div>
+                        </#if>
+
+
                         <#if leftNav??>
                         <#list leftNav as key>
                         <#include "${key}">
@@ -84,13 +111,16 @@
                 <div class="footer">
                     <div id="ft">
                         <span class="float-l">Copyright © 2013 Yourmood</span>
-                        <span class="float-r"><a href="/wtf.html" style="font-size:.9em;color:#fff;">Правила сайта</a></span>
+                        <span class="float-r">
+                            <a style="font-size:.9em;color:#fff;" href="/link.html" title="Наши ссылки">Link</a>
+                        </span>
                     </div>
                     <div id="ft-bar" class="ft-barN" style="color:#000; font-family:times New Roman;font-size:16px;">
-                        <b>Интересные разделы:</b>&nbsp;&nbsp;
+                        <b>Другие разделы:</b>&nbsp;&nbsp;
                         <a href="/catalog.html">Каталог сайтов</a>&nbsp;|
-                        &nbsp;<a href="/add.html">Изготовить пост</a>&nbsp;|
-                        &nbsp;<a href="/rss.html">RSS-подписка</a><br><br>
+                        &nbsp;<a href="/rss.html" title="Rss-подписка, виджеты, сообщества.">RSS-подписка</a>&nbsp;|
+                        &nbsp;<a href="http://vk.com/porka_anekdotov" target="_blank">Мы ВКонтакте</a>
+                        <br><br>
                         <div class="ft-barUpN">
 
                             <#if LastModified??>Последнее обновление: ${LastModified}</#if>
@@ -99,9 +129,27 @@
                     </div>
             </footer>
         </div>
-                
+
         <div id="out__error"></div>
-        <!-- Yandex.Metrika counter --><script type="text/javascript">(function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter439068 = new Ya.Metrika({id:439068, webvisor:true, clickmap:true, trackLinks:true, accurateTrackBounce:true, trackHash:true}); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks");</script><!-- /Yandex.Metrika counter -->
+        <!-- Yandex.Metrika counter --><script type="text/javascript">(function(d, w, c) {
+                (w[c] = w[c] || []).push(function() {
+                    try {
+                        w.yaCounter439068 = new Ya.Metrika({id: 439068, webvisor: true, clickmap: true, trackLinks: true, accurateTrackBounce: true, trackHash: true});
+                    } catch (e) {
+                    }
+                });
+                var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function() {
+                    n.parentNode.insertBefore(s, n);
+                };
+                s.type = "text/javascript";
+                s.async = true;
+                s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+                if (w.opera == "[object Opera]") {
+                    d.addEventListener("DOMContentLoaded", f, false);
+                } else {
+                    f();
+                }
+            })(document, window, "yandex_metrika_callbacks");</script><!-- /Yandex.Metrika counter -->
 
     </body>
 </html>

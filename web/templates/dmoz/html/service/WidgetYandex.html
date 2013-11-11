@@ -3,24 +3,25 @@
         <link type="text/css" href="/templates/dmoz/css/WidgetYandex.css" rel="stylesheet"/>
         <script type="text/javascript" src="http://img.yandex.net/webwidgets/1/WidgetApi.js"></script>
         <script>
-            
+
         </script>
     </head>
     <body onload="widget.adjustIFrameHeight();">
+
         <#list content.getItem()?keys as key>
-        <#if ((content.getItem()[key]["title"]!"")!="")>
-        <div class="type">
-            <a href="http://yourmood.ru/anekdot?id=${key!''}" target="_blank">${(content.getItem()[key]["title"])!""}</a>
-        </div>
-        </#if>
         <div class="text">
+            <#if ((content.getItem()[key]["title"]!"")!="")>
+            <div class="type">
+                <a href="http://yourmood.ru/post?id=${key!''}" target="_blank">${(content.getItem()[key]["title"])!""}</a>
+            </div>
+            </#if>
 
             ${content.getItem()[key]["text"]!""}
 
-            <#if ((content.getItem()[key]['image']!'')!='')>
-            <div style="text-align: center">
-                <a href="http://yourmood.ru/anekdot?id=${key!''}" target="_blank" style="text-decoration: none" >
-                    <img  src="http://yourmood.ru/photo_anekdot/small_${(content.getItem()[key]['image'])!''}" alt="${(content.getItem()[key]['alt'])!''}">
+            <#if (content.getItem()[key]['image'])??>
+            <div style="text-align: center;">
+                <a target="_blank" href="http://yourmood.ru/post?id=${key}">
+                    <img src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/small_${(content.getItem()[key]['image'])!''}" alt="${content.getItem()[key]['alt']!''}">
                 </a>
             </div>
             </#if>
@@ -28,7 +29,8 @@
         </#list>
 
         <div style="text-align: center">
-            <a class="btn-small2" href="#" onclick="javascript:widget.reload(); return false">Следующий»</a> 
+            <a class="btn-small2" href="#" onclick="javascript:widget.reload();
+                    return false">Следующий»</a> 
             <!--&nbsp; <a class="btn-opt" href="#" onclick="widget.showPreferences(); return false">Настройка</a>-->
         </div>
 

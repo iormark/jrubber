@@ -3,14 +3,14 @@
         <div class="user__photo " style="float: right">
             
         </div>
-        <b>${(user.getUserLogin())!""}</b>
+        <h3>${(user.getUserLogin())!""}</h3>
         <ul>
             <li>Рейтинг: ${(user.getUserMap()["rating"])!""}</li>
             <li><a href="/${(user.getUserLogin())!''}">Мои новости</a></li>
             <li><a href="/feed?section=comment">Мои комментарии</a></li>
             <!--<li><a href="/fave">Закладки</a></li>-->
             <li><a href="/edit">Мои настройки</a></li>
-            <li><a href="/svc/user?q=signout">выход</a></li>
+            <li><a href="/svc/user?q=signout">Выход</a></li>
         </ul>
         
     </div>

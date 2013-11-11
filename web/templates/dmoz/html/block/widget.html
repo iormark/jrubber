@@ -1,32 +1,26 @@
-<div style="margin: 1.2em 0 1.2em 0">
-<!-- VK Widget -->
-<div id="vk_groups"></div>
-<script type="text/javascript">
-    VK.Widgets.Group("vk_groups", {mode: 0, width: "230", height: "290"}, 47094437);
-</script>
-</div>
-
-<#if widget??>
 <#if (widget?size > 0)>
-
 <h4>Для Яндекса</h4>
 
-<div style="margin: 1em 0 0 0px;">${widget["all"]["text"]!""}</div>
+<#list widget?keys as key>
+<div style="margin: 1em 0 0 0px;">${widget[key]["text"]!""}</div>
 
-<#if ((widget["all"]["image"]!"")!="")>
-<div style="text-align: center;overflow: hidden; ">
-    <a href="/anekdot?id=${widget['all']['id']!''}" target="_blank" style="text-decoration: none" >
-        <img id="image-widget" src="http://yourmood.ru/photo_anekdot/small_${widget['all']['image']!''}" width="" border="0">
+<#if (widget[key]['image'])??>
+<div style="text-align: left;overflow: hidden; ">
+    <a class="image" target="_blank" href="http://yourmood.ru/post?id=${key}">
+        <img class="border" src="http://yourmood.ru${(widget[key]['imagePath'])!''}/small_${(widget[key]['image'])!''}" alt="${widget[key]['alt']!''}">
     </a>
 </div>
 </#if>
+
+</#list>
 <form action="http://www.yandex.ru/" method="get" target="_blank">
     <input type="hidden" name="add" value="116314">
-    <div style="text-align: center">
+    <div style="text-align: left">
         <input type="submit" value="Добавить в Яшу!" class="btn">
     </div>
 </form>
 </#if>
-</#if>
+
+
 
 <div style="margin: 2em 0 0 0px;"></div>

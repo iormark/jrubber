@@ -40,6 +40,16 @@ public class FieldCheck {
         censure.put("член", "ч*ен");
     }
 
+    private static HashSet blackTag = new HashSet();
+
+    {
+        blackTag.add("all");
+        blackTag.add("моё");
+        blackTag.add("мое");
+        blackTag.add("маё");
+        blackTag.add("мае");
+    }
+
     public FieldCheck(HttpServletRequest request) {
     }
 
@@ -67,17 +77,17 @@ public class FieldCheck {
             if (text2.equals("") && !video2.equals("")) {
                 message = video2;
             }
-            
+
         } else {
             message = ("Постить пустоту запрещено!");
         }
     }
-    
+
     public FieldCheck(String text, String video) {
         this.text = text != null ? text.trim() : "";
         this.video = video != null ? video.trim() : "";
-        
-        System.out.println(">>>>>>>>>>>>"+video);
+
+        System.out.println(">>>>>>>>>>>>" + video);
 
         if (!this.text.equals("") || !this.video.equals("")) {
             String text2 = checkText();
@@ -91,7 +101,7 @@ public class FieldCheck {
                     message = video2;
                 }
             }
-            
+
         }
     }
 
@@ -174,7 +184,7 @@ public class FieldCheck {
         for (String key : tagArray) {
             String tag = key.trim();
 
-            if (tag.matches("((?iu)[a-zа-яё0-9-*@(=:;)\\s]+)")) {
+            if (tag.matches("((?iu)[a-zçа-яё0-9-*@(=:;'’)!\\s]+)")) {
                 String[] wordArray = tag.split("[\\s]+");
 
                 if (wordArray.length > 4) {
@@ -189,6 +199,11 @@ public class FieldCheck {
 
                 if (tag.length() <= 1) {
                     message = ("Тег не может состоять из 1-го символа!");
+                    break;
+                }
+
+                if (blackTag.contains(tag)) {
+                    message = ("Тег &laquo;" + tag + "&raquo; недоступен.");
                     break;
                 }
 

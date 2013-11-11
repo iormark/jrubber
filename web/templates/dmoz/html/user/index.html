@@ -1,8 +1,21 @@
 <div class="user__page">
+    <div class="user__last_visit" style="float:right;color: #666;text-shadow: 0 1px 0 white;">
+        Заходил: ${(content.getUser()["lastVisit"])!"Давно"}
+    </div>
     <h2>${(content.getUser()["login"])!""}</h2>
     <div>на сайте c ${(content.getUser()["created"])!""}</div>
-    <div>рейтинг ${(content.getUser()["rating"])!""}</div>
-    <div>добавил постов ${(content.getUser()["countPost"])!"0"}</div>
+    <div>рейтинг: ${(content.getUser()["rating"])!""}</div>
+    <div>
+        добавил${(content.getUser()["sex_end"])!"о"} постов ${(content.getUser()["postCount"])!"0"} и 
+        комментариев ${(content.getUser()["commentCount"])!"0"}.
+    </div>
 </div>
+<!--
+<div class="list__filter">
+    <a href="" class="active">Актуальное</a> 
+    <a href="?fil=del">Удаленное</a>
+</div>-->
+
+
 
 <#include "../item.html">

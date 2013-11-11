@@ -70,7 +70,7 @@ public class Login {
                 EditCookie editcookie = new EditCookie(request, response);
                 editcookie.setCookie("user_id", rs.getString("id"), null, 3600 * 24 * 30);
                 editcookie.setCookie("user_hash", rs.getString("hash"), null, 3600 * 24 * 30);
-                message = ("{\"status\":\"redirect\",\"message\":\"/\"}");
+                message = ("{\"status\":\"redirect\",\"message\":\""+request.getHeader("referer")+"\"}");
             }
 
         } else {

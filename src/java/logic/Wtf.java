@@ -15,7 +15,7 @@ public class Wtf extends Creator {
 
     @Override
     public String getMetaTitle() {
-        return "Правила";
+        return "Правила на сайте";
     }
 
     @Override

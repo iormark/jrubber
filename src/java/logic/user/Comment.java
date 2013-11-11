@@ -50,10 +50,9 @@ public class Comment {
     }
 
     private void queryComment(Statement stmt, String id, String post) throws SQLException {
-        
     }
 
     public LinkedHashMap getComment() {
-        return Comment;
+        return !Comment.isEmpty() ? Comment : null;
     }
 }

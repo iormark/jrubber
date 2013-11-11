@@ -117,7 +117,7 @@ public class User extends HttpServlet {
                     EditCookie editcookie = new EditCookie(request, response);
                     editcookie.setCookie("user_id", "", null, 0);
                     editcookie.setCookie("user_hash", "", null, 0);
-                    response.sendRedirect("/");
+                    response.sendRedirect(request.getHeader("referer"));
 
                 } else {
                     response.sendRedirect("/");

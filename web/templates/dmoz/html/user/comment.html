@@ -1,11 +1,11 @@
 <div id="comment__get" class="getComment" style="width: 600px">
     <div class="comment_info">
-        <h3>комментариев: ${content.getComment()?size!"0"}</h3>
+        <h3>комментариев: ${(content.getComment()?size)!"0"}</h3>
     </div>
 
 
 
-    <#if (content.getComment()?size>0)>
+    <#if (content.getComment())??>
     <#list content.getComment()?keys as key>
     <div class="comment" id="comment_${key}">
         <div class='message hide'></div>
@@ -18,7 +18,7 @@
                 </span>
                 <span class="login"><a href="/${content.getComment()[key]['login']!''}">${content.getComment()[key]["login"]!""}</a></span>
                 <span class="created">отправлено ${content.getComment()[key]["created"]!""}</span>
-                <a href="#comment_${key}">#<span></span></a>
+                <a href="#comment_${key}" onclick="Edit.anchor_selected(this); return false;">#<span></span></a>
             </div>
 
             <div class="comment__value">
@@ -52,18 +52,18 @@
     </#if>
 </div>
 
-<div id="comment__add" style="width: 600px">
+<div id="add-comment" style="width: 600px">
     <div class="message hide"></div>
     <div class="addComment form__edit">
         <div>
-            <div><b>Комментарий</b> <span>*</span></div>
+            <div><b>А вы что об этом думаете?</b></div>
             <textarea rows="2" name="text" class=""></textarea>
         </div>
         <div class="buttons">
             <input type="hidden" name="post" value="${content.getId()}">
             <input type="hidden" name="q" value="comment">
             <div class="button">
-                <input type="button" name="button" value="Комментировать" onclick="Edit.create('comment')" class="btn">
+                <input type="button" name="button" value="Отправить" onclick="Edit.create('comment')" class="btn">
             </div>
             <div class="reply_to"></div>
         </div>

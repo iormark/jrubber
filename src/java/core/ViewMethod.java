@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Properties;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
@@ -22,6 +23,12 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 public class ViewMethod {
 
+    private Properties props = new Properties();
+    {
+        props.setProperty("title", "");
+        props.setProperty("textSize", "1000");
+        props.setProperty("comment", "false");
+    }
     private Date LastModified = null;
     private Statement stmt = null;
     private ResultSet rs = null;
@@ -51,6 +58,17 @@ public class ViewMethod {
         this.rs = rs;
         this.view = view;
         this.comment = comment;
+    }
+
+    public ViewMethod(ResultSet rs, Properties props) {
+        this.rs = rs;
+        this.props = props;
+    }
+    
+    public ViewMethod(ResultSet rs, Statement stmt, Properties props) {
+        this.rs = rs;
+        this.stmt = stmt;
+        this.props = props;
     }
 
     public LinkedHashMap getViewCatalog() throws SQLException {
@@ -121,28 +139,34 @@ public class ViewMethod {
                     } else if ("title".equals(colNames[j])) {
 
                         if (rs.getString("title").equals("")) {
-                            f = "№ " + rs.getString("id");
+                            //if(!props.getProperty("title").equals("")) {
+                            //    f = props.getProperty("title");
+                            //} else {
+                                f = "№ " + rs.getString("id");
+                            //}
                         } else {
-                            f = util.specialCharacters(util.Shortening(rs.getString("title") + "", 85, ""));
+                            f = util.Shortening(StringEscapeUtils.escapeHtml4(rs.getString("title") + ""), 85, "");
                         }
 
                     } else if ("text".equals(colNames[j])) {
-                        if (view) {
-                            f = util.lineFeed(StringEscapeUtils.escapeHtml4(rs.getString("text")) + "");
+                        
+                        int textSize = Integer.parseInt(props.getProperty("textSize"));
+                        if (textSize <= 0) {
+                            f = util.lineFeed(util.bbCode(StringEscapeUtils.escapeHtml4(rs.getString("text")) + ""));
                         } else {
-                            f = util.Shortening(util.lineFeed(StringEscapeUtils.escapeHtml4(rs.getString("text")) + ""), 1000, "<br><a href=\"/anekdot?id=" + rs.getString("id") + "\" target=\"_blank\" title=\"Откроется в новом окне\">Читать дальше</a>");
+                            f = util.Shortening(util.lineFeed(util.bbCode(StringEscapeUtils.escapeHtml4(rs.getString("text")) + "")), textSize, "<br><a href=\"http://yourmood.ru/post?id=" + rs.getString("id") + "\" target=\"_blank\" title=\"Откроется в новом окне\">Читать дальше</a>");
                         }
 
                     } else if ("itemCount".equals(colNames[j])) {
                         if (rs.getInt("itemCount") > 1) {
-                            f = " (" + rs.getString("itemCount") + " шт.)";
-                            content.put("readMore", "<a href=\"/anekdot?id=" + rs.getString("id") + "\" target=\"_blank\" title=\"Откроется в новом окне\">Читать дальше</a>");
+                            f = " (" + rs.getString("itemCount") + " фото)";
+                            content.put("readMore", "<a href=\"/post?id=" + rs.getString("id") + "\" target=\"_blank\" title=\"Откроется в новом окне\">Читать дальше</a>");
                         } else {
                             f = "";
                         }
 
                     } else if ("vote".equals(colNames[j])) {
-                        f = rs.getInt("vote") > 0 ? (comment ? "+" : "") + rs.getString("vote") : rs.getString("vote");
+                        f = rs.getInt("vote") > 0 ? (Boolean.parseBoolean(props.getProperty("comment")) ? "+" : "") + rs.getString("vote") : rs.getString("vote");
 
                     } else if ("image".equals(colNames[j])) {
                         if (rs.getString("image") != null) {

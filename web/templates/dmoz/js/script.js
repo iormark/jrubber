@@ -129,24 +129,16 @@
     }
 
     $(window).scroll(function() {
-        if (!$('#hd').hasClass("fixed") && $(window).scrollTop() > 255) {
-            $('#hd').css('opacity', '0');
-            $('#hd').animate({
-                opacity: 1
-            }, 500).addClass('fixed');
-            $('#doc').css('margin-top', '55px');
-        } else if ($('#hd').hasClass("fixed") && $(window).scrollTop() <= 55) {
-            $('#hd').removeClass('fixed');
-            $('#doc').css('margin-top', '0px');
-        }
-    });
-
-    $(window).scroll(function() {
-        if ($(window).scrollTop() > 255) {
-            //$("#scrollTop").show();
-        } else {
-            //$("#scrollTop").hide();
-        }
+        /*if (!$('#hd').hasClass("fixed") && $(window).scrollTop() > 39) {
+         //$('#hd').css('opacity', '0');
+         $('#docs').css('margin-top', '39px');
+         $('#hd').addClass('fixed');
+         
+         } else if ($('#hd').hasClass("fixed") && $(window).scrollTop() <= 39) {
+         
+         $('#docs').css('margin-top', '0px');
+         $('#hd').removeClass('fixed');
+         }*/
     });
 
     var focus = true;
@@ -164,6 +156,8 @@
         $(document).on('blur', 'input, select, textarea', function(e) {
             focus = true;
         });
+
+
 
         $(document).keyup(function(c) {
             if (c.which == 82 && focus) {
@@ -185,7 +179,8 @@
         });
         $(document).keyup(function(c) {
             if ((87 == c.which || 83 == c.which) && focus) {
-                for (var d = $(document).scrollTop(), a = 0; a < b.length && !(b[a][0] + b[a][1] > d + 55); a++);
+                for (var d = $(document).scrollTop(), a = 0; a < b.length && !(b[a][0] + b[a][1] > d + 55); a++)
+                    ;
                 a = 83 == c.which ? ++a : --a;
                 0 > a && (a = 0);
                 a >= b.length && (a = b.length - 1);

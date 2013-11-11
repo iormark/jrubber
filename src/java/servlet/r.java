@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author mark
  */
-@WebServlet(name = "r", urlPatterns = {"/r"})
+@WebServlet(name = "r", urlPatterns = {"/svc/r"})
 public class r extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)

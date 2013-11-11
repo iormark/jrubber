@@ -21,10 +21,18 @@
 
     <div class="post_head">
 
-        <div class="vote">
-            <div class="vote_up" value="${(content.getId())!''}" title="+1">&nbsp;</div>
-            <span id="vote_${(content.getId())!'0'}" class="vote_count ">${(content.getItemMeta()["vote"])!""}</span>
-            <div class="vote_down" value="${(content.getId())!''}" title="-1">&nbsp;</div>
+        <div class="post__opts">
+            <div class="vote">
+                <div class="vote_up" value="${(content.getId())!''}" title="+1">&nbsp;</div>
+                <span id="vote_${(content.getId())!'0'}" class="vote_count ">${(content.getItemMeta()["vote"])!""}</span>
+                <div class="vote_down" value="${(content.getId())!''}" title="-1">&nbsp;</div>
+            </div>
+            <div class="comment__count">
+                <a class="comment" onclick="Edit.anchor_selected(this); return false;" href="#add-comment">
+                    <span class="icon"></span>
+                    <span>${(content.getComment()?size)!"0"}</span>
+                </a>
+            </div>
         </div>
 
         <div class="post_title">
@@ -84,9 +92,9 @@
                 </#if>
             </div>
             </#if>
-            
+
             <#if ((content.getItem()[key]['video']!'')!='')>
-             <div class="text">${(content.getItem()[key]['video'])!''}&nbsp;</div>
+            <div class="text">${(content.getItem()[key]['video'])!''}&nbsp;</div>
             </#if>
 
         </div>

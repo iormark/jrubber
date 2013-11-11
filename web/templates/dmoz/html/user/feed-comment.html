@@ -1,5 +1,7 @@
 <h2>Мои комментарии (${content.getItem_count()!'0'})</h2>
 
+<#if content.getItem()??>
+
 <#list content.getItem()?keys as key>
 <h3><a href="/post?id=${key}#comment_${(content.getItem()[key]['comment_id'])!''}" target="_blank">${content.getItem()[key]["title"]}</a></h3>
 <div class="comment" id="comment_${(content.getItem()[key]['comment_id'])!''}">
@@ -18,3 +20,9 @@
     </div>
 </div>
 </#list>
+
+<#else>
+<div class="code">
+    Тут пусто=(
+</div>
+</#if>

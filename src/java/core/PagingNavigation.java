@@ -102,11 +102,11 @@ public class PagingNavigation {
         
         String s = "";
         if (page > 1) {
-            s += "<a href=\"?" + urloption.addParam1_1("page=" + (page - 1)+ "&q=[delete]") + "\">« Сюда</a>";
+            s += "← <a href=\"?" + urloption.addParam1_1("page=" + (page - 1)+ "&q=[delete]") + "\" class=\"left\">назад</a>";
         }
 
         if (page < pagCount) {
-            s += "<a href=\"?" + urloption.addParam1_1("page=" + (page + 1)+ "&q=[delete]") + "\">Туда »</a>";
+            s += "<a href=\"?" + urloption.addParam1_1("page=" + (page + 1)+ "&q=[delete]") + "\">вперед</a> →";
         }
 
         return s;

@@ -78,7 +78,7 @@ public class Home extends Creator {
         // по hurl определяем ид категории.
         if (!tags.equals("home.html") && !tags.equals("") && "tag".equals(args.get(0))) {
 
-            rs = stmt.executeQuery("SELECT id, tags FROM tags WHERE tags='" + args.get(1) + "'");
+            rs = stmt.executeQuery("SELECT id, tags FROM tags WHERE tags='" + util.forJSON(args.get(1).toString()) + "'");
             if (rs.next()) {
                 tagsId = rs.getInt("id");
                 selectedTags.put("id", tagsId);
@@ -147,20 +147,20 @@ public class Home extends Creator {
     }
 
     public String getMenu() {
-        String tag = selectedTags.containsKey("tags") ? "<a href=\"/" + ("new".equals(status) ? "new" : "") + "\">×</a> <h1>" + selectedTags.get("tags") + "</h1>" : "";
+        String tag = selectedTags.containsKey("tags") ? "<a href=\"/" + ("new".equals(status) ? "new" : "") + "\" title=\"Удалить\">×</a> <h1>" + selectedTags.get("tags") + "</h1>" : "<h1>Самое интересное</h1>";
         String tagUrl = selectedTags.containsKey("tags") ? "/tag/" + (String) selectedTags.get("tags") +"": "/";
         String tagUrlNew = selectedTags.containsKey("tags") ? "/tag/" + (String) selectedTags.get("tags") +"/new": "/new";
 
         String menu = "<ul class=\"menu\">";
 
-        menu += "<li class=\"tag\" title=\"Удалить\">" + tag + "</li>";
+        menu += "<li class=\"tag\">" + tag + "</li>";
 
         if ("on".equals(status)) {
             menu += "<li class=\"active\"><a href=\"" + tagUrl + "\">Лучшее</a></li>";
-            menu += "<li class=\"noactive\"><a href=\"" + tagUrlNew + "\">Новое</a></li>";
+            menu += "<li class=\"noactive\"><a href=\"" + tagUrlNew + "\">Свежее</a></li>";
         } else if ("new".equals(status)) {
             menu += "<li class=\"noactive\"><a href=\"" + tagUrl + "\">Лучшее</a></li>";
-            menu += "<li class=\"active\"><a href=\"" + tagUrlNew + "\">Новое</a></li>";
+            menu += "<li class=\"active\"><a href=\"" + tagUrlNew + "\">Свежее</a></li>";
         }
 
         menu += "</ul>";
@@ -171,9 +171,9 @@ public class Home extends Creator {
     public String getMetaTitle() {
         if (!selectedTags.isEmpty()) {
 
-            return selectedTags.get("tags").toString();
+            return ("new".equals(status)?"Свежее / ":"") + selectedTags.get("tags").toString();
         } else {
-            return "Самое смешное";
+            return ("new".equals(status)?"Свежее / ":"") + "Все самое интересное и актуальное в сети. Блог обо всем интересном";
         }
     }
 
@@ -204,8 +204,8 @@ public class Home extends Creator {
     @Override
     public String getMetaHead() {
         if (selectedTags.isEmpty()) {
-            return "<meta name=\"description\" content=\"Начальник достал, он урод. Денег нет в кармане, не беда. В жизни самое смешное, ерунда. Анекдоты почитай и картинки посмотри, на х*й брось эту работу, а начальнику въеби!\" />\n"
-                    + "<meta name=\"keywords\" content=\"самое смешное, самое прикольное, самое остроумное\" />";
+            return "<meta name=\"description\" content=\"\" />\n"
+                    + "<meta name=\"keywords\" content=\"самое интересное, самое смешное, самое прикольное, самое остроумное\" />";
 
         } else {
             return "<meta name=\"description\" content=\"" + (selectedTags.containsKey("description") ? selectedTags.get("description") : "") + "\" />\n"

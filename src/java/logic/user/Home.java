@@ -84,13 +84,25 @@ public class Home extends Creator {
             return;
         }
 
-        rs = stmt.executeQuery("SELECT u.*, COUNT(p.id) AS countPost FROM users u LEFT JOIN post p ON u.id=p.user AND p.status!='del' WHERE u.status='on' AND u.id=" + userId + " GROUP BY u.id");
+        rs = stmt.executeQuery("SELECT u.*, COUNT(p.id) AS postCount, (SELECT COUNT(*) FROM `comment` c WHERE u.id = c.user) AS commentCount FROM users u LEFT JOIN post p ON u.id=p.user AND p.status!='del' WHERE u.status='on' AND u.id=" + userId + " GROUP BY u.id");
 
         while (rs.next()) {
             user.put("login", rs.getString("login"));
+
+            int sex = rs.getInt("sex");
+            if (sex == 1) {
+                user.put("sex_string", "женский");
+                user.put("sex_end", "а");
+            } else if (sex == 2) {
+                user.put("sex_string", "мужской");
+                user.put("sex_end", "");
+            }
+
             user.put("rating", rs.getString("rating"));
             user.put("created", new SimpleDateFormat("d MMM yyyy").format(rs.getTimestamp("created")));
-            user.put("countPost", rs.getString("countPost"));
+            user.put("postCount", rs.getString("postCount"));
+            user.put("commentCount", rs.getString("commentCount"));
+            user.put("lastVisit", util.dateFormat(rs.getTimestamp("last_login")));
         }
 
         setHome(request, userID, status);

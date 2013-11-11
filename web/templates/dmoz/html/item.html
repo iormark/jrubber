@@ -7,10 +7,18 @@
 <article id="i__${key}" class="item__segment" <#if ((content.getItem()[key]['image']!'')!='')>itemscope itemtype="http://schema.org/ImageObject"</#if>>
          <div class="list_head">
 
-        <div class="vote">
-            <div class="vote_up" value="${key}" title="+1">&nbsp;</div>
-            <span id="vote_${key}" class="vote_count ">${(content.getItem()[key]["vote"])!""}</span>
-            <div class="vote_down" value="${key}" title="-1">&nbsp;</div>
+        <div class="post__opts">
+            <div class="vote">
+                <div class="vote_up" value="${key}" title="+1">&nbsp;</div>
+                <span id="vote_${key}" class="vote_count ">${(content.getItem()[key]["vote"])!""}</span>
+                <div class="vote_down" value="${key}" title="-1">&nbsp;</div>
+            </div>
+            <div class="comment__count">
+                <a class="comment" href="/post?id=${key}#add-comment" target="_blank">
+                    <span class="icon"></span>
+                    <span>${(content.getItem()[key]['commentCount'])!'0'}</span>
+                </a>
+            </div>
         </div>
 
         <div class="list_title">
@@ -20,13 +28,10 @@
         <div class="list_date">
             <b title="${content.getItem()[key]['dateMore']}"><span style="color: red;">${content.getItem()[key]['date']!''}</span></b>
             Добавил(а): <a href="/${content.getItem()[key]['login']!''}">${content.getItem()[key]["login"]!"Волонтер"}</a>
-            <#if (((content.getItem()[key]['commentCount'])!'0') > 0)>
-            <a href="/post?id=${key}#comments">Комментариев ${(content.getItem()[key]['commentCount'])!''}</a>
-            </#if>
 
             <#if (content.getTagsItem()[key])??>
             <#list content.getTagsItem()[key] as tag>
-            <a href="/tag/${tag}">${tag}</a>
+            <a href="/tag/${tag}" class="tagged__tag">${tag}</a>
             </#list>
             </#if>
         </div>
@@ -63,9 +68,7 @@
         </#if>
     </div>
 
-    <div class="list_meta">
-        <a href="/post?id=${key}#add-comments">Комментировать</a>
-    </div>
+    
 
 </article>
 </#list>
@@ -77,11 +80,11 @@
 
 
 <#if ((content.PageNavig()!"")!="")>
-<hr>
+
 <div class="pagNav">
     <p>${content.PageNavig()}</p>
 </div>
-<hr>
+
 </#if>
 
 

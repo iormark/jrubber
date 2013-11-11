@@ -2,7 +2,6 @@
     outline:none;
 }
 #add__post input[type="text"], textarea {
-    border: 3px solid #ccc;
     padding: 2px 0;
     border-radius: 0px;
 }
@@ -13,7 +12,7 @@
     width: 99%;
 }
 #img-list li div.progress {
-    width: 150px;
+    width: 200px;
     border: 1px solid #888888;
     height: 18px;
     text-align: center;

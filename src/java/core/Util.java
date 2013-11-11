@@ -6,10 +6,11 @@ package core;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.IDN;
 import java.net.URL;
+import java.text.CharacterIterator;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.text.StringCharacterIterator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
@@ -346,7 +347,8 @@ public class Util {
      * @return
      */
     public String bbCode(String str) {
-        return str.replaceAll("\\[br\\]+", "<br>");
+        return str.replaceAll("\\[h3\\]+", "<h3>").replaceAll("\\[/h3\\][\r\n]*", "</h3>")
+                .replaceAll("\\[b\\]+", "<b>").replaceAll("\\[/b\\]", "</b>");
     }
 
     /**
@@ -383,5 +385,27 @@ public class Util {
                 replaceAll("\\[br\\]+", " ").
                 replace("`", "'").
                 trim();
+    }
+
+    public String forJSON(String input) {
+        if (input == null || input.isEmpty()) {
+            return "";
+        }
+        int len = input.length();
+        // сделаем небольшой запас, чтобы не выделять память потом
+        final StringBuilder result = new StringBuilder(len + len / 4);
+        final StringCharacterIterator iterator = new StringCharacterIterator(input);
+        char ch = iterator.current();
+        while (ch != CharacterIterator.DONE) {
+            if (ch == '\'') {
+                result.append("\\\'");
+            } else if (ch == '"') {
+                result.append("\\\"");
+            } else {
+                result.append(ch);
+            }
+            ch = iterator.next();
+        }
+        return result.toString();
     }
 }

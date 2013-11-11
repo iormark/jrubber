@@ -119,7 +119,7 @@ input[type="submit"]:disabled {
     display: inline;
     float: left;
     height: 34px;
-    width: 160px;
+    width: 180px;
     margin-top: 8px;
     margin-left: 0.5em;
     background-color: transparent;
@@ -127,7 +127,35 @@ input[type="submit"]:disabled {
     color: #fff;
     cursor: help;
 }
+#hotkeys a {color: #fff; margin-right: 1.2em }
 #scrollTop span {
     font-family: tahoma;
     font-size: 20px;
 }
+
+
+/*menu*/
+ul.menu {padding: 0;margin: 0;list-style: none;float: left}
+ul.menu li {float: left;margin-right: 0.5em;}
+ul.menu h1 {font-size: inherit; color: #fff; font-weight: bold; display: inline-block;margin: 0;border: 0;}
+ul.menu a {text-decoration: none;padding: 0.1em 0.5em;}
+ul.menu li.tag {margin: 0 1em 0 0.5em}
+ul.menu li.tag a {padding: 0;}
+ul.menu li.active {
+    border: 1px solid;
+    border-bottom: 0;
+    background-color: #578843;
+    border-radius: 4px 4px 0 0;
+    background: -webkit-gradient(linear, center top, center bottom, from(#67AE55), to(#578843));
+    background: -webkit-linear-gradient(top, #67AE55, #578843);
+    background: -moz-linear-gradient(center top , rgb(103, 174, 85), rgb(87, 136, 67)) repeat scroll 0% 0% rgb(105, 167, 78);
+    box-shadow: inset 0 1px 1px #A4E388;
+    border-color: #3B6E22 #3B6E22 #2C5115;
+}
+ul.menu li.active:hover {
+    background:-webkit-gradient(linear, center top, center bottom, from(#79bc64), to(#578843));
+    background:-webkit-linear-gradient(top, #79bc64, #578843);
+    background: -moz-linear-gradient(center top , #79bc64, #578843) repeat scroll 0% 0% rgb(105, 167, 78);
+}
+ul.menu li.active a {color: #fff;}
+.menu__line {border-top: 2px solid #578843;clear: both;margin-bottom: 1.5em}

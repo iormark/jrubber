@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context antiJARLocking="true" path="">
-  <Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxActive="350" 
-  maxIdle="100" maxWait="1000" name="jdbc/yourmood" 
+  <Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxActive="50"
+  maxIdle="100" maxWait="100" name="jdbc/yourmood" 
   password="LRKzEfwCvWqCveK9" type="javax.sql.DataSource" 
   url="jdbc:mysql://46.4.48.29:3118/yourmood" username="yourmood" 
   validationQuery="SELECT 1"/>

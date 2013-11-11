@@ -147,10 +147,11 @@ public class Search extends Creator {
     private void viewCatalog(HashSet id) throws SQLException {
         String sqlid = id.toString().replaceAll("[\\[\\]]", "");
 
-        rs = stmt.executeQuery("SELECT p.*, i.text, i.image, i.img, i.alt,COUNT(i.id) as CountPosts, "
-                + "t.name_alias FROM `type` t, `post_item` i, `post` p WHERE t.id = p.type "
-                + "AND i.post = p.id AND p.status ='on' AND p.id in(" + sqlid + ") "
+        rs = stmt.executeQuery("SELECT p.*, i.text, i.image, i.img, i.alt,COUNT(i.id) as CountPosts "
+                + "FROM `post_item` i, `post` p WHERE "
+                + "i.post = p.id AND p.status ='on' AND p.id in(" + sqlid + ") "
                 + "GROUP BY i.post ORDER BY FIELD(p.id, " + sqlid + ")");
+        
         ViewMethod view = new ViewMethod(rs);
         item = view.getViewCatalog();
         //System.out.println(item);

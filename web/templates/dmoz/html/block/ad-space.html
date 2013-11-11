@@ -15,16 +15,16 @@
             //$('#res').html($(window).scrollTop()+" > "+$offset);
                 
             if (($(window).scrollTop() > $offset)) {
-                $block.css({position: "fixed", top: "35px"});
+                $block.css({position: "fixed", top: "55px"});
             } else  {
                 $block.css({position: "relative"});
             }
                     
         });
         
-        $block.width(230);
+        $block.width(250);
         $(window).resize(function() {
-            $block.width(230);
+            $block.width(250);
         });
         //}
     
@@ -32,13 +32,16 @@
         if(($side.height()+720) > $(document).height()) {
             $('#scroll').html('');
         }
-    
+        
+        $block.hover(function(){
+            $block.removeClass('scroll--animate');
+        });
     });
 </script>
 
 <!--noindex-->
 <div id="scroll">
-    <div class="scroll">
+    <div class="scroll scroll--animate">
         <div id="res"></div>
         <script language="Javascript">
             var bncuniqid = 'dq39UcQYo1d7RVVdT86a';

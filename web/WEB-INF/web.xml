@@ -47,7 +47,7 @@
     
     
     <resource-ref>
-        <description>База шуток</description>
+        <description>База нямок</description>
         <res-ref-name>jdbc/yourmood</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
@@ -58,6 +58,11 @@
     <error-page>
         <error-code>404</error-code>
         <location>/templates/dmoz/html/fuck/sexdice/index.html</location>
+    </error-page>
+    
+    <error-page>
+        <error-code>500</error-code>
+        <location>/templates/dmoz/html/service/error/500.html</location>
     </error-page>
     
     <!--<security-constraint>
