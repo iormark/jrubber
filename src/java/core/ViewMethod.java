@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,12 +24,17 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 public class ViewMethod {
 
-    private Properties props = new Properties();
+    Properties defaultProps = new Properties();
+
     {
-        props.setProperty("title", "");
-        props.setProperty("textSize", "1000");
-        props.setProperty("comment", "false");
+        defaultProps.setProperty("title", "");
+        defaultProps.setProperty("textSize", "1000");
+        defaultProps.setProperty("textLineFeed", "true");
+        defaultProps.setProperty("comment", "false");
+        defaultProps.setProperty("videoIframe", "true");
     }
+    private Properties props = new Properties(defaultProps);
+
     private Date LastModified = null;
     private Statement stmt = null;
     private ResultSet rs = null;
@@ -62,13 +68,166 @@ public class ViewMethod {
 
     public ViewMethod(ResultSet rs, Properties props) {
         this.rs = rs;
-        this.props = props;
+        this.props.putAll(props);
     }
-    
+
     public ViewMethod(ResultSet rs, Statement stmt, Properties props) {
         this.rs = rs;
         this.stmt = stmt;
-        this.props = props;
+        this.props.putAll(props);
+    }
+
+    public LinkedHashMap<String, HashMap> getPostItem(ResultSet rs) throws SQLException {
+
+        while (rs.next()) {
+
+            HashMap map = new HashMap();
+            String id = rs.getString("id");
+            String login = rs.getString("login");
+            String title = rs.getString("title");
+            int vote = rs.getInt("vote");
+            Date created = rs.getTimestamp("date");
+            int commentCount = rs.getInt("commentCount");
+
+            String type = rs.getString("type");
+            String content = rs.getString("content");
+            String type2 = rs.getString("type2");
+            String content2 = rs.getString("content2");
+
+            map.put("login", login);
+            if (title == null) {
+                title = "№ " + title;
+            } else {
+                title = util.Shortening(StringEscapeUtils.escapeHtml4(title), 85, "");
+            }
+            
+
+            if (title.equals("")) {
+                title = "№ " + rs.getString("id");
+            } else {
+                title = util.Shortening(StringEscapeUtils.escapeHtml4(rs.getString("title") + ""), 85, "");
+            }
+            map.put("title", title);
+
+            map.put("vote", vote > 0 ? (Boolean.parseBoolean(props.getProperty("comment")) ? "+" : "") + vote : vote);
+            map.put("created", util.dateFormat(created));
+            map.put("commentCount", commentCount);
+
+            if (content != null || type != null) {
+                map.putAll(getType("", content, type, id));
+            }
+            if (content2 != null || type2 != null) {
+                map.putAll(getType("2", content2, type2, id));
+            }
+
+            items.put(id, map);
+
+            if (LastModified == null) {
+                LastModified = rs.getTimestamp("last_modified");
+            }
+        }
+        //System.out.println(items);
+        return items;
+    }
+
+    public LinkedHashMap<String, HashMap> getItem(ResultSet rs) throws SQLException {
+
+        while (rs.next()) {
+
+            HashMap map = new HashMap();
+            String item = rs.getString("id");
+            String post = rs.getString("post");
+            String type = rs.getString("type");
+            String content = rs.getString("content");
+
+            if (content == null || type == null) {
+                continue;
+            }
+
+            map.putAll(getType("", content, type, post));
+            map.put("type", type);
+            map.put("sort", rs.getString("sort"));
+            items.put(item, map);
+        }
+        //System.out.println(items);
+        return items;
+    }
+
+    public LinkedHashMap<String, HashMap> getMinItem(ResultSet rs) throws SQLException {
+
+        while (rs.next()) {
+
+            HashMap map = new HashMap();
+            String item = rs.getString("id");
+            String title = rs.getString("title");
+            String type = rs.getString("type");
+            String content = rs.getString("content");
+
+            if (content == null || type == null) {
+                continue;
+            }
+
+            map.putAll(getType("", content, type, item));
+            map.put("title", title);
+            map.put("type", type);
+            items.put(item, map);
+        }
+        //System.out.println(items);
+        return items;
+    }
+
+    public HashMap getType(String suff, String content, String type, String post) {
+        HashMap map = new HashMap();
+        switch (type) {
+            case "text":
+                content = StringEscapeUtils.escapeHtml4(content);
+
+                if (Boolean.parseBoolean(props.getProperty("textLineFeed"))) {
+                    content = util.lineFeed(util.bbCode(content));
+                }
+
+                int textSize = Integer.parseInt(props.getProperty("textSize"));
+                if (textSize > 0) {
+                    content = util.Shortening(content, textSize, "<br><a href=\"http://yourmood.ru/post?id=" + post + "\" target=\"_blank\" title=\"Откроется в новом окне\">Читать дальше</a>");
+                }
+                map.put("content" + suff, content);
+
+                break;
+            case "image":
+                if (!content.equals("")) {
+                try {
+                    xor.setField(new String[]{"original", "middle"});
+                    HashMap<String, HashMap> h = xor.setDocument(content);
+
+                    map.put("content" + suff, h.get("original").get("name"));
+                    map.put("imagePath" + suff, h.get("original").containsKey("path") ? h.get("original").get("path") : "/photo_anekdot");
+
+                    map.put("width" + suff, h.get("middle").get("width"));
+                    map.put("height" + suff, h.get("middle").get("height"));
+
+                    int gif = Integer.parseInt(h.get("original").get("animated").toString());
+                    map.put("animated" + suff, gif > 0 ? "img__animated" : "");
+
+                    long size = Long.parseLong(h.get("original").get("size").toString());
+                    map.put("size" + suff, util.sizeFormat(size));
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                }
+
+            }
+                break;
+            case "video":
+                System.out.println(":::" + props.getProperty("videoIframe"));
+                if (Boolean.parseBoolean(props.getProperty("videoIframe"))) {
+                    content = ("<iframe width=\"600\" height=\"400\" src=\"//" + content + "\" frameborder=\"0\" allowfullscreen></iframe>");
+                }
+
+                map.put("content" + suff, content);
+                break;
+        }
+
+        map.put("type" + suff, type);
+        return map;
     }
 
     public LinkedHashMap getViewCatalog() throws SQLException {
@@ -142,73 +301,15 @@ public class ViewMethod {
                             //if(!props.getProperty("title").equals("")) {
                             //    f = props.getProperty("title");
                             //} else {
-                                f = "№ " + rs.getString("id");
+                            f = "№ " + rs.getString("id");
                             //}
                         } else {
                             f = util.Shortening(StringEscapeUtils.escapeHtml4(rs.getString("title") + ""), 85, "");
                         }
 
-                    } else if ("text".equals(colNames[j])) {
-                        
-                        int textSize = Integer.parseInt(props.getProperty("textSize"));
-                        if (textSize <= 0) {
-                            f = util.lineFeed(util.bbCode(StringEscapeUtils.escapeHtml4(rs.getString("text")) + ""));
-                        } else {
-                            f = util.Shortening(util.lineFeed(util.bbCode(StringEscapeUtils.escapeHtml4(rs.getString("text")) + "")), textSize, "<br><a href=\"http://yourmood.ru/post?id=" + rs.getString("id") + "\" target=\"_blank\" title=\"Откроется в новом окне\">Читать дальше</a>");
-                        }
-
-                    } else if ("itemCount".equals(colNames[j])) {
-                        if (rs.getInt("itemCount") > 1) {
-                            f = " (" + rs.getString("itemCount") + " фото)";
-                            content.put("readMore", "<a href=\"/post?id=" + rs.getString("id") + "\" target=\"_blank\" title=\"Откроется в новом окне\">Читать дальше</a>");
-                        } else {
-                            f = "";
-                        }
-
                     } else if ("vote".equals(colNames[j])) {
                         f = rs.getInt("vote") > 0 ? (Boolean.parseBoolean(props.getProperty("comment")) ? "+" : "") + rs.getString("vote") : rs.getString("vote");
 
-                    } else if ("image".equals(colNames[j])) {
-                        if (rs.getString("image") != null) {
-                            if (!rs.getString("image").equals("")) {
-                                content.put("alt", util.Shortening(util.specialCharactersTags(rs.getString("alt")), 255, ""));
-                                f = rs.getString("image");
-                            }
-                        }
-
-                    } else if ("img".equals(colNames[j])) {
-                        if (rs.getString("img") != null) {
-                            if (!rs.getString("img").equals("")) {
-
-                                try {
-                                    xor.setField(new String[]{"original", "middle"});
-                                    HashMap<String, HashMap> h = xor.setDocument(rs.getString("img"));
-
-                                    content.put("image", h.get("original").get("name"));
-                                    content.put("imagePath", h.get("original").containsKey("path") ? h.get("original").get("path") : "/photo_anekdot");
-
-                                    content.put("width", h.get("middle").get("width"));
-                                    content.put("height", h.get("middle").get("height"));
-
-                                    int gif = Integer.parseInt(h.get("original").get("animated").toString());
-                                    content.put("animated", gif > 0 ? "img__animated" : "");
-
-                                    long size = Long.parseLong(h.get("original").get("size").toString());
-                                    content.put("size", util.sizeFormat(size));
-                                } catch (Exception ex) {
-                                    System.out.println(ex);
-                                }
-                            }
-                        }
-
-                    } else if ("video".equals(colNames[j])) {
-                        if (rs.getString("video") != null) {
-                            if (!rs.getString("video").equals("")) {
-                                f = ("<iframe width=\"600\" height=\"400\" src=\"//" + rs.getString("video") + "\" frameborder=\"0\" allowfullscreen></iframe>");
-                            }
-                        } else {
-                            f = null;
-                        }
                     } else if ("status".equals(colNames[j])) {
 
                         String state = rs.getString("status");
@@ -225,6 +326,7 @@ public class ViewMethod {
                         } else {
                             f = null;
                         }
+                    } else if ("content".equals(colNames[j])) {
                     }
 
                     //System.out.println(colNames[j]+"="+f);
@@ -238,7 +340,7 @@ public class ViewMethod {
         return items;
     }
 
-    public HashMap getPostTags(String id) throws SQLException {
+    public HashMap<String, HashSet> getPostTags(int id) throws SQLException {
 
         //System.out.println("SELECT tl.post, t.id, t.tags FROM tags t, tags_link tl WHERE t.id=tl.tags AND tl.post IN (" + id + ")");
         rs = stmt.executeQuery("SELECT tl.post, t.id, t.tags FROM tags t, tags_link tl WHERE t.id=tl.tags AND tl.post IN (" + id + ")");
@@ -260,7 +362,7 @@ public class ViewMethod {
         return tags;
     }
 
-    public HashMap getPostTags() throws SQLException {
+    public HashMap<String, HashSet> getPostTags() throws SQLException {
         if (items.keySet().isEmpty()) {
             return null;
         }

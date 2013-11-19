@@ -1,0 +1,4 @@
+SELECT SQL_CALC_FOUND_ROWS u.login, p.*, (SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount,
+MAX(if(i.sort=0, i.content, NULL)) AS content,
+MAX(if(i.sort=1, i.content, NULL)) AS content2
+FROM users u, tags_link tl, post2 p LEFT JOIN post_item2 i on i.post=p.id WHERE u.id=p.user AND tl.post=p.id GROUP BY p.id ORDER BY p.svc_date DESC

@@ -18,7 +18,7 @@
 var uploaderObject = function(params) {
     var self = this;
 
-    if (!params.key || !params.file || !params.url) {
+    if (!params.key || !params.url) {
         self.lastError = {
             code: 1,
             text: 'Not image'

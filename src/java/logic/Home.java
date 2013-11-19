@@ -7,7 +7,6 @@ import core.Util;
 import core.ViewMethod;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,7 +44,7 @@ public class Home extends Creator {
     private HashMap selectedTags = null;
     private String status = "on";
 
-    public Home(HttpServletRequest request, ArrayList args, Connection conn) throws SQLException {
+    public Home(HttpServletRequest request, ArrayList args, Connection conn) throws Exception {
         this.conn = conn;
         this.args = args;
         this.request = request;
@@ -103,15 +102,23 @@ public class Home extends Creator {
 
     }
 
-    private void setHome(HttpServletRequest request, String tagsID, String status) throws SQLException {
+    private void setHome(HttpServletRequest request, String tagsID, String status) throws Exception {
 
         //rs = stmt.executeQuery("SELECT h.text, h.image, h.alt,COUNT(h.id) as CountPosts, hm.*, t.name AS nameType, t.name_alias AS nameAlias, t.hurl  FROM `type2` t, `humor` h, `humor_meta` hm WHERE t.id = hm.type_int AND h.id = hm.id AND hm.status ='on' " + CategoriesAllId + " GROUP BY h.id ORDER BY hm.date DESC LIMIT " + begin + "," + lt);
-
-        rs = stmt.executeQuery("SELECT SQL_CALC_FOUND_ROWS u.login, p.*, i.itemCount, pi.text, pi.image, pi.img, pi.alt, pi.video, (SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount FROM users u, post p, tags_link tl, post_item pi JOIN (SELECT id, post, COUNT(*) AS itemCount, MIN(sort) AS sortMin FROM post_item GROUP BY post) AS i ON pi.post=i.post AND pi.sort=i.sortMin WHERE u.id=p.user AND tl.post=p.id AND p.id=pi.post AND p.status='" + status + "' " + tagsID + " GROUP BY p.id ORDER BY p.svc_date DESC LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
+        rs = stmt.executeQuery("SELECT SQL_CALC_FOUND_ROWS u.login, p.*, "
+                + "(SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount,"
+                + "MAX(if(i.sort=0, i.content, NULL)) AS content, MAX(if(i.sort=0, i.type, NULL)) AS type,"
+                + "MAX(if(i.sort=1, i.content, NULL)) AS content2, MAX(if(i.sort=1, i.type, NULL)) AS type2 "
+                + "FROM users u, tags_link tl, post2 p LEFT JOIN post_item2 i on i.post=p.id "
+                + "WHERE u.id=p.user AND tl.post=p.id AND p.status='" + status + "' " + tagsID + " "
+                + "GROUP BY p.id ORDER BY p.svc_date DESC LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
         
-
+        
+        //rs = stmt.executeQuery("SELECT SQL_CALC_FOUND_ROWS u.login, p.*, i.itemCount, pi.content, pi.image, pi.img, pi.alt, pi.video, (SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount FROM users u, post p, tags_link tl, post_item pi JOIN (SELECT id, post, COUNT(*) AS itemCount, MIN(sort) AS sortMin FROM post_item GROUP BY post) AS i ON pi.post=i.post AND pi.sort=i.sortMin WHERE u.id=p.user AND tl.post=p.id AND p.id=pi.post AND p.status='" + status + "' " + tagsID + " GROUP BY p.id ORDER BY p.svc_date DESC LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
+        
         ViewMethod view = new ViewMethod(rs, stmt);
-        item = view.getViewCatalog();
+        item = view.getPostItem(rs);
+
         rs = stmt.executeQuery("SELECT FOUND_ROWS() as rows;");
         if (rs.next()) {
             found = rs.getInt("rows");
@@ -148,8 +155,8 @@ public class Home extends Creator {
 
     public String getMenu() {
         String tag = selectedTags.containsKey("tags") ? "<a href=\"/" + ("new".equals(status) ? "new" : "") + "\" title=\"Удалить\">×</a> <h1>" + selectedTags.get("tags") + "</h1>" : "<h1>Самое интересное</h1>";
-        String tagUrl = selectedTags.containsKey("tags") ? "/tag/" + (String) selectedTags.get("tags") +"": "/";
-        String tagUrlNew = selectedTags.containsKey("tags") ? "/tag/" + (String) selectedTags.get("tags") +"/new": "/new";
+        String tagUrl = selectedTags.containsKey("tags") ? "/tag/" + (String) selectedTags.get("tags") + "" : "/";
+        String tagUrlNew = selectedTags.containsKey("tags") ? "/tag/" + (String) selectedTags.get("tags") + "/new" : "/new";
 
         String menu = "<ul class=\"menu\">";
 
@@ -171,9 +178,9 @@ public class Home extends Creator {
     public String getMetaTitle() {
         if (!selectedTags.isEmpty()) {
 
-            return ("new".equals(status)?"Свежее / ":"") + selectedTags.get("tags").toString();
+            return ("new".equals(status) ? "Свежее / " : "") + selectedTags.get("tags").toString();
         } else {
-            return ("new".equals(status)?"Свежее / ":"") + "Все самое интересное и актуальное в сети. Блог обо всем интересном";
+            return ("new".equals(status) ? "Свежее / " : "") + "Все самое интересное и смешное в сети. Блог обо всем интересном";
         }
     }
 

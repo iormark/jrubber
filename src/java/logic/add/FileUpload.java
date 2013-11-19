@@ -11,7 +11,12 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
+import java.util.TimeZone;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,30 +28,38 @@ import org.apache.log4j.Logger;
  *
  * @author mark
  */
-@WebServlet(name = "FileUpload2", urlPatterns = {"/svc/FileUpload2"})
-public class FileUpload2 extends HttpServlet {
+@WebServlet(name = "FileUpload", urlPatterns = {"/svc/FileUpload"})
+public class FileUpload extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(FileUpload2.class);
+    private static final Logger logger = Logger.getLogger(FileUpload.class);
     private Util util = new Util();
-    private String message = "";
+    private String message = "", additionalMessage = "";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         try {
+            request.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
 
-            EditCookie editcookie = new EditCookie(request, response);
             PrintWriter out = response.getWriter();
-            String q = request.getParameter("q") != null ? request.getParameter("q") : "file";
+            EditCookie editcookie = new EditCookie(request, response);
 
-            // Соединение с DB
+            System.out.println("q:" + request.getAttribute("q"));
+            
+            String q = request.getParameter("q") != null ? request.getParameter("q") : "item";
+            String id = (String) request.getParameter("id");
+
+            // Connect with DB
             JNDIConnection jndi = new JNDIConnection();
             Connection conn = jndi.init();
             Statement stmt = conn.createStatement();
+
+            // Information about the user
             Check check = new Check(request, response, stmt);
 
-            String realPath = getServletContext().getRealPath("/").replaceAll("/ROOT", "");
+            // Path to the servlet
+            String realPath = getServletContext().getRealPath("/").replaceAll("/ROOT", "").replaceAll("[/]$", "");
 
             if (!check.getCheck()) {
                 out.print("{\"status\":\"error\",\"message\":\"Отказанно в доступе!\"}");
@@ -54,72 +67,59 @@ public class FileUpload2 extends HttpServlet {
             }
 
             try {
-                request.setCharacterEncoding("UTF-8");
 
                 FieldCheck fc = null;
                 HashSet tags = null;
-                System.out.println(q);
+
                 switch (q) {
                     case "header":
-
-                        fc = new FieldCheck(request);
-                        fc.checkTags(request.getParameter("tags"));
-                        fc.checkTitle(request.getParameter("title"));
-                        message = fc.getMessage();
 
                         break;
                     case "article":
 
-                        fc = new FieldCheck(request, response);
-                        tags = fc.checkTags(request.getParameter("tags"));
-                        fc.checkTitle(request.getParameter("title"));
-                        message = fc.getMessage();
-
-                        if (message.equals("")) {
-                            PostCreate pc = new PostCreate(request, response, conn, stmt, check);
-                            pc.createPost();
-                            pc.createTags(tags);
-                        }
-
                         break;
-                    case "file":
+                    case "item":
 
-                        FileUploader fu = new FileUploader(realPath, "", request, response, conn, stmt, out, check);
+                        Calendar calendar = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault());
+                        calendar.setTime(new Date());
+                        String loadPath = "/img/" + calendar.get(Calendar.YEAR) + "/" + calendar.get(Calendar.MONTH);
+                        
+                        FileUploader fu = new FileUploader(realPath, loadPath, request, response, conn, stmt, out, check);
+                        additionalMessage = ",\"item\":" + fu.getInsertItem();
                         message = fu.getMessage();
 
                         break;
                     case "create":
+                        
                         PostCreate pc = new PostCreate(request, response, conn, stmt, check);
                         fc = new FieldCheck(request, response);
-                        //message = fc.getMessage();
-
-                        //if (!message.equals("")) {
                         tags = fc.checkTags(request.getParameter("tags"));
-                        pc.createPost();
+                        int insertPostId = pc.createPost();
                         pc.updateItem_post();
                         pc.createTags(tags);
+                        message = pc.getMessage();
+                        
+                        
+                        additionalMessage = ",\"post\":\""+insertPostId+"\"";
+                        
+                        break;
+                    default:
 
-                        if (request.getParameter("video") != null) {
-                            if (!request.getParameter("video").equals("")) {
-                                pc.createPost_item(request.getParameter("video"), 99);
-                            }
-                        }
 
-                        //}
                         break;
 
                 }
 
             } catch (Exception ex) {
-                message = ("<li>" + ex.getMessage().trim() + "</li>");
+                message = ("" + ex.getMessage() + "");
                 logger.error("", ex);
             } finally {
                 jndi.close(stmt, null);
 
                 if (message.length() == 0) {
-                    out.print("{\"status\":\"ok\",\"message\":\"Сохранено\"}");
+                    out.print("{\"status\":\"ok\",\"message\":\"Сохранено\"" + additionalMessage + "}");
                 } else {
-                    out.print("{\"status\":\"error\",\"action\":\"" + q + "\",\"message\":\"" + message.toString().trim() + "\"}");
+                    out.print("{\"status\":\"error\",\"action\":\"" + q + "\",\"message\":\"" + message.toString().trim() + "\"" + additionalMessage + "}");
                 }
 
                 System.out.println("message: " + message);
@@ -144,7 +144,6 @@ public class FileUpload2 extends HttpServlet {
         Statement stmt;
         try {
             stmt = conn.createStatement();
-
             try {
                 Autocomplete auto = new Autocomplete(request, response, conn, stmt, out);
                 out.println(auto.getJson());

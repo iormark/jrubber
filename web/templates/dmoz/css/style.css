@@ -89,6 +89,14 @@ fieldset {
 }
 
 
+/*draggable*/
+.draggable li {
+    //border: solid 1px #fff;
+}
+.draggable .over {
+    //border: dashed 1px #ddd;
+}
+
 
 /*Table*/
 table.data {

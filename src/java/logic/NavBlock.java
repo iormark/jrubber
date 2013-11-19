@@ -45,7 +45,7 @@ public class NavBlock extends CreatorBlock {
         String datetime = null;
 
         try {
-            rs = stmt.executeQuery("SELECT svc_date FROM `post` WHERE status='on' ORDER BY `date` DESC LIMIT 1");
+            rs = stmt.executeQuery("SELECT svc_date FROM `post2` WHERE status='on' ORDER BY `date` DESC LIMIT 1");
             if (rs.next()) {
                 Calendar c = new GregorianCalendar();
                 c.setTimeInMillis(rs.getTimestamp("svc_date").getTime());
@@ -98,7 +98,7 @@ public class NavBlock extends CreatorBlock {
 
         ct = new CategoriesTree(stmt, cat[n]);
 
-        rs = stmt.executeQuery("SELECT MAX(p.id) AS max, MIN(p.id) AS min FROM `post_item` i, post p WHERE i.post = p.id AND p.status ='on' AND (i.image is not null AND i.video is null)" );
+        rs = stmt.executeQuery("SELECT MAX(p.id) AS max, MIN(p.id) AS min FROM `post_item2` i, post2 p WHERE i.post = p.id AND p.status ='on' AND i.type is not null");
         if (rs.next()) {
             max = rs.getInt("max");
             min = rs.getInt("min");
@@ -106,33 +106,14 @@ public class NavBlock extends CreatorBlock {
 
         rand = min + random.nextInt((max - min) + 1);
 
-        rs = stmt.executeQuery("SELECT i.text, i.image, i.img, i.alt,COUNT(i.id) as CountPosts, p.* FROM `post_item` i, `post` p WHERE i.post = p.id AND p.status ='on' "
-                + "AND (p.id <=" + max + " AND p.id>=" + min + ") AND p.id>=" + rand +" GROUP BY i.post LIMIT 1");
-        
-        
+        rs = stmt.executeQuery("SELECT i.content, i.type, p.* FROM `post_item2` i, `post2` p WHERE i.post = p.id AND p.status ='on' "
+                + "AND (p.id <=" + max + " AND p.id>=" + min + ") AND p.id>=" + rand + " AND i.type is not null GROUP BY i.post LIMIT 1");
+       
         Properties props = new Properties();
+        props.setProperty("title", "Подробнее...");
         props.setProperty("textSize", "200");
         ViewMethod view = new ViewMethod(rs, props);
-        item = view.getViewCatalog();
-
-        /*
-        if (rs.next()) {
-            HashMap<String, String> content = new HashMap<String, String>();
-
-
-            content.put("id", rs.getString("id"));
-            content.put("text", util.Shortening(util.lineFeed(util.bbCode(StringEscapeUtils.escapeHtml4(rs.getString("text")) + "")), 400, "<br><a href=\"/post?id=" + rs.getString("id") + "\" target=\"_blank\">Читать дальше</a>"));
-
-            if (rs.getString("image") != null) {
-                content.put("alt", util.specialCharactersTags(rs.getString("alt")));
-                content.put("image", rs.getString("image"));
-            }
-
-
-            content.put("date", new SimpleDateFormat("d MMM yyyy, HH:mm:ss").format(rs.getTimestamp("date")));
-
-            item.put("all", content);
-        }*/
+        item = view.getMinItem(rs);
 
 
         return item;

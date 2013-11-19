@@ -111,10 +111,17 @@ public class Home extends Creator {
 
     private void setHome(HttpServletRequest request, String userID, String status) throws SQLException {
 
-        rs = stmt.executeQuery("SELECT SQL_CALC_FOUND_ROWS u.login, p.*, i.itemCount, pi.text, pi.image, pi.img, pi.alt, pi.video, (SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount FROM users u, post p, tags_link tl, post_item pi JOIN (SELECT id, post, COUNT(*) AS itemCount, MIN(sort) AS sortMin FROM post_item GROUP BY post) AS i ON pi.post=i.post AND pi.sort=i.sortMin WHERE u.id=p.user AND tl.post=p.id AND p.id=pi.post AND p.status IN('on', 'new') " + userID + " GROUP BY p.id ORDER BY p.id DESC LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
+        rs = stmt.executeQuery("SELECT SQL_CALC_FOUND_ROWS u.login, p.*, "
+                + "(SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount,"
+                + "MAX(if(i.sort=0, i.content, NULL)) AS content, MAX(if(i.sort=0, i.type, NULL)) AS type,"
+                + "MAX(if(i.sort=1, i.content, NULL)) AS content2, MAX(if(i.sort=1, i.type, NULL)) AS type2 "
+                + "FROM users u, tags_link tl, post2 p LEFT JOIN post_item2 i on i.post=p.id "
+                + "WHERE u.id=p.user AND tl.post=p.id AND p.status IN('on', 'new') " + userID + " "
+                + "GROUP BY p.id ORDER BY p.svc_date DESC  LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
 
         ViewMethod view = new ViewMethod(rs, stmt);
-        item = view.getViewCatalog();
+        item = view.getPostItem(rs);
+
         rs = stmt.executeQuery("SELECT FOUND_ROWS() as rows;");
         if (rs.next()) {
             found = rs.getInt("rows");

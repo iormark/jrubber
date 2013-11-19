@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import logic.*;
-import logic.Service.WidgetYandex;
 import logic.user.Check;
 import logic.user.Feed;
 import org.apache.log4j.Logger;
@@ -54,7 +53,8 @@ public class Main extends HttpServlet {
             try {
                 stmt = conn.createStatement();
             } catch (Exception e) {
-                out.println(e + "Creates a Statement object for sending SQL statements to the database.");
+                logger.error("", e);
+                response.sendError(500);
                 return;
             }
 
@@ -138,7 +138,7 @@ public class Main extends HttpServlet {
 
                 } else if ("add".equals(q)) {
                     if (check.getCheck()) {
-                        creator = new Add(request, response, stmt, getServletContext().getRealPath("/"));
+                        creator = new Add(request, response, stmt, getServletContext().getRealPath("/"), check);
 
                         root.put("time_addition", block.getTimeAddition());
                         root.put("tags", block.getTagsLi());
@@ -157,6 +157,7 @@ public class Main extends HttpServlet {
                         q += ".html";
                     } else {
                         response.sendRedirect("/");
+                        return;
                     }
                 } else if ("rss.html".equals(q)) {
                     creator = new Rss(stmt);
@@ -275,6 +276,7 @@ public class Main extends HttpServlet {
                         q = "edit.html";
                     } else {
                         response.sendRedirect("/");
+                        return;
                     }
 
                 } else if ("feed".equals(q)) {
@@ -300,6 +302,7 @@ public class Main extends HttpServlet {
                         q = "user/feed-comment.html";
                     } else {
                         response.sendRedirect("/");
+                        return;
                     }
                 } else {
                     creator = new logic.user.Home(request, args, conn);
@@ -325,12 +328,11 @@ public class Main extends HttpServlet {
 
             } catch (Exception e) {
                 logger.error("", e);
-                //response.sendError(500);
-                return;
+                throw new Exception(e);
             }
 
             if (creator == null) {
-                //response.sendError(404);
+                response.sendError(404);
                 return;
             }
 

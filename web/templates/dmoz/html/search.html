@@ -3,64 +3,7 @@
 ${content.getMessage()}
 
 
-<#list content.getItem()?keys as key>
-<article class="item__segment" <#if ((content.getItem()[key]['image']!'')!='')>itemscope itemtype="http://schema.org/ImageObject"</#if>>
-    <div class="list_head">
-
-        <div class="post__opts">
-            <div class="vote">
-                <div class="vote_up" value="${key}" title="+1">&nbsp;</div>
-                <span id="vote_${key}" class="vote_count ">${(content.getItem()[key]["vote"])!""}</span>
-                <div class="vote_down" value="${key}" title="-1">&nbsp;</div>
-            </div>
-            <!--<div class="comment__count">
-                <a class="comment" href="/post?id=${key}#add-comment" target="_blank">
-                    <span class="icon"></span>
-                    <span>${(content.getItem()[key]['commentCount'])!'0'}</span>
-                </a>
-            </div>-->
-        </div>
-
-        <div class="list_title">
-            <a class="h2" href="/anekdot?id=${key}">${content.getItem()[key]['title']!''}</a>
-        </div>
-
-        <div class="list_date">
-            <b title="${content.getItem()[key]['dateMore']}"><span style="color: red;">${content.getItem()[key]['date']!''}</span></b>
-        </div>
-
-    </div>
-
-    <div class="list_info">
-        <div>${content.getItem()[key]["text"]!""}</div>
-
-        <#if ((content.getItem()[key]['image']!'')!='')>
-        <meta itemprop="description" content="${content.getItem()[key]['alt']!''}">
-        <meta itemprop="contentUrl" content="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['image']!''}">
-        <#if (((content.getItem()[key]['animated'])!'')!='')>
-        <div style="display: inline-block;position: relative">
-            <a class="image img__href img__animated" value="${(content.getItem()[key]['imagePath'])!''}:${(content.getItem()[key]['image'])!''}" target="_blank" href="/anekdot?id=${key}">
-                <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['image'])!''}" alt="${content.getItem()[key]['alt']!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
-                <div class="list__info__img__hint">gif, ${content.getItem()[key]['size']!''}</div>
-            </a>
-        </div>
-        <#else>
-        <a class="image img__href" target="_blank" href="/anekdot?id=${key}">
-            <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['image'])!''}" alt="${content.getItem()[key]['alt']!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
-        </a>
-        </#if>
-        ${content.getItem()[key]["readMore"]!""}
-        </#if>
-    </div>
-
-    <div class="list_meta">
-        <!--<a href="/anekdot?id=${key}#add-comments">Комментировать</a>-->
-        <span>Добавил(а): ${content.getItem()[key]["name"]!"Волонтер"}</span>
-    </div>
-</article>
-</#list>
-
-
+<#include "/item.html">
 
 
 <#if ((content.PageNavig()!"")!="")>

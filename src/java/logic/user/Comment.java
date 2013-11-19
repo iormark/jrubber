@@ -23,15 +23,15 @@ public class Comment {
     private LinkedHashMap<String, HashMap> Comment = new LinkedHashMap();
     private static Util util = new Util();
 
-    public Comment(Statement stmt, String id) throws SQLException {
+    public Comment(Statement stmt, int id) throws SQLException {
         queryComment(stmt, id);
     }
 
-    public Comment(Statement stmt, String id, String post) throws SQLException {
+    public Comment(Statement stmt, int id, int post) throws SQLException {
         queryComment(stmt, id, post);
     }
 
-    private void queryComment(Statement stmt, String id) throws SQLException {
+    private void queryComment(Statement stmt, int id) throws SQLException {
         ResultSet rs = stmt.executeQuery("SELECT u.id AS user_id, u.login, c.* FROM users u, comment c WHERE u.id=c.user AND c.post='" + id + "' AND c.status='on'");
 
         for (int i = 0; rs.next(); i++) {
@@ -49,7 +49,7 @@ public class Comment {
         }
     }
 
-    private void queryComment(Statement stmt, String id, String post) throws SQLException {
+    private void queryComment(Statement stmt, int id, int post) throws SQLException {
     }
 
     public LinkedHashMap getComment() {

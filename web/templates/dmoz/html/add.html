@@ -1,64 +1,76 @@
 <link href="/templates/dmoz/css/add/add.css" rel="stylesheet" type="text/css">
 <link href="/templates/dmoz/css/add/main.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="/templates/dmoz/js/add/uploaderObject.js?4" charset="utf-8"></script>
-<script type="text/javascript" src="/templates/dmoz/js/add/interface.js?4" charset="utf-8"></script>
-<div id="add__post">
-    <h1>Изготовить пост <small>(Beta)</small>
-        <a style="float: right;font-size: 14px;text-decoration: none;color:#000" href="/wtf.html">Правила сайта</a>
-    </h1>
-    
-    <div id="add__logout"></div>
 
-    <form>
-        <!--<div class="field"><input type="text" name="name" placeholder="имя" value=""></div>
-        <div class="field"><input type="text" name="email" placeholder="email" value=""></div>-->
+<div id="add__post"  style="border: 0px solid #ddd;padding: .7em">
 
-        <div class="field"><input type="text" name="title" placeholder="название" value="" id="filed__title"></div>
-        <input type="hidden" name="key" value="${content.getFileKey()}">
-    </form>
+    <div class="field"><input type="text" name="title" value="${(content.getPost()['title'])!''}" placeholder="название" id="filed__title"></div>
+    <input type="hidden" name="key" value="${(content.getFileKey())!'0'}">
+    <input type="hidden" name="post" value="${(content.getHashId())!'0'}">
+
+    <ul id="file_list" class="draggable">
+
+        <#if (content.getItem()?size> 0)>
+        <#list content.getItem()?keys as key>
+        <#assign type = (content.getItem()[key]["type"]!"")>
+        <#assign cont = (content.getItem()[key]["content"]!"")>
 
 
-    <div id="wrapper">
+        <li class="read" id="${key}">
 
-        <div id="workfield">
-            <div id="content">
-                <div>Чтобы добавить картинки, выбери их в поле
-                    <input type="file" name="file" id="file-field" multiple><br/>
-                    
-                </div>
-                <div id="img-container">
-                    <ul id="img-list">
-                        <li><textarea name="text"></textarea></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+            <#if (type=='text')><textarea name="text" cols="2">${cont}</textarea></#if>
 
-        <#if ( user.getRating()> 200 )>
-        <div class="field">
+            <#if (type=='image')>
+            <input type="file" class="file_input" name="files" multiple="">
+            <div class="file_name"></div>
+            <#if (content!='')>
+            <img src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/small_${cont}">
+            <div class="progress"><div class="percent" style="width: 100%;">100%</div></div>
+            </#if>
+            </#if>
+
+            <#if (type=='video')>
             <div>Видео (Coub): URL (без http's), пример: <code>www.youtube.com/video...</code></div>
-            <input type="text" name="video" value="" id="filed__video">
-        </div>
+            <input type="text" name="video" value="${cont}">
+            </#if>
+
+            <input type="hidden" name="id" value="${key}">
+            <input type="hidden" name="sort" value="${(content.getItem()[key]['sort'])!''}">
+        </li>
+        </#list>
+        <#else>
+        <!--<li>
+            <input type="file" class="file_input" name="files" multiple="">
+            <textarea name="text" cols="2"></textarea>
+            <input type="hidden" name="id" value="0">
+            <input type="hidden" name="sort" value="0">
+        </li>-->
         </#if>
-        
-        <div class="field">
-            <div>Теги (укажите от 2 до 6 тегов через запятую)</div>
-            <input type="text" name="tags" value="" id="filed__tags">
-            <div id="filed__autocomplete"></div>
-        </div>
+    </ul>
 
-        <div id="leftpanel">
-            <div id="actions">
-                <span id="info-count">Изображений не выбрано</span><br/>
-                Общий размер: <span id="info-size">0</span> Кб<br/><br/>
-                <button id="upload-all">Загрузить</button>
-            </div>
+    <div class="field">
+        <button id="filed__add--text">+ Добавить текст</button>
+        <button id="filed__add--image">+ Добавить картинку</button>
+        <#if ( user.getRating()> 200 )>
+        <button id="filed__add--video">+ Добавить видео</button>
+        </#if>
+    </div>
 
-            <div id="console">
-            </div>
-        </div>
-
+    <div class="field">
+        <div>Теги (укажите от 2 до 6 тегов через запятую)</div>
+        <input type="text" name="tags" value="<#if (content.getTagsItem()[content.getId()?string])??><#list content.getTagsItem()[content.getId()?string] as tag>${tag}, </#list></#if>" id="filed__tags">
+        <div id="filed__autocomplete"></div>
     </div>
 
 
+
+
+    <div id="actions">
+        <button id="upload"><#if (content.getId()> 0)>Сохранить<#else>Загрузить</#if></button>
+    </div>
+
+    <div id="console"></div>
 </div>
+
+
+<script type="text/javascript" src="/templates/dmoz/js/FileApi.js" charset="utf-8"></script>
+<script type="text/javascript" src="/templates/dmoz/js/add/add.js" charset="utf-8"></script>

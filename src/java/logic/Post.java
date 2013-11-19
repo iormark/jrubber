@@ -1,10 +1,12 @@
 package logic;
 
-import core.*;
+import core.EditCookie;
+import core.UrlOption;
+import core.Util;
+import core.ViewMethod;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,7 +29,7 @@ public class Post extends Creator {
 
     private int serverStatus = 200;
     private int gid = 0, imageLength = 0, next = 0, back = 0;
-    private String id = "0";
+    private int id = 0;
     private HashMap<String, String> itemMeta = new HashMap();
     private LinkedHashMap<String, HashMap> item = new LinkedHashMap();
     private HashMap<String, HashSet> tags = new HashMap();
@@ -46,11 +48,11 @@ public class Post extends Creator {
 
         urloption = new UrlOption(request);
 
-        id = request.getParameter("id");
+        id = Integer.parseInt(request.getParameter("id"));
         ResultSet rs = null;
         int typeId = 0;
 
-        rs = stmt.executeQuery("SELECT * FROM users u, post p WHERE u.id=p.user AND p.status IN('new','on') AND p.id = '" + id + "'");
+        rs = stmt.executeQuery("SELECT * FROM users u, post2 p WHERE u.id=p.user AND p.status IN('new','on') AND p.id = '" + id + "'");
 
         while (rs.next()) {
             itemMeta.put("id", rs.getString("id"));
@@ -70,13 +72,13 @@ public class Post extends Creator {
             return;
         }
 
-        rs = stmt.executeQuery("SELECT i.id, i.post, i.text, i.image, i.img, i.video, i.alt, i.status FROM `post_item` i WHERE  i.post = '" + id + "' ORDER BY i.sort LIMIT 99;");
+        rs = stmt.executeQuery("SELECT id, post, sort, type, content FROM "
+                + "`post_item2` WHERE  post = '" + id + "' ORDER BY sort LIMIT 99;");
 
         Properties props = new Properties();
         props.setProperty("textSize", "0");
-        ViewMethod view = new ViewMethod(rs, stmt, props);
-        item = view.getViewCatalog();
-        System.out.println(item);
+        ViewMethod view = new ViewMethod(null, stmt, props);
+        item = view.getItem(rs);
         tags = view.getPostTags(id);
 
         for (Map.Entry<String, HashMap> entry : item.entrySet()) {
@@ -87,7 +89,7 @@ public class Post extends Creator {
             }
         }
 
-        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT min(id) as id FROM post WHERE (status = 'new' OR status = 'on')  AND id > " + id + ") p2 ON p2.id=p.id LIMIT 1");
+        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post2`p JOIN  (SELECT min(id) as id FROM post2 WHERE (status = 'new' OR status = 'on')  AND id > " + id + ") p2 ON p2.id=p.id LIMIT 1");
 
         if (rs.next()) {
             HashMap batton = new HashMap();
@@ -103,7 +105,7 @@ public class Post extends Creator {
             bn.put("next", batton);
         }
 
-        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT max(id) as id FROM post WHERE (status = 'new' OR status = 'on')  AND id < " + id + ") p2 ON p2.id=p.id LIMIT 1");
+        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post2`p JOIN  (SELECT max(id) as id FROM post2 WHERE (status = 'new' OR status = 'on')  AND id < " + id + ") p2 ON p2.id=p.id LIMIT 1");
 
         if (rs.next()) {
             HashMap batton = new HashMap();
@@ -132,7 +134,6 @@ public class Post extends Creator {
     }
     
     public String varMenu() {
-        
         return "Комментарии";
     }
 
@@ -140,7 +141,7 @@ public class Post extends Creator {
         return itemMeta;
     }
 
-    public HashMap getTagsItem() {
+    public HashMap<String, HashSet> getTagsItem() {
         return !tags.isEmpty() ? tags : null;
     }
 
@@ -162,7 +163,7 @@ public class Post extends Creator {
     }
 
     public String getId() {
-        return id;
+        return Integer.toString(id);
     }
 
     public int getNext() {
@@ -199,10 +200,10 @@ public class Post extends Creator {
     public String getMetaTitle() {
 
         if (itemMeta.get("title").equals("")) {
-            if (item.get(Integer.toString(gid)).get("text").toString().equals("")) {
-                return "Пост № " + id;
+            if (item.get(Integer.toString(gid)).get("content").toString().equals("")) {
+                return "Новость № " + id;
             } else {
-                return util.specialCharacters(util.Shortening(item.get(Integer.toString(gid)).get("text").toString(), 85, "")) + " # Пост №" + gid;
+                return util.specialCharacters(util.Shortening(item.get(Integer.toString(gid)).get("content").toString(), 85, "")) + " # Новость №" + gid;
             }
         } else {
             if (imageLength > 1) {

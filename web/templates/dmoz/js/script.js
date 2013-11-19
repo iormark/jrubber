@@ -12,6 +12,7 @@
 
 
         $('textarea').autosize();
+        //$('textarea').elastic();
 
 
         //Vote

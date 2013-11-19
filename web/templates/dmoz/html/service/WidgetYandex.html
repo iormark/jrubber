@@ -16,14 +16,32 @@
             </div>
             </#if>
 
-            ${content.getItem()[key]["text"]!""}
+            <#if ((content.getItem()[key]["type"])??)>
+            <#if ((content.getItem()[key]["type"])=='text')>
+            <div class="text">${(content.getItem()[key]["content"])!""}</div>
+            </#if>
 
-            <#if (content.getItem()[key]['image'])??>
+            <#if ((content.getItem()[key]["type"])=="image")>
             <div style="text-align: center;">
                 <a target="_blank" href="http://yourmood.ru/post?id=${key}">
-                    <img src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/small_${(content.getItem()[key]['image'])!''}" alt="${content.getItem()[key]['alt']!''}">
+                    <img src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/small_${(content.getItem()[key]['content'])!''}">
                 </a>
             </div>
+            </#if>
+            </#if>
+
+            <#if ((content.getItem()[key]["type2"])??)>
+            <#if ((content.getItem()[key]["type2"])=='text')>
+            <div class="text">${(content.getItem()[key]["content2"])!""}</div>
+            </#if>
+
+            <#if ((content.getItem()[key]["type2"])=="image")>
+            <div style="text-align: center;">
+                <a target="_blank" href="http://yourmood.ru/post?id=${key}">
+                    <img src="http://yourmood.ru${(content.getItem()[key]['imagePath2'])!''}/small_${(content.getItem()[key]['content2'])!''}">
+                </a>
+            </div>
+            </#if>
             </#if>
         </div>
         </#list>

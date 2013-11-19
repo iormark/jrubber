@@ -83,25 +83,34 @@ public class FieldCheck {
         }
     }
 
-    public FieldCheck(String text, String video) {
+    public FieldCheck(String text, String video, boolean file) {
         this.text = text != null ? text.trim() : "";
         this.video = video != null ? video.trim() : "";
 
-        System.out.println(">>>>>>>>>>>>" + video);
+        if (!file) {
+            if (!this.text.equals("") || !this.video.equals("")) {
+                String text2 = checkText();
+                String video2 = checkVideo();
 
-        if (!this.text.equals("") || !this.video.equals("")) {
-            String text2 = checkText();
-            String video2 = checkVideo();
+                if (!text2.equals("") || !video2.equals("")) {
+                    if (!text2.equals("")) {
+                        message = text2;
+                    }
+                    if (!video2.equals("")) {
+                        message = video2;
+                    }
+                }
 
-            if (!text2.equals("") || !video2.equals("")) {
-                if (!text2.equals("")) {
+                if (!text2.equals("") && video2.equals("")) {
                     message = text2;
                 }
-                if (!video2.equals("")) {
+
+                if (text2.equals("") && !video2.equals("")) {
                     message = video2;
                 }
+            } else {
+                message = ("Постить пустоту запрещено!");
             }
-
         }
     }
 
@@ -109,14 +118,14 @@ public class FieldCheck {
         if (title != null) {
             title = title.trim();
             if (title.length() > 255) {
-                message = ("Название не более 255 символов.");
+                message = ("Простите, очень длинное название");
             } else if (title.length() >= 6) {
                 title = (String.valueOf(title.charAt(0)).toUpperCase()).concat(title.substring(1));
             } else if ((title.length() < 6)) {
-                message = ("Название не менее 6 символов.");
+                message = ("Простите, очень короткое название");
             }
         } else {
-            message = ("Название не менее 6 символов.");
+            message = ("Простите, очень короткое название");
         }
 
         return title;
@@ -125,8 +134,8 @@ public class FieldCheck {
     private String checkText() {
         String msg = "";
         if (!text.equals("")) {
-            if (text.length() <= 6) {
-                msg = ("Слишком короткий текст!");
+            if (text.length() < 7) {
+                msg = ("Простите, очень короткое описание");
             } else if (text.length() > 10000) {
                 msg = ("У нас тут, не Википедия!");
             }
@@ -157,7 +166,7 @@ public class FieldCheck {
 
     public HashSet checkTags(String tags) {
         if (tags == null) {
-            message = ("Иди на хуй бот!");
+            message = ("Добавьте несколько тегов");
             return null;
         }
 

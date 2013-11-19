@@ -33,7 +33,7 @@ public class WidgetYandex extends Creator {
         CategoriesTree ct = null;
         Random random = new Random();
 
-        rs = stmt.executeQuery("SELECT MAX(p.id) AS max, MIN(p.id) AS min FROM `post_item` i, post p WHERE i.post = p.id AND p.status ='on' AND i.video is null");
+        rs = stmt.executeQuery("SELECT MAX(p.id) AS max, MIN(p.id) AS min FROM `post_item2` i, post2 p WHERE i.post = p.id AND p.status ='on' AND i.type is not null");
         if (rs.next()) {
             max = rs.getInt("max");
             min = rs.getInt("min");
@@ -41,14 +41,14 @@ public class WidgetYandex extends Creator {
 
         rand = min + random.nextInt((max - min) + 1);
 
-        rs = stmt.executeQuery("SELECT i.text, i.image, i.img, i.alt,COUNT(i.post) as CountPosts, p.* FROM `post_item` i, `post` p WHERE i.post = p.id AND p.status ='on' "
-                + "AND (p.id <=" + max + " AND p.id>=" + min + ") AND p.id>=" + rand + " AND i.video is null GROUP BY i.post LIMIT 1");
+        rs = stmt.executeQuery("SELECT i.content, i.type, p.* FROM `post_item2` i, `post2` p WHERE i.post = p.id AND p.status ='on' "
+                + "AND (p.id <=" + max + " AND p.id>=" + min + ") AND p.id>=" + rand + " AND i.type is not null GROUP BY i.post LIMIT 1");
        
         Properties props = new Properties();
         props.setProperty("title", "Подробнее...");
         props.setProperty("textSize", "200");
         ViewMethod view = new ViewMethod(rs, props);
-        item = view.getViewCatalog();
+        item = view.getMinItem(rs);
 
         
         logger.info(request.getRemoteAddr()+" - " + request.getHeader("Referer"));

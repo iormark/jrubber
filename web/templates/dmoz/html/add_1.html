@@ -1,0 +1,64 @@
+<link href="/templates/dmoz/css/add/add.css" rel="stylesheet" type="text/css">
+<link href="/templates/dmoz/css/add/main.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="/templates/dmoz/js/add/uploaderObject.js?4" charset="utf-8"></script>
+<script type="text/javascript" src="/templates/dmoz/js/add/interface.js?4" charset="utf-8"></script>
+<div id="add__post">
+    <h1>Изготовить пост <small>(Beta)</small>
+        <a style="float: right;font-size: 14px;text-decoration: none;color:#000" href="/wtf.html">Правила сайта</a>
+    </h1>
+    
+    <div id="add__logout"></div>
+
+    <form>
+        <!--<div class="field"><input type="text" name="name" placeholder="имя" value=""></div>
+        <div class="field"><input type="text" name="email" placeholder="email" value=""></div>-->
+
+        <div class="field"><input type="text" name="title" placeholder="название" value="" id="filed__title"></div>
+        <input type="hidden" name="key" value="${content.getFileKey()}">
+    </form>
+
+
+    <div id="wrapper">
+
+        <div id="workfield">
+            <div id="content">
+                <div>Чтобы добавить картинки, выбери их в поле
+                    <input type="file" name="file" id="file-field" multiple><br/>
+                    
+                </div>
+                <div id="img-container">
+                    <ul id="img-list">
+                        <li><textarea name="text"></textarea></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <#if ( user.getRating()> 200 )>
+        <div class="field">
+            <div>Видео (Coub): URL (без http's), пример: <code>www.youtube.com/video...</code></div>
+            <input type="text" name="video" value="" id="filed__video">
+        </div>
+        </#if>
+        
+        <div class="field">
+            <div>Теги (укажите от 2 до 6 тегов через запятую)</div>
+            <input type="text" name="tags" value="" id="filed__tags">
+            <div id="filed__autocomplete"></div>
+        </div>
+
+        <div id="leftpanel">
+            <div id="actions">
+                <span id="info-count">Изображений не выбрано</span><br/>
+                Общий размер: <span id="info-size">0</span> Кб<br/><br/>
+                <button id="upload-all">Загрузить</button>
+            </div>
+
+            <div id="console">
+            </div>
+        </div>
+
+    </div>
+
+
+</div>

@@ -107,7 +107,7 @@ $(document).ready(function() {
             reader.onload = (function(aImg) {
                 return function(e) {
                     aImg.attr('src', e.target.result);
-                    aImg.attr('width', 150);
+                    aImg.css('width', 200);
                     log('Картинка добавлена: `' + file.name + '` (' + Math.round(file.size / 1024) + ' Кб)');
                     imgCount++;
                     imgSize += file.size;

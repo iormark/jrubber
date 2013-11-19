@@ -34,7 +34,8 @@ public class Search extends Creator {
     private long numFound = 0;
     private UrlOption urloption = null;
     private AdvancedAnalyzerQuest аnalyzer;
-    private LinkedHashMap<String, HashMap> item = new LinkedHashMap<>();
+    private LinkedHashMap<String, HashMap> item = new LinkedHashMap();
+    private HashMap<String, HashSet> tags = new HashMap();
     private Util util = new Util();
     private Statement stmt = null;
     private ResultSet rs = null;
@@ -146,14 +147,18 @@ public class Search extends Creator {
 
     private void viewCatalog(HashSet id) throws SQLException {
         String sqlid = id.toString().replaceAll("[\\[\\]]", "");
-
-        rs = stmt.executeQuery("SELECT p.*, i.text, i.image, i.img, i.alt,COUNT(i.id) as CountPosts "
-                + "FROM `post_item` i, `post` p WHERE "
-                + "i.post = p.id AND p.status ='on' AND p.id in(" + sqlid + ") "
-                + "GROUP BY i.post ORDER BY FIELD(p.id, " + sqlid + ")");
         
-        ViewMethod view = new ViewMethod(rs);
-        item = view.getViewCatalog();
+        rs = stmt.executeQuery("SELECT SQL_CALC_FOUND_ROWS u.login, p.*, "
+                + "(SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount,"
+                + "MAX(if(i.sort=0, i.content, NULL)) AS content, MAX(if(i.sort=0, i.type, NULL)) AS type,"
+                + "MAX(if(i.sort=1, i.content, NULL)) AS content2, MAX(if(i.sort=1, i.type, NULL)) AS type2 "
+                + "FROM users u, tags_link tl, post2 p LEFT JOIN post_item2 i on i.post=p.id "
+                + "WHERE u.id=p.user AND tl.post=p.id AND p.status IN ('on','new') AND p.id in(" + sqlid + ") "
+                + "GROUP BY p.id ORDER BY FIELD(p.id, " + sqlid + ")");
+        
+        ViewMethod view = new ViewMethod(rs, stmt);
+        item = view.getPostItem(rs);
+        tags = view.getPostTags();
         //System.out.println(item);
     }
 
@@ -167,6 +172,10 @@ public class Search extends Creator {
 
     public LinkedHashMap getItem() {
         return item;
+    }
+    
+    public HashMap getTagsItem() {
+        return tags;
     }
 
     public String PageNavig() {

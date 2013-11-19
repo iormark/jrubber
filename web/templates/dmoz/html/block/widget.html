@@ -2,17 +2,24 @@
 <h4>Для Яндекса</h4>
 
 <#list widget?keys as key>
-<div style="margin: 1em 0 0 0px;">${widget[key]["text"]!""}</div>
+<#if ((widget[key]["type"])??)>
 
-<#if (widget[key]['image'])??>
-<div style="text-align: left;overflow: hidden; ">
-    <a class="image" target="_blank" href="http://yourmood.ru/post?id=${key}">
-        <img class="border" src="http://yourmood.ru${(widget[key]['imagePath'])!''}/small_${(widget[key]['image'])!''}" alt="${widget[key]['alt']!''}">
+<#if ((widget[key]["type"])=='text')>
+<div class="text">${(widget[key]["content"])!""}</div>
+</#if>
+
+<#if ((widget[key]["type"])=="image")>
+<div>
+    <a target="_blank" href="http://yourmood.ru/post?id=${key}">
+        <img src="http://yourmood.ru${(widget[key]['imagePath'])!''}/small_${(widget[key]['content'])!''}">
     </a>
 </div>
 </#if>
+</#if>
 
 </#list>
+
+
 <form action="http://www.yandex.ru/" method="get" target="_blank">
     <input type="hidden" name="add" value="116314">
     <div style="text-align: left">

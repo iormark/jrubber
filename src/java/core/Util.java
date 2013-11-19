@@ -4,6 +4,7 @@
  */
 package core;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -12,8 +13,11 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.text.StringCharacterIterator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  *
@@ -407,5 +411,18 @@ public class Util {
             ch = iterator.next();
         }
         return result.toString();
+    }
+    
+    /**
+     * Delete files
+     * @param files 
+     */
+    public void deleteFile(HashSet files) {
+        Iterator i = files.iterator();
+
+        while (i.hasNext()) {
+            String file = (String) i.next();
+            new File(file).delete();
+        }
     }
 }

@@ -11,17 +11,15 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,13 +35,15 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 public class FileUploader {
 
     private LinkedHashMap<Integer, HashMap> ListContent = new LinkedHashMap();
-    private HashMap<String, String> ListFiled = new HashMap();
+    private HashMap<String, String> ListField = new HashMap();
     private HashMap<String, FileItem> ListFile = new HashMap();
     private String realPath = "";
     private String realPathLoad = "";
     private String message = "";
+    private int insertItem = 0;
+    private ResultSet rs = null;
 
-    FileUploader(String realPath, HttpServletRequest request, HttpServletResponse response,
+    FileUploader(String realPath, String loadPath, HttpServletRequest request, HttpServletResponse response,
             Connection conn, Statement stmt, PrintWriter out, Check check) throws Exception {
 
         this.realPath = realPath;
@@ -87,95 +87,131 @@ public class FileUploader {
 
                 //out.println(item.getFieldName());
                 for (int i = 0; i < 100; i++) {
-                    String name = item.getFieldName() + "" + i;
-
+                    String name = item.getFieldName();
+                    System.out.println(name+": "+item.getString("UTF-8"));
+                    
                     if (item.isFormField()) {
-                        if (!ListFiled.containsKey(name)) {
+                        if (!ListContent.containsKey(i)) {
+                            HashMap meta = new HashMap();
+                            ListContent.put(i, meta);
+                        }
+                        if (!ListContent.get(i).containsKey(name)) {
 
-                            if ("key0".equals(name)) {
-                                ListFiled.put(name, Long.parseLong(item.getString("UTF-8")) + "");
+                            if (("key" + i).equals(name)) {
+                                ListContent.get(i).put(name, Long.parseLong(item.getString("UTF-8")) + "");
                             } else {
-                                ListFiled.put(name, item.getString("UTF-8"));
+                                ListContent.get(i).put(name, item.getString("UTF-8"));
                             }
 
                             break;
                         }
                     } else {
-                        if (!ListFile.containsKey(name)) {
-                            ListFile.put(name, item);
+                        if (!ListFile.containsKey(name + "" + i)) {
+                            ListFile.put(name + "" + i, item);
                             break;
                         }
                     }
                 }
             }
 
-            System.out.println(ListFiled);
+            // Access permission
+            int objId = Integer.parseInt((String) ListContent.get(0).get("post"));
+            if (objId > 0) {
+                rs = stmt.executeQuery("SELECT id FROM post2 "
+                        + "WHERE user='" + check.getUserID() + "' "
+                        + "AND id='" + objId + "' LIMIT 1");
+                if (!rs.next()) {
+                    message = "Простите, ошибка доступа.";
+                    return;
+                }
+            }
+            objId = Integer.parseInt((String) ListContent.get(0).get("item"));
+            if (objId > 0) {
+                rs = stmt.executeQuery("SELECT i.id FROM post2 p, post_item2 i "
+                        + "WHERE p.id=i.post AND p.user='" + check.getUserID() + "' "
+                        + "AND i.id='" + objId + "' LIMIT 1");
+                if (!rs.next()) {
+                    message = "Простите, ошибка доступа.";
+                    return;
+                }
+            }
+
+            //System.out.println("Total: " + ListContent);
+            //System.out.println(ListField);
             //System.out.println(ListFile);
-            if (message.length() == 0 && !ListFile.isEmpty()) {
-                for (int i = 0; i < ListFile.size(); i++) {
+            // Fields validation of fasting
+            HashSet tags = new HashSet();
+            if (message.length() == 0) {
 
-                    if (!"".equals(ListFile.get("file" + i).getName())) {
-
-                        HashMap imageItem = (processUploadedFile(ListFile.get("file" + i), out));
-
-                        if (imageItem != null) {
-
-                            HashMap meta = new HashMap();
-                            meta.putAll(imageItem);
-                            meta.put("text", ListFiled.get("text" + i));
-                            meta.put("video", ListFiled.get("video" + i));
-                            meta.put("key", ListFiled.get("key" + i));
-                            meta.put("sort", ListFiled.get("sort" + i));
-                            meta.put("tags", ListFiled.get("tags" + i));
-                            ListContent.put(i, meta);
-
-                            if (!imageItem.containsKey("imgXml")) {
-                                deleteFile(out);
-                            }
-                        } else {
-                            deleteFile(out);
-                        }
-                    }
+                System.out.println("ListContent: "+ListContent.get(0).get("file"));
+                boolean isFile = true;
+                if (ListFile.isEmpty()) {
+                    isFile = Boolean.parseBoolean(ListContent.get(0).get("file").toString());
+                } else {
+                    isFile = true;
                 }
 
+                FieldCheck fc = new FieldCheck(
+                        (String) ListContent.get(0).get("text"),
+                        (String) ListContent.get(0).get("video"),
+                        isFile);
+                fc.checkTitle((String) ListContent.get(0).get("title"));
+                tags = fc.checkTags((String) ListContent.get(0).get("tags"));
+                message = fc.getMessage();
             }
 
             if (message.length() == 0) {
-                FieldCheck fc = new FieldCheck((String) ListContent.get(0).get("text"), (String) ListContent.get(0).get("video"));
-                HashSet tags = fc.checkTags((String) ListContent.get(0).get("tags"));
-                message = fc.getMessage();
-
-                if (!fc.getMessage().equals("")) {
-                    deleteFile(out);
+                if (ListFile.isEmpty()) {
                 } else {
-                    PostCreate pc = new PostCreate(conn, stmt, check);
-                    pc.createPost_items(ListContent, tags);
+                    for (int i = 0; i < ListFile.size(); i++) {
+
+                        if (!"".equals(ListFile.get("file" + i).getName())) {
+                            HashMap imageItem = (processUploadedFile(ListFile.get("file" + i), loadPath, out));
+
+                            if (imageItem != null) {
+                                HashMap meta = ListContent.get(i);
+                                meta.putAll(imageItem);
+                                ListContent.put(i, meta);
+
+                                if (!imageItem.containsKey("imgXml")) {
+                                    deleteFile(out);
+                                }
+                            } else {
+                                deleteFile(out);
+                            }
+                        }
+                    }
                 }
             }
 
+            System.out.println("Total2: " + ListContent);
+
+            if (message.length() == 0) {
+                PostCreate pc = new PostCreate(conn, stmt, check);
+                insertItem = pc.createPost_items(ListContent, tags, realPath);
+                message = pc.getMessage();
+            } else {
+                deleteFile(out);
+            }
+
         } catch (Exception ex) {
-            //logger.error("", ex);
             System.out.println("File - " + ex);
             message = ("" + ex.getMessage() + "");
             deleteFile(out);
+            throw new Exception(ex);
         }
 
         //out.println("<br>--------<br>");
-        System.out.println("File: " + ListContent);
     }
 
     /**
-     * Сохраняет файл на сервере, в папке. Сама папка должна быть уже создана.
+     * Сохраняет файл на сервере, в папке Папка должна быть уже создана.
      *
      * @param item
      * @throws Exception
      */
-    private HashMap processUploadedFile(FileItem item, PrintWriter out) throws Exception {
+    private HashMap processUploadedFile(FileItem item, String loadPath, PrintWriter out) throws Exception {
 
-        Calendar calendar = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault());
-        calendar.setTime(new Date());
-
-        String loadPath = "/img/" + calendar.get(Calendar.YEAR) + "/" + calendar.get(Calendar.MONTH);
         File myPath = new File(realPath + loadPath);
         if (!myPath.exists()) {
             myPath.mkdirs();
@@ -257,6 +293,7 @@ public class FileUploader {
         } catch (Exception ex) {
             //logger.error("", ex);
             message = ("Ошибка при загрузке изображения!");
+            throw new Exception(ex);
         }
         return imageItem;
     }
@@ -271,6 +308,10 @@ public class FileUploader {
 
         }
 
+    }
+
+    public int getInsertItem() {
+        return insertItem;
     }
 
     public String getMessage() {
