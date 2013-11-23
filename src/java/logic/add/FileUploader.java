@@ -117,7 +117,7 @@ public class FileUploader {
             // Access permission
             int objId = Integer.parseInt((String) ListContent.get(0).get("post"));
             if (objId > 0) {
-                rs = stmt.executeQuery("SELECT id FROM post2 "
+                rs = stmt.executeQuery("SELECT id FROM post "
                         + "WHERE user='" + check.getUserID() + "' "
                         + "AND id='" + objId + "' LIMIT 1");
                 if (!rs.next()) {
@@ -127,7 +127,7 @@ public class FileUploader {
             }
             objId = Integer.parseInt((String) ListContent.get(0).get("item"));
             if (objId > 0) {
-                rs = stmt.executeQuery("SELECT i.id FROM post2 p, post_item2 i "
+                rs = stmt.executeQuery("SELECT i.id FROM post p, post_item i "
                         + "WHERE p.id=i.post AND p.user='" + check.getUserID() + "' "
                         + "AND i.id='" + objId + "' LIMIT 1");
                 if (!rs.next()) {

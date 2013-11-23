@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import logic.Creator;
 
@@ -47,11 +48,15 @@ public class Feed extends Creator {
     private void queryComment() throws SQLException {
 
         metaTitle = "Мои комментарии";
-        rs = stmt.executeQuery("SELECT SQL_CALC_FOUND_ROWS u.login, p.title, p.id, c.id AS comment_id, c.vote, c.created AS date, c.comment, c.status FROM post p, comment c, users u WHERE p.id=c.post AND c.user=u.id AND u.id=" + check.getUserID()+" ORDER BY c.id DESC LIMIT 500");
-        ViewMethod view = new ViewMethod(rs, false, true);
+        rs = stmt.executeQuery("SELECT SQL_CALC_FOUND_ROWS u.login, p.title, p.id, c.id AS comment_id, c.vote, c.created AS date, c.comment AS text, c.status FROM post p, comment c, users u WHERE p.id=c.post AND c.user=u.id AND u.id=" + check.getUserID() + " ORDER BY c.id DESC LIMIT 500");
+
+        Properties props = new Properties();
+        props.setProperty("comment", "true");
+        props.setProperty("textSize", "0");
+        props.setProperty("textLineFeed", "true");
+        ViewMethod view = new ViewMethod(rs, props);
         item = view.getViewCatalog();
-        
-        
+
         rs = stmt.executeQuery("SELECT FOUND_ROWS() as rows;");
         if (rs.next()) {
             count = rs.getInt("rows");
@@ -61,7 +66,7 @@ public class Feed extends Creator {
     public LinkedHashMap getItem() {
         return item;
     }
-    
+
     public int getItem_count() {
         return count;
     }

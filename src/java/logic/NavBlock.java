@@ -45,7 +45,7 @@ public class NavBlock extends CreatorBlock {
         String datetime = null;
 
         try {
-            rs = stmt.executeQuery("SELECT svc_date FROM `post2` WHERE status='on' ORDER BY `date` DESC LIMIT 1");
+            rs = stmt.executeQuery("SELECT svc_date FROM `post` WHERE status='on' ORDER BY `date` DESC LIMIT 1");
             if (rs.next()) {
                 Calendar c = new GregorianCalendar();
                 c.setTimeInMillis(rs.getTimestamp("svc_date").getTime());
@@ -98,7 +98,7 @@ public class NavBlock extends CreatorBlock {
 
         ct = new CategoriesTree(stmt, cat[n]);
 
-        rs = stmt.executeQuery("SELECT MAX(p.id) AS max, MIN(p.id) AS min FROM `post_item2` i, post2 p WHERE i.post = p.id AND p.status ='on' AND i.type is not null");
+        rs = stmt.executeQuery("SELECT MAX(p.id) AS max, MIN(p.id) AS min FROM `post_item` i, post p WHERE i.post = p.id AND p.status ='on' AND i.type is not null");
         if (rs.next()) {
             max = rs.getInt("max");
             min = rs.getInt("min");
@@ -106,7 +106,7 @@ public class NavBlock extends CreatorBlock {
 
         rand = min + random.nextInt((max - min) + 1);
 
-        rs = stmt.executeQuery("SELECT i.content, i.type, p.* FROM `post_item2` i, `post2` p WHERE i.post = p.id AND p.status ='on' "
+        rs = stmt.executeQuery("SELECT i.content, i.type, p.* FROM `post_item` i, `post` p WHERE i.post = p.id AND p.status ='on' "
                 + "AND (p.id <=" + max + " AND p.id>=" + min + ") AND p.id>=" + rand + " AND i.type is not null GROUP BY i.post LIMIT 1");
        
         Properties props = new Properties();

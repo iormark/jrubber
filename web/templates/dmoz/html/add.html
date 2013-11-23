@@ -1,7 +1,8 @@
 <link href="/templates/dmoz/css/add/add.css" rel="stylesheet" type="text/css">
 <link href="/templates/dmoz/css/add/main.css" rel="stylesheet" type="text/css">
 
-<div id="add__post"  style="border: 0px solid #ddd;padding: .7em">
+<p>Прежде чем добавить новость, ознакомьтесь с <a href="/wtf.html">правилами!</a></p>
+<div id="add__post"  style="border: 0px solid #ddd;padding: .7em .7em .7em 0">
 
     <div class="field"><input type="text" name="title" value="${(content.getPost()['title'])!''}" placeholder="название" id="filed__title"></div>
     <input type="hidden" name="key" value="${(content.getFileKey())!'0'}">
@@ -15,7 +16,8 @@
         <#assign cont = (content.getItem()[key]["content"]!"")>
 
 
-        <li class="read" id="${key}">
+        <li class="read">
+            <span class="item-delete">Удалить</span>
 
             <#if (type=='text')><textarea name="text" cols="2">${cont}</textarea></#if>
 
@@ -66,11 +68,11 @@
 
     <div id="actions">
         <button id="upload"><#if (content.getId()> 0)>Сохранить<#else>Загрузить</#if></button>
+        <span id="add__info"></span>
     </div>
 
     <div id="console"></div>
 </div>
 
 
-<script type="text/javascript" src="/templates/dmoz/js/FileApi.js" charset="utf-8"></script>
-<script type="text/javascript" src="/templates/dmoz/js/add/add.js" charset="utf-8"></script>
+<script type="text/javascript" src="/templates/dmoz/js/add/add.js?3" charset="utf-8"></script>

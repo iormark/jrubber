@@ -52,7 +52,7 @@ public class HelloWorld implements Filter {
 
         //System.out.println(req.getHeader("host"));
         if (!"yourmood.ru".matches(req.getHeader("Host")) && !"localhost:8094".matches(req.getHeader("Host"))) {
-            resp.setStatus(302);
+            resp.setStatus(301);
             resp.setHeader("Location",
                     (req.getRequestURL().toString()).replaceAll("^http://(www.)?" + req.getHeader("host"), "http://yourmood.ru")
                     + (req.getQueryString() == null ? "" : "?" + req.getQueryString()));

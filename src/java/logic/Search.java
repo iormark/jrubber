@@ -40,6 +40,7 @@ public class Search extends Creator {
     private Statement stmt = null;
     private ResultSet rs = null;
     private String error = "", pagnav = "";
+    private ViewMethod view = null;
 
     public Search(HttpServletRequest request, HttpServletResponse response, Statement stmt) throws Exception {
 
@@ -150,16 +151,21 @@ public class Search extends Creator {
         
         rs = stmt.executeQuery("SELECT SQL_CALC_FOUND_ROWS u.login, p.*, "
                 + "(SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount,"
+                + "(SELECT COUNT(*) FROM `post_item` i WHERE p.id = i.post) AS itemCount,"
                 + "MAX(if(i.sort=0, i.content, NULL)) AS content, MAX(if(i.sort=0, i.type, NULL)) AS type,"
                 + "MAX(if(i.sort=1, i.content, NULL)) AS content2, MAX(if(i.sort=1, i.type, NULL)) AS type2 "
-                + "FROM users u, tags_link tl, post2 p LEFT JOIN post_item2 i on i.post=p.id "
+                + "FROM users u, tags_link tl, post p LEFT JOIN post_item i on i.post=p.id "
                 + "WHERE u.id=p.user AND tl.post=p.id AND p.status IN ('on','new') AND p.id in(" + sqlid + ") "
                 + "GROUP BY p.id ORDER BY FIELD(p.id, " + sqlid + ")");
         
-        ViewMethod view = new ViewMethod(rs, stmt);
+        view = new ViewMethod(rs, stmt);
         item = view.getPostItem(rs);
         tags = view.getPostTags();
         //System.out.println(item);
+    }
+    
+    public String getAlt(String id) {
+        return view.getPostTags(id);
     }
 
     public long getFound() {

@@ -73,9 +73,9 @@ public class PostCreate {
     public int createPost() throws SQLException {
 
         System.out.println("Query post");
-        PreparedStatement ps = conn.prepareStatement("INSERT INTO `post2` "
+        PreparedStatement ps = conn.prepareStatement("INSERT INTO `post` "
                 + "(`id`, `user`, `title`, `date`, `svc_date`, status) "
-                + "VALUES (?, ?, ?, NOW(), NOW(), 'del') "
+                + "VALUES (?, ?, ?, NOW(), NOW(), 'new') "
                 + "ON DUPLICATE KEY UPDATE "
                 + "title='" + title + "'", Statement.RETURN_GENERATED_KEYS);
 
@@ -141,7 +141,7 @@ public class PostCreate {
                 content = content.trim();
                 type = "video";
                 /*
-                 rs = stmt.executeQuery("SELECT id, post FROM post_item2 WHERE content='" + content + "' AND type='" + type + "' LIMIT 1");
+                 rs = stmt.executeQuery("SELECT id, post FROM post_item WHERE content='" + content + "' AND type='" + type + "' LIMIT 1");
                  if (rs.next()) {
                  message = ("<a href='/post?id=" + rs.getInt("post") + "' target='_blank'>Это видео</a> уже есть на сайте");
                  return rs.getInt("id");
@@ -156,7 +156,7 @@ public class PostCreate {
             HashSet files = new HashSet();
 
             if (item > 0 && "image".equals(type)) {
-                rs = stmt.executeQuery("SELECT content FROM post_item2 WHERE user='" + check.getUserID() + "' AND id='" + item + "' AND type='image' LIMIT 1");
+                rs = stmt.executeQuery("SELECT content FROM post_item WHERE user='" + check.getUserID() + "' AND id='" + item + "' AND type='image' LIMIT 1");
                 if (rs.next()) {
                     String loadPath = null;
                     xor.setField(new String[]{"original"});
@@ -168,7 +168,7 @@ public class PostCreate {
                 }
             }
 
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO `post_item2` "
+            PreparedStatement ps = conn.prepareStatement("INSERT INTO `post_item` "
                     + "(`id`, `user`, `post`, `sort`, `content`, `type`, `key`) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?) "
                     + "ON DUPLICATE KEY UPDATE "
@@ -204,7 +204,7 @@ public class PostCreate {
     }
 
     public void updateItem_post() throws SQLException {
-        stmt.executeUpdate("UPDATE `post_item2` SET post=if(post=0," + insertPostId + ",post), `key`=null WHERE `key`='" + key + "'");
+        stmt.executeUpdate("UPDATE `post_item` SET post=if(post=0," + insertPostId + ",post), `key`=null WHERE `key`='" + key + "'");
     }
 
     public void createTags(HashSet tagsMap) throws SQLException {
@@ -256,6 +256,32 @@ public class PostCreate {
         }
 
         System.out.println("------end-------");
+    }
+
+    public void deleteItem(String realPath, int item) throws SQLException, Exception {
+        HashSet files = new HashSet();
+        ResultSet rs = stmt.executeQuery("SELECT content, type FROM post_item WHERE user='" + check.getUserID() + "' AND id='" + item + "' LIMIT 1");
+        if (rs.next()) {
+
+            if ("image".equals(rs.getString("type"))) {
+                String loadPath = null;
+                xor.setField(new String[]{"original"});
+                HashMap<String, HashMap> image = xor.setDocument(rs.getString("content"));
+                loadPath = (String) (image.get("original").containsKey("path") ? image.get("original").get("path") : "/photo_anekdot");
+                files.add(realPath + loadPath + "/" + image.get("original").get("name"));
+                files.add(realPath + loadPath + "/middle_" + image.get("original").get("name"));
+                files.add(realPath + loadPath + "/small_" + image.get("original").get("name"));
+            }
+        } else {
+            message = "Простите, ошибка доступа.";
+            return;
+        }
+
+        if (!files.isEmpty()) {
+            util.deleteFile(files);
+        }
+        
+        stmt.executeUpdate("DELETE FROM post_item WHERE id = " + item);
     }
 
     public String getMessage() {

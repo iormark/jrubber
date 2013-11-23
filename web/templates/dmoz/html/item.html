@@ -46,18 +46,18 @@
 
         <#if ((content.getItem()[key]["type"])=="image")>
         <div class="item__image">
-            <meta itemprop="description" content="">
+            <meta itemprop="description" content="${content.getAlt(key)!''}">
             <meta itemprop="contentUrl" content="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['content']!''}">
-            <#if (((content.getItem()[key]['animated2'])!'')!='')>
+            <#if (((content.getItem()[key]['animated'])!'')!='')>
             <div style="display: inline-block;position: relative">
                 <a class="image img__href img__animated" value="${(content.getItem()[key]['imagePath'])!''}:${(content.getItem()[key]['content'])!''}" target="_blank" href="/anekdot?id=${key}">
-                    <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['content'])!''}" alt="" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
-                    <div class="list__info__img__hint">gif, ${content.getItem()[key]["size2"]!""}</div>
+                    <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['content'])!''}" alt="${content.getAlt(key)!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
+                    <div class="list__info__img__hint">gif, ${content.getItem()[key]["size"]!""}</div>
                 </a>
             </div>
             <#else>
             <a class="image img__href" target="_blank" href="/post?id=${key}">
-                <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['content'])!''}" alt="" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
+                <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['content'])!''}" alt="${content.getAlt(key)!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
             </a>
             </#if>
         </div>
@@ -82,13 +82,13 @@
             <#if (((content.getItem()[key]['animated2'])!'')!='')>
             <div style="display: inline-block;position: relative">
                 <a class="image img__href img__animated" value="${(content.getItem()[key]['imagePath2'])!''}:${(content.getItem()[key]['content2'])!''}" target="_blank" href="/anekdot?id=${key}">
-                    <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath2'])!''}/middle_${(content.getItem()[key]['content2'])!''}" alt="" width="${(content.getItem()[key]['width2'])!''}" height="${(content.getItem()[key]['height2'])!''}">
+                    <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath2'])!''}/middle_${(content.getItem()[key]['content2'])!''}" alt="${content.getAlt(key)!''}" width="${(content.getItem()[key]['width2'])!''}" height="${(content.getItem()[key]['height2'])!''}">
                     <div class="list__info__img__hint">gif, ${content.getItem()[key]["size2"]!""}</div>
                 </a>
             </div>
             <#else>
             <a class="image img__href" target="_blank" href="/post?id=${key}">
-                <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath2'])!''}/middle_${(content.getItem()[key]['content2'])!''}" alt="" width="${(content.getItem()[key]['width2'])!''}" height="${(content.getItem()[key]['height2'])!''}">
+                <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath2'])!''}/middle_${(content.getItem()[key]['content2'])!''}" alt="${content.getAlt(key)!''}" width="${(content.getItem()[key]['width2'])!''}" height="${(content.getItem()[key]['height2'])!''}">
             </a>
             </#if>
         </div>
@@ -97,10 +97,11 @@
         <#if ((content.getItem()[key]["type2"])=="video")>
         <div class="text">${(content.getItem()[key]["content2"])!""}&nbsp;</div>
         </#if>
+        
+        ${(content.getItem()[key]["readMore"])!""}
     </div>
     </#if>
          
-    
 
 </article>
 </#list>

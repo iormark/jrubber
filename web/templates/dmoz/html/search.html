@@ -4,21 +4,3 @@ ${content.getMessage()}
 
 
 <#include "/item.html">
-
-
-<#if ((content.PageNavig()!"")!="")>
-
-<div class="pagNav">
-    <p>${content.PageNavig()}</p>
-</div>
-
-</#if>
-
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        try {
-            $('body').listScroll({});
-        } catch (e) {}    
-    });    
-</script>

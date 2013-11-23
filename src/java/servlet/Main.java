@@ -91,6 +91,7 @@ public class Main extends HttpServlet {
                     q = "home.html";
 
                 } else if ("search".equals(q)) {
+                    
                     creator = new logic.Search(request, response, stmt);
                     q += ".html";
 
@@ -112,9 +113,9 @@ public class Main extends HttpServlet {
                     leftNav.add("/block/ad-space.html");
 
                 } else if ("anekdot".equals(q)) {
-                    response.setStatus(302);
+                    response.setStatus(301);
                     response.sendRedirect("/post?id=" + request.getParameter("id"));
-
+                    return;
                 } else if ("post".equals(q)) {
 
                     creator = new Post(request, response, conn);
@@ -203,9 +204,11 @@ public class Main extends HttpServlet {
                         || args.get(0).toString().equals("kartinki")
                         || args.get(0).toString().equals("demotivatory")) {
 
-                    response.sendRedirect("/");
+                    
 
                     q = "home.html";
+                    response.sendRedirect("/");
+                    return;
 
                 } /*else if ("terms_of_use.html".equals(q)) {
                  creator = new TermsOfUse(stmt);

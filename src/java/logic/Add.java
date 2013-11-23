@@ -16,6 +16,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import logic.user.Check;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  *
@@ -38,10 +39,10 @@ public class Add extends Creator {
             return;
         }
 
-        ResultSet rs = stmt.executeQuery("SELECT * FROM users u, post2 p WHERE "
+        ResultSet rs = stmt.executeQuery("SELECT * FROM users u, post p WHERE "
                 + "u.id=p.user AND u.id = '" + check.getUserID() + "' AND p.id = '" + id + "'");
         while (rs.next()) {
-            post.put("title", rs.getString("title"));
+            post.put("title", StringEscapeUtils.escapeHtml4(rs.getString("title")));
         }
 
         if (post.isEmpty()) {
@@ -50,7 +51,7 @@ public class Add extends Creator {
         }
 
         rs = stmt.executeQuery("SELECT id, post, sort, type, content FROM "
-                + "`post_item2` WHERE  post = '" + id + "' ORDER BY sort LIMIT 99;");
+                + "`post_item` WHERE  post = '" + id + "' ORDER BY sort LIMIT 99;");
 
         Properties props = new Properties();
         props.setProperty("textSize", "0");

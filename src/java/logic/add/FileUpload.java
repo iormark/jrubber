@@ -45,8 +45,7 @@ public class FileUpload extends HttpServlet {
             PrintWriter out = response.getWriter();
             EditCookie editcookie = new EditCookie(request, response);
 
-            System.out.println("q:" + request.getAttribute("q"));
-            
+
             String q = request.getParameter("q") != null ? request.getParameter("q") : "item";
             String id = (String) request.getParameter("id");
 
@@ -69,6 +68,7 @@ public class FileUpload extends HttpServlet {
             try {
 
                 FieldCheck fc = null;
+                PostCreate pc = null;
                 HashSet tags = null;
 
                 switch (q) {
@@ -83,24 +83,31 @@ public class FileUpload extends HttpServlet {
                         Calendar calendar = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault());
                         calendar.setTime(new Date());
                         String loadPath = "/img/" + calendar.get(Calendar.YEAR) + "/" + calendar.get(Calendar.MONTH);
-                        
+
                         FileUploader fu = new FileUploader(realPath, loadPath, request, response, conn, stmt, out, check);
                         additionalMessage = ",\"item\":" + fu.getInsertItem();
                         message = fu.getMessage();
 
                         break;
                     case "create":
-                        
-                        PostCreate pc = new PostCreate(request, response, conn, stmt, check);
+
+                        pc = new PostCreate(request, response, conn, stmt, check);
                         fc = new FieldCheck(request, response);
                         tags = fc.checkTags(request.getParameter("tags"));
                         int insertPostId = pc.createPost();
                         pc.updateItem_post();
                         pc.createTags(tags);
                         message = pc.getMessage();
-                        
-                        
-                        additionalMessage = ",\"post\":\""+insertPostId+"\"";
+
+                        additionalMessage = ",\"post\":\"" + insertPostId + "\"";
+
+                        break;
+                    case "item-delete":
+
+                        pc = new PostCreate(conn, stmt, check);
+                        pc.deleteItem(realPath, Integer.parseInt(request.getParameter("item")));
+                        message = pc.getMessage();
+                        additionalMessage = ",\"post\":\"" + request.getParameter("item") + "\"";
                         
                         break;
                     default:

@@ -42,6 +42,11 @@
         <div class="post_date">
             <span style="color: red;">${(content.getItemMeta()["created"])!""}</span>
             Добавил(а): <a href="/${(content.getItemMeta()['login'])!''}">${(content.getItemMeta()["login"])!"Волонтер"}</a>
+            
+            <#if (user.getUserID()==content.getItemMeta()['user'])>
+            <a href="add?id=${(content.getId())!''}">Редактировать</a>
+            </#if>
+            
             <div id="share">
                 <a href="#ddd" onclick="return false"><span>Отправить</span></a>
                 <ul>
@@ -76,18 +81,18 @@
                 <span class="item__numbering">${i}</span>
                 </#if>
 
-                <meta itemprop="description" content="">
-                <meta itemprop="contentUrl" content="${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['image']!''}">
+                <meta itemprop="description" content="${content.getAlt()}">
+                <meta itemprop="contentUrl" content="${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['content']!''}">
                 <#if (((content.getItem()[key]['animated'])!'')!='')>
                 <div style="display: inline-block;position: relative">
                     <a class="image img__href img__animated" value="${(content.getItem()[key]['imagePath'])!''}:${(content.getItem()[key]['content'])!''}" target="_blank" href="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['content']!''}">
-                        <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['content'])!''}" alt="${content.getItem()[key]['alt']!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
+                        <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['content'])!''}" alt="${content.getAlt()}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
                         <div class="list__info__img__hint">gif, ${content.getItem()[key]['size']!''}</div>
                     </a>
                 </div>
                 <#else>
                 <a class="image img__href" target="_blank" href="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['content']!''}">
-                    <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['content'])!''}" alt="${content.getItem()[key]['alt']!''}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
+                    <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['content'])!''}" alt="${content.getAlt()}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
                 </a>
                 </#if>
             </div>

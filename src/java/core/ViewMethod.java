@@ -88,6 +88,7 @@ public class ViewMethod {
             int vote = rs.getInt("vote");
             Date created = rs.getTimestamp("date");
             int commentCount = rs.getInt("commentCount");
+            int itemCount = rs.getInt("itemCount");
 
             String type = rs.getString("type");
             String content = rs.getString("content");
@@ -100,7 +101,6 @@ public class ViewMethod {
             } else {
                 title = util.Shortening(StringEscapeUtils.escapeHtml4(title), 85, "");
             }
-            
 
             if (title.equals("")) {
                 title = "№ " + rs.getString("id");
@@ -112,6 +112,7 @@ public class ViewMethod {
             map.put("vote", vote > 0 ? (Boolean.parseBoolean(props.getProperty("comment")) ? "+" : "") + vote : vote);
             map.put("created", util.dateFormat(created));
             map.put("commentCount", commentCount);
+            map.put("readMore", itemCount > 2 ? "<a href=\"/post?id=" + rs.getString("id") + "\" target=\"_blank\" title=\"Откроется в новом окне\">Читать дальше</a>" : "");
 
             if (content != null || type != null) {
                 map.putAll(getType("", content, type, id));
@@ -326,7 +327,19 @@ public class ViewMethod {
                         } else {
                             f = null;
                         }
-                    } else if ("content".equals(colNames[j])) {
+                    } else if ("text".equals(colNames[j])) {
+                        String text = StringEscapeUtils.escapeHtml4(rs.getString("text"));
+
+                        if (Boolean.parseBoolean(props.getProperty("textLineFeed"))) {
+                            text = util.lineFeed(util.bbCode(text));
+                        }
+
+                        int textSize = Integer.parseInt(props.getProperty("textSize"));
+                        if (textSize <= 0) {
+                            f = text;
+                        } else {
+                            f = util.Shortening(text, textSize, "<br><a href=\"http://yourmood.ru/post?id=" + rs.getString("id") + "\" target=\"_blank\" title=\"Откроется в новом окне\">Читать дальше</a>");
+                        }
                     }
 
                     //System.out.println(colNames[j]+"="+f);
@@ -337,6 +350,7 @@ public class ViewMethod {
 
             items.put(rs.getString("id"), content);
         }
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+items);
         return items;
     }
 
@@ -361,6 +375,15 @@ public class ViewMethod {
 
         return tags;
     }
+    
+    public String getPostTags(String id) {
+        String str = "";
+        if (tags.containsKey(id)) {
+            str = tags.get(id).toString().replaceAll("[\\[\\]]", "");
+        }
+        return str;
+    }
+    
 
     public HashMap<String, HashSet> getPostTags() throws SQLException {
         if (items.keySet().isEmpty()) {

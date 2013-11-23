@@ -30,7 +30,7 @@ public class Post extends Creator {
     private int serverStatus = 200;
     private int gid = 0, imageLength = 0, next = 0, back = 0;
     private int id = 0;
-    private HashMap<String, String> itemMeta = new HashMap();
+    private HashMap itemMeta = new HashMap();
     private LinkedHashMap<String, HashMap> item = new LinkedHashMap();
     private HashMap<String, HashSet> tags = new HashMap();
     private LinkedHashMap<String, HashMap> Comment = null;
@@ -40,6 +40,7 @@ public class Post extends Creator {
     private Date LastModified = null;
     private EditCookie editcookie;
     private Connection conn;
+    private ViewMethod view = null;
     private static final Logger logger = Logger.getLogger(Post.class);
 
     public Post(HttpServletRequest request, HttpServletResponse response, Connection conn) throws Exception {
@@ -52,10 +53,11 @@ public class Post extends Creator {
         ResultSet rs = null;
         int typeId = 0;
 
-        rs = stmt.executeQuery("SELECT * FROM users u, post2 p WHERE u.id=p.user AND p.status IN('new','on') AND p.id = '" + id + "'");
+        rs = stmt.executeQuery("SELECT * FROM users u, post p WHERE u.id=p.user AND p.status IN('new','on') AND p.id = '" + id + "'");
 
         while (rs.next()) {
             itemMeta.put("id", rs.getString("id"));
+            itemMeta.put("user", rs.getString("user"));
             itemMeta.put("login", rs.getString("login"));
             itemMeta.put("title", rs.getString("title"));
             itemMeta.put("vote", rs.getInt("vote") > 0 ? "" + rs.getString("vote") : rs.getString("vote"));
@@ -66,18 +68,18 @@ public class Post extends Creator {
                 LastModified = rs.getTimestamp("last_modified");
             }
         }
-        
-        if(itemMeta.isEmpty()) {
+
+        if (itemMeta.isEmpty()) {
             serverStatus = 404;
             return;
         }
 
         rs = stmt.executeQuery("SELECT id, post, sort, type, content FROM "
-                + "`post_item2` WHERE  post = '" + id + "' ORDER BY sort LIMIT 99;");
+                + "`post_item` WHERE  post = '" + id + "' ORDER BY sort LIMIT 99;");
 
         Properties props = new Properties();
         props.setProperty("textSize", "0");
-        ViewMethod view = new ViewMethod(null, stmt, props);
+        view = new ViewMethod(null, stmt, props);
         item = view.getItem(rs);
         tags = view.getPostTags(id);
 
@@ -89,7 +91,7 @@ public class Post extends Creator {
             }
         }
 
-        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post2`p JOIN  (SELECT min(id) as id FROM post2 WHERE (status = 'new' OR status = 'on')  AND id > " + id + ") p2 ON p2.id=p.id LIMIT 1");
+        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT min(id) as id FROM post WHERE (status = 'new' OR status = 'on')  AND id > " + id + ") p2 ON p2.id=p.id LIMIT 1");
 
         if (rs.next()) {
             HashMap batton = new HashMap();
@@ -105,7 +107,7 @@ public class Post extends Creator {
             bn.put("next", batton);
         }
 
-        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post2`p JOIN  (SELECT max(id) as id FROM post2 WHERE (status = 'new' OR status = 'on')  AND id < " + id + ") p2 ON p2.id=p.id LIMIT 1");
+        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT max(id) as id FROM post WHERE (status = 'new' OR status = 'on')  AND id < " + id + ") p2 ON p2.id=p.id LIMIT 1");
 
         if (rs.next()) {
             HashMap batton = new HashMap();
@@ -132,7 +134,7 @@ public class Post extends Creator {
         editcookie = new EditCookie(request, response);
 
     }
-    
+
     public String varMenu() {
         return "Комментарии";
     }
@@ -143,6 +145,10 @@ public class Post extends Creator {
 
     public HashMap<String, HashSet> getTagsItem() {
         return !tags.isEmpty() ? tags : null;
+    }
+
+    public String getAlt() {
+        return view.getPostTags(Integer.toString(id));
     }
 
     public LinkedHashMap getItem() {
@@ -190,7 +196,7 @@ public class Post extends Creator {
             if (imageLength > 1) {
                 return itemMeta.get("title") + " (" + imageLength + " шт.)";
             } else {
-                return itemMeta.get("title");
+                return (String) itemMeta.get("title");
             }
         }
 
@@ -200,7 +206,7 @@ public class Post extends Creator {
     public String getMetaTitle() {
 
         if (itemMeta.get("title").equals("")) {
-            if (item.get(Integer.toString(gid)).get("content").toString().equals("")) {
+            if (!item.get(Integer.toString(gid)).get("type").toString().equals("text")) {
                 return "Новость № " + id;
             } else {
                 return util.specialCharacters(util.Shortening(item.get(Integer.toString(gid)).get("content").toString(), 85, "")) + " # Новость №" + gid;
@@ -209,7 +215,7 @@ public class Post extends Creator {
             if (imageLength > 1) {
                 return itemMeta.get("title") + " (" + imageLength + " шт.)";
             } else {
-                return itemMeta.get("title");
+                return (String) itemMeta.get("title");
             }
         }
 
@@ -218,9 +224,8 @@ public class Post extends Creator {
     @Override
     public int getServerStatus() {
 
-        
-            return serverStatus;
-        
+        return serverStatus;
+
     }
 
     @Override

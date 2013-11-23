@@ -43,6 +43,7 @@ public class Home extends Creator {
     private CategoriesTree ct = null;
     private HashMap selectedTags = null;
     private String status = "on";
+    private ViewMethod view = null;
 
     public Home(HttpServletRequest request, ArrayList args, Connection conn) throws Exception {
         this.conn = conn;
@@ -106,17 +107,17 @@ public class Home extends Creator {
 
         //rs = stmt.executeQuery("SELECT h.text, h.image, h.alt,COUNT(h.id) as CountPosts, hm.*, t.name AS nameType, t.name_alias AS nameAlias, t.hurl  FROM `type2` t, `humor` h, `humor_meta` hm WHERE t.id = hm.type_int AND h.id = hm.id AND hm.status ='on' " + CategoriesAllId + " GROUP BY h.id ORDER BY hm.date DESC LIMIT " + begin + "," + lt);
         rs = stmt.executeQuery("SELECT SQL_CALC_FOUND_ROWS u.login, p.*, "
-                + "(SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount,"
+                + "(SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount, "
+                + "(SELECT COUNT(*) FROM `post_item` i WHERE p.id = i.post) AS itemCount,"
                 + "MAX(if(i.sort=0, i.content, NULL)) AS content, MAX(if(i.sort=0, i.type, NULL)) AS type,"
                 + "MAX(if(i.sort=1, i.content, NULL)) AS content2, MAX(if(i.sort=1, i.type, NULL)) AS type2 "
-                + "FROM users u, tags_link tl, post2 p LEFT JOIN post_item2 i on i.post=p.id "
+                + "FROM users u, tags_link tl, post p LEFT JOIN post_item i on i.post=p.id "
                 + "WHERE u.id=p.user AND tl.post=p.id AND p.status='" + status + "' " + tagsID + " "
                 + "GROUP BY p.id ORDER BY p.svc_date DESC LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
         
-        
         //rs = stmt.executeQuery("SELECT SQL_CALC_FOUND_ROWS u.login, p.*, i.itemCount, pi.content, pi.image, pi.img, pi.alt, pi.video, (SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount FROM users u, post p, tags_link tl, post_item pi JOIN (SELECT id, post, COUNT(*) AS itemCount, MIN(sort) AS sortMin FROM post_item GROUP BY post) AS i ON pi.post=i.post AND pi.sort=i.sortMin WHERE u.id=p.user AND tl.post=p.id AND p.id=pi.post AND p.status='" + status + "' " + tagsID + " GROUP BY p.id ORDER BY p.svc_date DESC LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
         
-        ViewMethod view = new ViewMethod(rs, stmt);
+        view = new ViewMethod(rs, stmt);
         item = view.getPostItem(rs);
 
         rs = stmt.executeQuery("SELECT FOUND_ROWS() as rows;");
@@ -132,6 +133,11 @@ public class Home extends Creator {
         pagnav = pnav.PagingPreviousNext();
 
     }
+    
+    public String getAlt(String id) {
+        return view.getPostTags(id);
+    }
+
 
     public HashMap getSelectedTags() {
         return selectedTags;
@@ -173,14 +179,15 @@ public class Home extends Creator {
         menu += "</ul>";
         return menu;
     }
-
+    
+    
     @Override
     public String getMetaTitle() {
         if (!selectedTags.isEmpty()) {
 
             return ("new".equals(status) ? "Свежее / " : "") + selectedTags.get("tags").toString();
         } else {
-            return ("new".equals(status) ? "Свежее / " : "") + "Все самое интересное и смешное в сети. Блог обо всем интересном";
+            return ("new".equals(status) ? "Свежие новости" : "Все самое интересное и смешное в сети. Блог обо всем интересном");
         }
     }
 

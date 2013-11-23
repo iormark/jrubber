@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    // Info
+    var fieldInfo = $("#add__info");
     // Консоль
     var console = $("#console");
 
@@ -13,34 +15,53 @@ $(document).ready(function() {
     //Quick tips tag
     var autocomplete = $('#filed__autocomplete');
 
+
     // Status change form
     var create = false;
 
 
     var fileCount = 0;
     var itemCount = fileList.find('li').length;
+    var updateCount = 0;
+
+    // Buttom upload disabled
+    $('#upload').attr('disabled', 'disabled');
 
     // Drag events
     $(fileList).sortable({
+        zIndex: 999,
         axis: 'y',
         cursor: 'move',
         opacity: 1,
         tolerance: 'intersect',
         update: function() {
-            var i = 0;
-            fileList.find('li').each(function() {
-                $(this).find('input[name="sort"]').val(i++);
-            });
-            fileList.find('li').removeClass('read').addClass('update');
+            updateInfo();
         }
     });
-    $(fileList).disableSelection();
+    //$(fileList).disableSelection();
 
 
     //var drop = new Draggable(fileList.find('li'));
     //fileList.find('li').each(function() {
     //  drop.handleAdd(this);
     //});
+
+    // Info
+    info();
+    function info() {
+        $(fieldInfo).html('<span>Всего: ' + itemCount + '</span>');
+    }
+    
+    function updateInfo() {
+        var i = 0;
+        fileList.find('li').each(function() {
+            $(this).find('input[name="sort"]').val(i++);
+        });
+        fileList.find('li').removeClass('read').addClass('update');
+        create = true;
+        $('#upload').removeAttr('disabled');
+    }
+
 
     // Вывод в консоль
     function log(str) {
@@ -53,6 +74,12 @@ $(document).ready(function() {
         $(obj).find('.percent').css('width', percents + '%').text(percents + '%');
     }
 
+    $(window).unload(function() {
+        if (create) {
+            alert("Вы не сохранили изменения! Уверенны что хотите покинуть эту страницу?");
+        }
+    });
+
 
     $(document).on('change', '.file_input', function(e) {
         //alert($(this).parent().html())
@@ -62,15 +89,17 @@ $(document).ready(function() {
 
     $(document).on('change', '#file_list textarea, #file_list input[name="video"], #file_list input[name="sort"]', function(e) {
         var parent = $(this).parent();
-        if ($(this).val().trim() === '' && $(this).attr('name') != 'text') {
+        if ($(this).val().trim() === '' && $(this).attr('name') !== 'text') {
             parent.removeClass('update').addClass('read');
         } else {
             parent.removeClass('read').addClass('update');
         }
+        $('#upload').removeAttr('disabled');
     });
     $(document).on('change', '#add__post input[name="title"], #add__post input[name="tags"]', function(e) {
         if ($('#add__post input[name="post"]').val() > 0) {
             create = true;
+            $('#upload').removeAttr('disabled');
         }
     });
 
@@ -82,6 +111,7 @@ $(document).ready(function() {
         $('<input/>').attr('type', 'hidden').attr('name', 'id').attr('value', 0).appendTo(li);
         $('<input/>').attr('type', 'hidden').attr('name', 'sort').attr('value', itemCount).appendTo(li);
         itemCount++;
+        info();
     });
     fieldAddImage.click(function() {
         var li = $('<li/>').appendTo(fileList);
@@ -89,6 +119,7 @@ $(document).ready(function() {
         $('<input/>').attr('type', 'hidden').attr('name', 'id').attr('value', 0).appendTo(li);
         $('<input/>').attr('type', 'hidden').attr('name', 'sort').attr('value', itemCount).appendTo(li);
         itemCount++;
+        info();
     });
     fieldAddVideo.click(function() {
         var li = $('<li/>').appendTo(fileList);
@@ -99,6 +130,36 @@ $(document).ready(function() {
         //$(this).html('&minus; Удалить видео');
         //$(this).attr('disabled', 'disabled');
         itemCount++;
+        info();
+    });
+
+    $(document).on('click', '.item-delete', function(e) {
+        if (!confirm("Это действие невозможно будет отменить! Вы уверены что хотите удалить этот элемент?")) {
+            return;
+        }
+
+        var item = $(this).parent();
+
+        // Delete item
+        $.post('/svc/FileUpload', {
+            url: '/svc/FileUpload',
+            q: 'item-delete',
+            item: $(item).find('input[name="id"]').val(),
+        }, function(response) {
+            if (response.status === 'ok' && response.post >= 0) {
+                $(item).remove();
+                itemCount--;
+                if ($(item).hasClass('update')) {
+                    updateCount--;
+                }
+                info();
+                updateInfo();
+            } else {
+                alert(response.message);
+            }
+        }, "json").fail(function() {
+            log("Произошла ошибка при удалении! Пожалуйста, повторите попытку, \nпростите...");
+        });
     });
 
 
@@ -157,7 +218,8 @@ $(document).ready(function() {
                     theFile.attr('src', e.target.result);
                     theFile.css('width', 150);
                     log('Картинка добавлена: `' + file.name + '` (' + Math.round(file.size / 1024) + ' Кб)');
-
+                    $('#upload').removeAttr('disabled');
+                    info();
                 };
             })(theFile);
             reader.readAsDataURL(file);
@@ -165,8 +227,10 @@ $(document).ready(function() {
     }
 
 
-    $("#upload").click(function() {        
-                
+    $("#upload").click(function() {
+        log('Секундочку...');
+        $('#upload').attr('disabled', 'disabled');
+
         if (create) {
             createPost();
         }
@@ -176,6 +240,7 @@ $(document).ready(function() {
             var item = this;
             // Keeps out of the loaded
             if ($(item).hasClass('read')) {
+                $('#upload').removeAttr('disabled');
                 return true;
             }
 
@@ -211,34 +276,38 @@ $(document).ready(function() {
                     Progress(item, percents)
                 },
                 oncomplete: function(response) {
-                    $('#upload').removeAttr('disabled');
-                    
-                    if (response.status == 'ok' && response.item >= 0) {
+
+                    if (response.status === 'ok' && response.item >= 0) {
+                        updateCount++;
                         $(item).removeClass('update').addClass('read');
                         $(id).val(response.item);
-                        createPost();
                         $(item).find('.error').remove();
+                        createPost();
                     } else {
                         if ($(item).find('.percent').length > 0) {
                             $(item).find('.percent').css('width', 0).text('0%');
                         }
 
-                        if ($(item).find('.error').length == 0) {
+                        if ($(item).find('.error').length === 0) {
                             $('<div/>').addClass('error').html(response.message).appendTo(item);
                         } else {
                             $(item).find('.error').html(response.message);
                         }
+
+                        $('#upload').removeAttr('disabled');
                     }
                 }
             });
         });
-        
-        
+
     });
 
 
     function createPost() {
-        if (!fileList.find('li').hasClass('update') && 1 > 0) {
+        //alert((((itemCount - updateCount) + updateCount === itemCount) || create));
+        if (!fileList.find('li').hasClass('update') &&
+                (((itemCount - updateCount) + updateCount === itemCount) || create)) {
+
             log('Сохраняем...');
             $('#upload').attr('disabled', 'disabled');
 
@@ -252,16 +321,22 @@ $(document).ready(function() {
                 post: $("#add__post input[name='post']").val()
             },
             function(response) {
-                $('#upload').removeAttr('disabled');
-                //alert(response);
+
                 if (response.status === 'ok' && response.post >= 0) {
                     $("#add__post input[name='post']").val(response.post);
+                    create = false;
+                    location.href = '/post?id=' + response.post;
+                    //location.href = '/add?id=' + response.post;
+                } else {
+                    $('#upload').removeAttr('disabled');
+                    alert(response.message);
                 }
             }, "json").fail(function() {
                 $('#upload').removeAttr('disabled');
                 log("Произошла ошибка! Пожалуйста, повторите попытку, \nпростите...");
             });
-            create = false;
+        } else {
+            $('#upload').removeAttr('disabled');
         }
     }
 
