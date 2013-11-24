@@ -260,7 +260,10 @@ public class PostCreate {
 
     public void deleteItem(String realPath, int item) throws SQLException, Exception {
         HashSet files = new HashSet();
-        ResultSet rs = stmt.executeQuery("SELECT content, type FROM post_item WHERE user='" + check.getUserID() + "' AND id='" + item + "' LIMIT 1");
+        ResultSet rs = stmt.executeQuery("SELECT content, type FROM post_item WHERE "
+                + (!check.getUserID().equals("1") ? "user=" + check.getUserID()+" AND " : "")
+                + "id='" + item + "' LIMIT 1");
+
         if (rs.next()) {
 
             if ("image".equals(rs.getString("type"))) {
@@ -280,7 +283,7 @@ public class PostCreate {
         if (!files.isEmpty()) {
             util.deleteFile(files);
         }
-        
+
         stmt.executeUpdate("DELETE FROM post_item WHERE id = " + item);
     }
 

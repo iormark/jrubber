@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -135,6 +136,15 @@ public class Util {
                     string = "Только что";
                 }
             }
+        } else if (day <= 7) {
+            if (day == 1) {
+                string = day + " день ";
+            } else if ((day >= 2 && day <= 4)) {
+                string = day + " дня ";
+            } else if (day >= 5) {
+                string = day + " дней ";
+            }
+            string = string + " назад";
         } else {
             string = new SimpleDateFormat("d MMM yy в HH:mm").format(create);
         }
@@ -172,6 +182,14 @@ public class Util {
                 } else {
                     string = "Только что";
                 }
+            }
+        } else if (day <= 7) {
+            if (day == 1) {
+                string = day + " день ";
+            } else if ((day >= 2 && day <= 4)) {
+                string = day + " дня ";
+            } else if (day >= 5) {
+                string = day + " дней ";
             }
         } else {
             string = new SimpleDateFormat("d MMM yy в HH:mm").format(create);
@@ -347,12 +365,30 @@ public class Util {
     /**
      * bbCode
      *
-     * @param str
+     * @param html
      * @return
      */
-    public String bbCode(String str) {
-        return str.replaceAll("\\[h3\\]+", "<h3>").replaceAll("\\[/h3\\][\r\n]*", "</h3>")
-                .replaceAll("\\[b\\]+", "<b>").replaceAll("\\[/b\\]", "</b>");
+    public static String bbCode(String html) {
+        if (html == null) {
+            return "";
+        }
+
+        Map<String, String> bbMap = new HashMap();
+
+        //bbMap.put("(\r\n|\r|\n|\n\r)", "<br>");
+        bbMap.put("\\[b\\](.+?)\\[/b\\]", "<strong>$1</strong>");
+        bbMap.put("\\[i\\](.+?)\\[/i\\]", "<span style=\"font-style:italic;\">$1</span>");
+        bbMap.put("\\[u\\](.+?)\\[/u\\]", "<span style=\"text-decoration:underline;\">$1</span>");
+        bbMap.put("\\[h3\\](.+?)\\[/h3\\]", "<h3>$1</h3>");
+        bbMap.put("\\[h4\\](.+?)\\[/h4\\]", "<h4>$1</h4>");
+        bbMap.put("\\[url\\](.+?)\\[/url\\]", "<a href=\"$1\">$1</a>");
+        bbMap.put("\\[url=(.+?)\\](.+?)\\[/url\\]", "<a href=\"$1\">$2</a>");
+
+        for (Map.Entry entry : bbMap.entrySet()) {
+            html = html.replaceAll(entry.getKey().toString(), entry.getValue().toString());
+        }
+
+        return html;
     }
 
     /**
@@ -412,10 +448,11 @@ public class Util {
         }
         return result.toString();
     }
-    
+
     /**
      * Delete files
-     * @param files 
+     *
+     * @param files
      */
     public void deleteFile(HashSet files) {
         Iterator i = files.iterator();

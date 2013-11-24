@@ -16,7 +16,12 @@
                     <span class="vote_up" value="${key!''}_comment" title="+1">&nbsp;</span>
                     <span class="vote_down" value="${key!''}_comment" title="-1">&nbsp;</span>
                 </span>
-                <span class="login"><a href="/${content.getComment()[key]['login']!''}">${content.getComment()[key]["login"]!""}</a></span>
+                <span class="login">
+                    <a href="/${content.getComment()[key]['login']!''}">${content.getComment()[key]["login"]!""}</a>
+                    <#if (content.getComment()[key]['login_reply'])??>
+                    ответ <a href="#comment_${content.getComment()[key]['id_reply']!''}" onclick="Edit.anchor_selected(this); return false;">${content.getComment()[key]["login_reply"]!""}</a>
+                    </#if>
+                </span>
                 <span class="created">отправлено ${content.getComment()[key]["created"]!""}</span>
                 <a href="#comment_${key}" onclick="Edit.anchor_selected(this); return false;">#<span></span></a>
             </div>

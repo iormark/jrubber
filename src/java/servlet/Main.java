@@ -138,7 +138,7 @@ public class Main extends HttpServlet {
                     leftNav.add("/block/ad-space.html");
 
                 } else if ("add".equals(q)) {
-                    if (check.getCheck()) {
+                    if (check.getCheck() || check.getUserID().equals("1")) {
                         creator = new Add(request, response, stmt, getServletContext().getRealPath("/"), check);
 
                         root.put("time_addition", block.getTimeAddition());

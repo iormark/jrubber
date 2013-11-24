@@ -39,8 +39,15 @@ public class Add extends Creator {
             return;
         }
 
-        ResultSet rs = stmt.executeQuery("SELECT * FROM users u, post p WHERE "
+        ResultSet rs = null;
+        
+        if(check.getUserID().equals("1")) {
+            rs = stmt.executeQuery("SELECT * FROM post WHERE id = '" + id + "'");
+        }else {
+            rs = stmt.executeQuery("SELECT * FROM users u, post p WHERE "
                 + "u.id=p.user AND u.id = '" + check.getUserID() + "' AND p.id = '" + id + "'");
+        }
+
         while (rs.next()) {
             post.put("title", StringEscapeUtils.escapeHtml4(rs.getString("title")));
         }

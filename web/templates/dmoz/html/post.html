@@ -43,7 +43,7 @@
             <span style="color: red;">${(content.getItemMeta()["created"])!""}</span>
             Добавил(а): <a href="/${(content.getItemMeta()['login'])!''}">${(content.getItemMeta()["login"])!"Волонтер"}</a>
             
-            <#if (user.getUserID()==content.getItemMeta()['user'])>
+            <#if (user.getUserID()==content.getItemMeta()['user'] || user.getUserID()=="1")>
             <a href="add?id=${(content.getId())!''}">Редактировать</a>
             </#if>
             

@@ -3,6 +3,7 @@
 
 <#list widget?keys as key>
 <#if ((widget[key]["type"])??)>
+<a href="http://yourmood.ru/post?id=${key!''}" target="_blank">${(widget[key]["title"])!""}</a>
 
 <#if ((widget[key]["type"])=='text')>
 <div class="text">${(widget[key]["content"])!""}</div>

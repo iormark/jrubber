@@ -248,7 +248,7 @@ $(document).ready(function() {
             var isFile = null;
             if (typeof(item.file) != 'undefined') {
                 isFile = item.file;
-            } else if ($(item).find('.percent').text() == '100%') {
+            } else if ($(item).find('.percent').text() === '100%') {
                 isFile = true;
             } else {
                 isFile = false;
@@ -273,7 +273,7 @@ $(document).ready(function() {
             new Uploads(params, {
                 onprogress: function(percents) {
                     //log(percents);
-                    Progress(item, percents)
+                    Progress(item, percents);
                 },
                 oncomplete: function(response) {
 

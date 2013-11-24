@@ -169,6 +169,12 @@ public class ViewMethod {
             }
 
             map.putAll(getType("", content, type, item));
+
+            if (title.equals("")) {
+                title = "Подробнее...";
+            } else {
+                title = util.Shortening(StringEscapeUtils.escapeHtml4(rs.getString("title") + ""), 55, "");
+            }
             map.put("title", title);
             map.put("type", type);
             items.put(item, map);
@@ -218,10 +224,9 @@ public class ViewMethod {
             }
                 break;
             case "video":
-                System.out.println(":::" + props.getProperty("videoIframe"));
                 if (Boolean.parseBoolean(props.getProperty("videoIframe"))) {
-                    content = ("<iframe width=\"600\" height=\"400\" src=\"//" + content + "\" frameborder=\"0\" allowfullscreen></iframe>");
-                }
+                content = ("<iframe width=\"600\" height=\"400\" src=\"//" + content + "\" frameborder=\"0\" allowfullscreen></iframe>");
+            }
 
                 map.put("content" + suff, content);
                 break;
@@ -350,7 +355,7 @@ public class ViewMethod {
 
             items.put(rs.getString("id"), content);
         }
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+items);
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>" + items);
         return items;
     }
 
@@ -375,7 +380,7 @@ public class ViewMethod {
 
         return tags;
     }
-    
+
     public String getPostTags(String id) {
         String str = "";
         if (tags.containsKey(id)) {
@@ -383,7 +388,6 @@ public class ViewMethod {
         }
         return str;
     }
-    
 
     public HashMap<String, HashSet> getPostTags() throws SQLException {
         if (items.keySet().isEmpty()) {
