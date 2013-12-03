@@ -67,7 +67,7 @@ public class Home extends Creator {
         status = (String) args.get(args.size() - 1);
 
         if (!tags.equals("home.html") && (args.size() == 1 || args.size() == 3)) {
-            if (!"new".equals(status)) {
+            if (!"new".equals(status) && !"abyss".equals(status)) {
                 serverStatus = 404;
                 return;
             }
@@ -88,7 +88,7 @@ public class Home extends Creator {
 
         if (tagsId > 0) {
             tagsID = " AND tl.tags=" + tagsId;
-        } else if (!tags.equals("home.html") && !tags.equals("new")) {
+        } else if (!tags.equals("home.html") && !tags.equals("new") && !tags.equals("abyss")) {
             serverStatus = 404;
             return;
         } else {
@@ -114,9 +114,8 @@ public class Home extends Creator {
                 + "FROM users u, tags_link tl, post p LEFT JOIN post_item i on i.post=p.id "
                 + "WHERE u.id=p.user AND tl.post=p.id AND p.status='" + status + "' " + tagsID + " "
                 + "GROUP BY p.id ORDER BY p.svc_date DESC LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
-        
+
         //rs = stmt.executeQuery("SELECT SQL_CALC_FOUND_ROWS u.login, p.*, i.itemCount, pi.content, pi.image, pi.img, pi.alt, pi.video, (SELECT COUNT(*) FROM `comment` c WHERE p.id = c.post) AS commentCount FROM users u, post p, tags_link tl, post_item pi JOIN (SELECT id, post, COUNT(*) AS itemCount, MIN(sort) AS sortMin FROM post_item GROUP BY post) AS i ON pi.post=i.post AND pi.sort=i.sortMin WHERE u.id=p.user AND tl.post=p.id AND p.id=pi.post AND p.status='" + status + "' " + tagsID + " GROUP BY p.id ORDER BY p.svc_date DESC LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
-        
         view = new ViewMethod(rs, stmt);
         item = view.getPostItem(rs);
 
@@ -133,11 +132,10 @@ public class Home extends Creator {
         pagnav = pnav.PagingPreviousNext();
 
     }
-    
+
     public String getAlt(String id) {
         return view.getPostTags(id);
     }
-
 
     public HashMap getSelectedTags() {
         return selectedTags;
@@ -163,6 +161,7 @@ public class Home extends Creator {
         String tag = selectedTags.containsKey("tags") ? "<a href=\"/" + ("new".equals(status) ? "new" : "") + "\" title=\"Удалить\">×</a> <h1>" + selectedTags.get("tags") + "</h1>" : "<h1>Самое интересное</h1>";
         String tagUrl = selectedTags.containsKey("tags") ? "/tag/" + (String) selectedTags.get("tags") + "" : "/";
         String tagUrlNew = selectedTags.containsKey("tags") ? "/tag/" + (String) selectedTags.get("tags") + "/new" : "/new";
+        String tagUrlAbyss = selectedTags.containsKey("tags") ? "/tag/" + (String) selectedTags.get("tags") + "/abyss" : "/abyss";
 
         String menu = "<ul class=\"menu\">";
 
@@ -171,24 +170,32 @@ public class Home extends Creator {
         if ("on".equals(status)) {
             menu += "<li class=\"active\"><a href=\"" + tagUrl + "\">Лучшее</a></li>";
             menu += "<li class=\"noactive\"><a href=\"" + tagUrlNew + "\">Свежее</a></li>";
+            menu += "<li class=\"noactive\"><a href=\"" + tagUrlAbyss + "\">Бездна</a></li>";
         } else if ("new".equals(status)) {
             menu += "<li class=\"noactive\"><a href=\"" + tagUrl + "\">Лучшее</a></li>";
             menu += "<li class=\"active\"><a href=\"" + tagUrlNew + "\">Свежее</a></li>";
+            menu += "<li class=\"noactive\"><a href=\"" + tagUrlAbyss + "\">Бездна</a></li>";
+        } else if ("abyss".equals(status)) {
+            menu += "<li class=\"noactive\"><a href=\"" + tagUrl + "\">Лучшее</a></li>";
+            menu += "<li class=\"noactive\"><a href=\"" + tagUrlNew + "\">Свежее</a></li>";
+            menu += "<li class=\"active\"><a href=\"" + tagUrlAbyss + "\">Бездна</a></li>";
         }
 
         menu += "</ul>";
         return menu;
     }
-    
-    
+
     @Override
     public String getMetaTitle() {
-        if (!selectedTags.isEmpty()) {
-
-            return ("new".equals(status) ? "Свежее / " : "") + selectedTags.get("tags").toString();
-        } else {
-            return ("new".equals(status) ? "Свежие новости" : "Все самое интересное и смешное в сети. Блог обо всем интересном");
+        String title = "";
+        if ("on".equals(status)) {
+            title = selectedTags.isEmpty() ? "Все самое интересное и смешное в сети. Блог обо всем интересном" : "Тег: "+ selectedTags.get("tags").toString();
+        } else if ("new".equals(status)) {
+            title = selectedTags.isEmpty() ? "Свежие новости" : "Свежие новости / Тег: "+selectedTags.get("tags").toString();
+        } else if ("abyss".equals(status)) {
+            title = selectedTags.isEmpty() ? "Бездна" : "Бездна / Тег: "+ selectedTags.get("tags").toString();
         }
+        return title;
     }
 
     @Override

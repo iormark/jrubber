@@ -18,7 +18,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.servlet.http.Part;
 
 /**
  *
@@ -285,7 +287,24 @@ public class Util {
         return result;
     }
 
+    /**
+     * Replace IFRAME, TEXT to URL
+     *
+     * @param string
+     * @return
+     */
+    public String replaceURLconnect(String string) {
+        Pattern p = Pattern.compile("src=[\"]*[^\\s\"]*[\\s\"]");
+        Matcher m = p.matcher(string);
+        if (m.find()) {
+            String src = m.group();
+            string = src.replaceAll("src=|[\"]", "");
+        }
+        return string.replaceAll("^(http://|https://|//)", "").trim();
+    }
+
     public boolean checkURLconnect(String string) {
+        string = replaceURLconnect(string);
         URL url = null;
         HttpURLConnection connection = null;
         try {
@@ -458,8 +477,31 @@ public class Util {
         Iterator i = files.iterator();
 
         while (i.hasNext()) {
-            String file = (String) i.next();
-            new File(file).delete();
+            String item = (String) i.next();
+            File file = new File(item);
+            if (file.exists()) {
+                System.out.println(file);
+                file.delete();
+            }
         }
+    }
+    
+    /**
+     * Method used to get uploaded file name.
+     * This will parse following string and get filename
+     * Content-Disposition: form-data; name="content"; filename="a.txt"
+     * @param p
+     * @return 
+     */
+    public String getUploadedFileName(Part p) {
+        String file = "", header = "content-disposition";
+        String[] strArray = p.getHeader(header).split(";");
+        for(String split : strArray) {
+            if(split.trim().startsWith("filename")) {
+                file = split.substring(split.indexOf('=') + 1);
+                file = file.trim().replace("\"", "");
+            }
+        }
+        return file;
     }
 }

@@ -41,6 +41,7 @@ public class Main extends HttpServlet {
 
         PrintWriter out = response.getWriter();
 
+        String layout = null;
         String q = request.getParameter("q") != null ? request.getParameter("q") : "home.html";
         ArrayList args = new ArrayList(Arrays.asList(q.split("/")));
 
@@ -69,7 +70,8 @@ public class Main extends HttpServlet {
             try {
 
                 if ("home.html".equals(q) || "tag".equals(args.get(0).toString())
-                        || "new".equals(args.get(0).toString())) {
+                        || "new".equals(args.get(0).toString())
+                        || "abyss".equals(args.get(0).toString())) {
                     creator = new logic.Home(request, args, conn);
 
                     root.put("time_addition", block.getTimeAddition());
@@ -91,7 +93,7 @@ public class Main extends HttpServlet {
                     q = "home.html";
 
                 } else if ("search".equals(q)) {
-                    
+
                     creator = new logic.Search(request, response, stmt);
                     q += ".html";
 
@@ -126,6 +128,7 @@ public class Main extends HttpServlet {
                     root.put("tags", block.getTagsLi());
                     root.put("widget", block.getWidget());
 
+                    leftNav.add("/block/navig.html");
                     if (check.getCheck()) {
                         leftNav.add("/block/user-menu.html");
                     } else {
@@ -136,6 +139,13 @@ public class Main extends HttpServlet {
                     leftNav.add("/block/tags.html");
                     leftNav.add("/block/widget.html");
                     leftNav.add("/block/ad-space.html");
+
+                } else if ("view".equals(q)) {
+
+                    creator = new Post(request, response, conn);
+                    q = "/view/" + q + ".html";
+                    layout = "/view/index.html";
+                    root.put("user", check);
 
                 } else if ("add".equals(q)) {
                     if (check.getCheck() || check.getUserID().equals("1")) {
@@ -203,8 +213,6 @@ public class Main extends HttpServlet {
                         || "stishki.html".equals(q)
                         || args.get(0).toString().equals("kartinki")
                         || args.get(0).toString().equals("demotivatory")) {
-
-                    
 
                     q = "home.html";
                     response.sendRedirect("/");
@@ -276,7 +284,7 @@ public class Main extends HttpServlet {
                         leftNav.add("/block/widget.html");
                         leftNav.add("/block/about.html");
                         leftNav.add("/block/ad-space.html");
-                        q = "edit.html";
+                        q = "/user/edit.html";
                     } else {
                         response.sendRedirect("/");
                         return;
@@ -366,9 +374,7 @@ public class Main extends HttpServlet {
 
             root.put("title", creator.getMetaTitle());
 
-            if (creator != null) {
-                root.put("content", creator);
-            }
+            root.put("content", creator);
 
             root.put("head", block.getTypeTitle() != null ? "" : creator.getMetaHead());
 
@@ -384,7 +390,7 @@ public class Main extends HttpServlet {
             //}
             root.put("footer_tpl", "footer.html");
 
-            new Templating().getTemplating(getServletContext().getRealPath("/")).process(root, out);
+            new Templating().getTemplating(getServletContext().getRealPath("/"),layout).process(root, out);
 
         } catch (Exception e) {
             logger.error("", e);

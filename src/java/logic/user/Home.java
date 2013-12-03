@@ -9,6 +9,7 @@ import core.PagingNavigation;
 import core.UrlOption;
 import core.Util;
 import core.ViewMethod;
+import core.XmlOptionReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -44,15 +45,16 @@ public class Home extends Creator {
     private Date LastModified = null;
     private LinkedHashMap<String, HashMap> item = new LinkedHashMap<>();
     private HashMap<String, HashSet> tags = new HashMap();
-    private HashMap<String, String> user = new HashMap();
+    private HashMap user = new HashMap();
     private HttpServletRequest request = null;
     private ArrayList args;
     private CategoriesTree ct = null;
     private HashMap selected = null;
     private String status = "on";
     private ViewMethod view = null;
+    private XmlOptionReader xor = new XmlOptionReader();
 
-    public Home(HttpServletRequest request, ArrayList args, Connection conn) throws SQLException {
+    public Home(HttpServletRequest request, ArrayList args, Connection conn) throws SQLException, Exception {
         this.conn = conn;
         this.args = args;
         this.request = request;
@@ -99,6 +101,15 @@ public class Home extends Creator {
                 user.put("sex_end", "");
             }
 
+            if (rs.getString("avatar") != null) {
+                xor.setField(new String[]{"o"});
+                HashMap<String, HashMap> avatar = xor.setDocument(rs.getString("avatar"));
+                HashMap cnt = new HashMap();
+                cnt.put("name", avatar.get("o").get("name"));
+                cnt.put("path", avatar.get("o").get("p"));
+                user.put("avatar", cnt);
+            }
+
             user.put("rating", rs.getString("rating"));
             user.put("created", new SimpleDateFormat("d MMM yyyy").format(rs.getTimestamp("created")));
             user.put("postCount", rs.getString("postCount"));
@@ -118,7 +129,7 @@ public class Home extends Creator {
                 + "MAX(if(i.sort=0, i.content, NULL)) AS content, MAX(if(i.sort=0, i.type, NULL)) AS type,"
                 + "MAX(if(i.sort=1, i.content, NULL)) AS content2, MAX(if(i.sort=1, i.type, NULL)) AS type2 "
                 + "FROM users u, tags_link tl, post p LEFT JOIN post_item i on i.post=p.id "
-                + "WHERE u.id=p.user AND tl.post=p.id AND p.status IN('on', 'new') " + userID + " "
+                + "WHERE u.id=p.user AND tl.post=p.id " + userID + " "
                 + "GROUP BY p.id ORDER BY p.svc_date DESC  LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
 
         view = new ViewMethod(rs, stmt);
@@ -137,6 +148,7 @@ public class Home extends Creator {
         pagnav = pnav.PagingPreviousNext();
 
     }
+
     public String getAlt(String id) {
         return view.getPostTags(id);
     }

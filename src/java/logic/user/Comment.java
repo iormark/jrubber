@@ -32,7 +32,10 @@ public class Comment {
     }
 
     private void queryComment(Statement stmt, int id) throws SQLException {
-        ResultSet rs = stmt.executeQuery("SELECT c.id, u.id AS user, u.login, c.parent, c.comment, c.created, c.vote, c.status, r.user_reply, r.login_reply FROM users u, comment c LEFT JOIN (SELECT c.id, u.id AS user_reply, u.login AS login_reply FROM users u, comment c WHERE u.id=c.user) AS r ON r.id=c.parent WHERE u.id=c.user AND c.status='on' AND c.post=" + id);
+        ResultSet rs = stmt.executeQuery("SELECT c.id, u.id AS user, u.login, c.parent, c.comment, c.created, c.vote, c.status, r.user_reply, r.login_reply "
+                + "FROM users u, comment c LEFT JOIN "
+                + "(SELECT c.id, u.id AS user_reply, u.login AS login_reply FROM users u, comment c WHERE u.id=c.user) AS r "
+                + "ON r.id=c.parent WHERE u.id=c.user AND c.status IN('on','reply','first') AND c.post=" + id);
 
         for (int i = 0; rs.next(); i++) {
             HashMap data = new HashMap();

@@ -28,9 +28,10 @@ import org.apache.log4j.Logger;
 public class Post extends Creator {
 
     private int serverStatus = 200;
-    private int gid = 0, imageLength = 0, next = 0, back = 0;
+    private int imageLength = 0, next = 0, back = 0;
     private int id = 0;
-    private HashMap itemMeta = new HashMap();
+    private String gid = "0";
+    private HashMap meta = new HashMap();
     private LinkedHashMap<String, HashMap> item = new LinkedHashMap();
     private HashMap<String, HashSet> tags = new HashMap();
     private LinkedHashMap<String, HashMap> Comment = null;
@@ -53,23 +54,27 @@ public class Post extends Creator {
         ResultSet rs = null;
         int typeId = 0;
 
-        rs = stmt.executeQuery("SELECT * FROM users u, post p WHERE u.id=p.user AND p.status IN('new','on') AND p.id = '" + id + "'");
+        rs = stmt.executeQuery("SELECT * FROM users u, post p WHERE u.id=p.user AND p.status IN('new','on','abyss') AND p.id = '" + id + "'");
 
         while (rs.next()) {
-            itemMeta.put("id", rs.getString("id"));
-            itemMeta.put("user", rs.getString("user"));
-            itemMeta.put("login", rs.getString("login"));
-            itemMeta.put("title", rs.getString("title"));
-            itemMeta.put("vote", rs.getInt("vote") > 0 ? "" + rs.getString("vote") : rs.getString("vote"));
+            meta.put("id", rs.getString("id"));
+            meta.put("user", rs.getString("user"));
+            meta.put("login", rs.getString("login"));
+            meta.put("title", rs.getString("title"));
+            meta.put("vote", rs.getInt("vote"));
 
-            itemMeta.put("created", util.dateFormat(rs.getTimestamp("date")));
-            itemMeta.put("time", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss+04:00").format(rs.getTimestamp("date")));
+            if (rs.getInt("vote") <= -4 || "noindex".equals(rs.getString("robots"))) {
+                meta.put("meta robots", "<meta name=\"robots\" content=\"noindex, nofollow\"/>\n");
+            }
+
+            meta.put("created", util.dateFormat(rs.getTimestamp("date")));
+            meta.put("time", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss+04:00").format(rs.getTimestamp("date")));
             if (LastModified == null) {
                 LastModified = rs.getTimestamp("last_modified");
             }
         }
 
-        if (itemMeta.isEmpty()) {
+        if (meta.isEmpty()) {
             serverStatus = 404;
             return;
         }
@@ -84,14 +89,14 @@ public class Post extends Creator {
         tags = view.getPostTags(id);
 
         for (Map.Entry<String, HashMap> entry : item.entrySet()) {
-            if (gid == 0) {
-                gid = Integer.parseInt(entry.getKey());
+            if (gid.equals("0")) {
+                gid = (entry.getKey());
             } else {
                 break;
             }
         }
 
-        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT min(id) as id FROM post WHERE (status = 'new' OR status = 'on')  AND id > " + id + ") p2 ON p2.id=p.id LIMIT 1");
+        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT min(id) as id FROM post WHERE status IN('new','on','abyss') AND id > " + id + ") p2 ON p2.id=p.id LIMIT 1");
 
         if (rs.next()) {
             HashMap batton = new HashMap();
@@ -107,7 +112,7 @@ public class Post extends Creator {
             bn.put("next", batton);
         }
 
-        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT max(id) as id FROM post WHERE (status = 'new' OR status = 'on')  AND id < " + id + ") p2 ON p2.id=p.id LIMIT 1");
+        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT max(id) as id FROM post WHERE status IN('new','on','abyss') AND id < " + id + ") p2 ON p2.id=p.id LIMIT 1");
 
         if (rs.next()) {
             HashMap batton = new HashMap();
@@ -140,7 +145,7 @@ public class Post extends Creator {
     }
 
     public HashMap getItemMeta() {
-        return itemMeta;
+        return meta;
     }
 
     public HashMap<String, HashSet> getTagsItem() {
@@ -190,13 +195,13 @@ public class Post extends Creator {
 
     public String getTitle() {
 
-        if (itemMeta.get("title").equals("")) {
+        if (meta.get("title").equals("")) {
             return "№ " + id;
         } else {
             if (imageLength > 1) {
-                return itemMeta.get("title") + " (" + imageLength + " шт.)";
+                return meta.get("title") + " (" + imageLength + " шт.)";
             } else {
-                return (String) itemMeta.get("title");
+                return (String) meta.get("title");
             }
         }
 
@@ -205,17 +210,17 @@ public class Post extends Creator {
     @Override
     public String getMetaTitle() {
 
-        if (itemMeta.get("title").equals("")) {
-            if (!item.get(Integer.toString(gid)).get("type").toString().equals("text")) {
-                return "Новость № " + id;
+        if (meta.get("title").equals("")) {
+            if (!item.get(gid).get("type").equals("text")) {
+               return "Новость № " + id;
             } else {
-                return util.specialCharacters(util.Shortening(item.get(Integer.toString(gid)).get("content").toString(), 85, "")) + " # Новость №" + gid;
+                return util.specialCharacters(util.Shortening((String)item.get(gid).get("content"), 85, "")) + " # Новость №" + gid;
             }
         } else {
             if (imageLength > 1) {
-                return itemMeta.get("title") + " (" + imageLength + " шт.)";
+                return meta.get("title") + " (" + imageLength + " шт.)";
             } else {
-                return (String) itemMeta.get("title");
+                return (String) meta.get("title");
             }
         }
 
@@ -244,6 +249,6 @@ public class Post extends Creator {
 
     @Override
     public String getMetaHead() {
-        return "";
+        return meta.containsKey("meta robots") ? (String) meta.get("meta robots") : "";
     }
 }

@@ -1,9 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package logic.add;
+
+package logic.user;
 
 import core.GifDecoder;
 import java.awt.image.BufferedImage;
@@ -73,7 +69,7 @@ public class FileUploader {
 
         //максимальный размер данных который разрешено загружать в байтах
         //по умолчанию -1, без ограничений. Устанавливаем 3 мегабайта. 
-        upload.setSizeMax(1024 * 1024 * 20);
+        upload.setSizeMax(1024 * 1024 * 5);
 
         try {
             List items = upload.parseRequest(request);
@@ -113,54 +109,10 @@ public class FileUploader {
                     }
                 }
             }
+            
+            System.out.println("ListContent: "+ListContent);
 
-            // Access permission
-            int objId = Integer.parseInt((String) ListContent.get(0).get("post"));
-            if (objId > 0) {
-                rs = stmt.executeQuery("SELECT id FROM post "
-                        + "WHERE user='" + check.getUserID() + "' "
-                        + "AND id='" + objId + "' LIMIT 1");
-                if (!rs.next()) {
-                    message = "Простите, ошибка доступа.";
-                    return;
-                }
-            }
-            objId = Integer.parseInt((String) ListContent.get(0).get("item"));
-            if (objId > 0) {
-                rs = stmt.executeQuery("SELECT i.id FROM post p, post_item i "
-                        + "WHERE p.id=i.post AND p.user='" + check.getUserID() + "' "
-                        + "AND i.id='" + objId + "' LIMIT 1");
-                if (!rs.next()) {
-                    message = "Простите, ошибка доступа.";
-                    return;
-                }
-            }
-
-            //System.out.println("Total: " + ListContent);
-            //System.out.println(ListField);
-            //System.out.println(ListFile);
-            // Fields validation of fasting
-            HashSet tags = new HashSet();
-            if (message.length() == 0) {
-
-                System.out.println("ListContent: "+ListContent.get(0).get("file"));
-                boolean isFile = true;
-                if (ListFile.isEmpty()) {
-                    isFile = Boolean.parseBoolean(ListContent.get(0).get("file").toString());
-                } else {
-                    isFile = true;
-                }
-
-                FieldCheck fc = new FieldCheck(
-                        (String) ListContent.get(0).get("text"),
-                        (String) ListContent.get(0).get("video"),
-                        isFile);
-                fc.checkTitle((String) ListContent.get(0).get("title"));
-                tags = fc.checkTags((String) ListContent.get(0).get("tags"));
-                message = fc.getMessage();
-            }
-
-            if (message.length() == 0) {
+            if (message.length() == 1111111110) {
                 if (ListFile.isEmpty()) {
                 } else {
                     for (int i = 0; i < ListFile.size(); i++) {
@@ -184,24 +136,11 @@ public class FileUploader {
                 }
             }
 
-            //System.out.println("Total2: " + ListContent);
-
-            if (message.length() == 0) {
-                PostCreate pc = new PostCreate(conn, stmt, check);
-                insertItem = pc.createPost_items(ListContent, tags, realPath);
-                message = pc.getMessage();
-            } else {
-                deleteFile(out);
-            }
-
         } catch (Exception ex) {
-            System.out.println("File - " + ex);
             message = ("" + ex.getMessage() + "");
             deleteFile(out);
             throw new Exception(ex);
         }
-
-        //out.println("<br>--------<br>");
     }
 
     /**
@@ -223,7 +162,7 @@ public class FileUploader {
         String fileName = new File(item.getName()).getName();
 
         int pintPosition = fileName.lastIndexOf(".");
-        String mimeType = fileName.substring(pintPosition, fileName.length()).toLowerCase();
+        String mimeType = fileName.substring(pintPosition, fileName.length());
 
         if (mimeType.equals(".jpeg") || mimeType.equals(".gif")
                 || mimeType.equals(".png") || mimeType.equals(".jpg")) {

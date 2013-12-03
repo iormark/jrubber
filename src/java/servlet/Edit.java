@@ -69,7 +69,7 @@ public class Edit extends HttpServlet {
 
                 String q = request.getParameter("q") != null ? request.getParameter("q") : "";
 
-                if ("edit".equals(q) && check.getCheck()) {
+                if ("editsssssssssssssssss".equals(q) && check.getCheck()) {
 
                     String email = request.getParameter("email"),
                             sex = request.getParameter("sex"),
@@ -179,8 +179,16 @@ public class Edit extends HttpServlet {
                                 + " WHERE `id`='" + check.getUserID() + "';");
                     }
 
+                    
+                    
+                    
+                    
+                    
                 } else if ("comment".equals(q) && check.getCheck()) {
 
+                    // Comments Edit
+                    
+                    
                     if (request.getParameter("post") != null) {
                         String text = request.getParameter("text");
 
@@ -201,16 +209,26 @@ public class Edit extends HttpServlet {
                         String status = "on";
 
                         if (message.length() == 0) {
+                            String post = request.getParameter("post");
+                            int parent = request.getParameter("parent") != null ? Integer.parseInt(request.getParameter("parent")) : 0;
+                            String id = request.getParameter("id");
 
+                            // check url 
                             Pattern p = Pattern.compile("(((http|https):\\/\\/)?(www[.])?[a-zа-я0-9-]+\\.[a-zа-я0-9-]{2,6})");
                             Matcher m = p.matcher(text);
                             if (m.find()) {
                                 status = "check";
+                            } else if(parent > 0) {
+                                status = "reply";
+                            } else {
+                                //rs = stmt.executeQuery("SELECT id FROM `comment` WHERE `post` = " + post + " LIMIT 1");
+                                //if (!rs.next()) {
+                                //    status = "first";
+                                //}
                             }
-
-                            String post = request.getParameter("post");
-                            String parent = request.getParameter("parent") != null ? request.getParameter("parent") : "0";
-                            String id = request.getParameter("id");
+                            
+                            
+                            
 
                             try {
                                 if (id == null) {
@@ -218,7 +236,7 @@ public class Edit extends HttpServlet {
                                             = conn.prepareStatement("INSERT INTO `comment` (id, parent, post, user, comment, created, status) VALUES "
                                             + "(" + id + ", ?, ?, ?, ?, NOW(), ?)", Statement.RETURN_GENERATED_KEYS);
 
-                                    ps.setInt(1, Integer.parseInt(parent));
+                                    ps.setInt(1, parent);
                                     ps.setInt(2, Integer.parseInt(post));
                                     ps.setInt(3, Integer.parseInt(check.getUserID()));
                                     ps.setString(4, text);

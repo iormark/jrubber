@@ -150,6 +150,8 @@ public class FieldCheck {
 
     private String checkVideo() {
         String msg = "";
+        
+        
         if (!video.equals("")) {
             if (video.length() > 255) {
                 msg = ("URL должен быть не более 255 символов.");

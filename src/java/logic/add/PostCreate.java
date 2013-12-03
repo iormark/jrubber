@@ -138,7 +138,7 @@ public class PostCreate {
             } else if (!ListContent.get(i).get("video").equals("")) {
 
                 content = (String) ListContent.get(i).get("video");
-                content = content.trim();
+                content = util.replaceURLconnect(content);
                 type = "video";
                 /*
                  rs = stmt.executeQuery("SELECT id, post FROM post_item WHERE content='" + content + "' AND type='" + type + "' LIMIT 1");
@@ -261,7 +261,7 @@ public class PostCreate {
     public void deleteItem(String realPath, int item) throws SQLException, Exception {
         HashSet files = new HashSet();
         ResultSet rs = stmt.executeQuery("SELECT content, type FROM post_item WHERE "
-                + (!check.getUserID().equals("1") ? "user=" + check.getUserID()+" AND " : "")
+                + (!check.getUserID().equals("1") ? "user=" + check.getUserID() + " AND " : "")
                 + "id='" + item + "' LIMIT 1");
 
         if (rs.next()) {
@@ -276,8 +276,11 @@ public class PostCreate {
                 files.add(realPath + loadPath + "/small_" + image.get("original").get("name"));
             }
         } else {
-            message = "Простите, ошибка доступа.";
+            if (item > 0) {
+                message = "Простите, ошибка доступа.";
+            }
             return;
+
         }
 
         if (!files.isEmpty()) {

@@ -87,6 +87,8 @@ public class FileUpload extends HttpServlet {
                         FileUploader fu = new FileUploader(realPath, loadPath, request, response, conn, stmt, out, check);
                         additionalMessage = ",\"item\":" + fu.getInsertItem();
                         message = fu.getMessage();
+                        
+                        System.out.println(q+" +++ "+message +" +++ "+additionalMessage);
 
                         break;
                     case "create":
@@ -98,8 +100,8 @@ public class FileUpload extends HttpServlet {
                         pc.updateItem_post();
                         pc.createTags(tags);
                         message = pc.getMessage();
-
                         additionalMessage = ",\"post\":\"" + insertPostId + "\"";
+                        System.out.println(q+" +++ "+message +" +++ "+additionalMessage);
 
                         break;
                     case "item-delete":
@@ -108,7 +110,7 @@ public class FileUpload extends HttpServlet {
                         pc.deleteItem(realPath, Integer.parseInt(request.getParameter("item")));
                         message = pc.getMessage();
                         additionalMessage = ",\"post\":\"" + request.getParameter("item") + "\"";
-                        
+                        System.out.println(q+" +++ "+message +" +++ "+additionalMessage);
                         break;
                     default:
 
@@ -128,8 +130,14 @@ public class FileUpload extends HttpServlet {
                 } else {
                     out.print("{\"status\":\"error\",\"action\":\"" + q + "\",\"message\":\"" + message.toString().trim() + "\"" + additionalMessage + "}");
                 }
+                
+                if (message.length() == 0) {
+                    System.out.print("{\"status\":\"ok\",\"message\":\"Сохранено\"" + additionalMessage + "}");
+                } else {
+                    System.out.print("{\"status\":\"error\",\"action\":\"" + q + "\",\"message\":\"" + message.toString().trim() + "\"" + additionalMessage + "}");
+                }
 
-                System.out.println("message: " + message);
+                //System.out.println("message: " + message);
 
                 message = "";
             }

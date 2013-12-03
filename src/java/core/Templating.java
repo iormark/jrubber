@@ -40,7 +40,7 @@ public class Templating {
         return temp;
     }
     
-    public Template getTemplating(String RealPath, String template) throws Exception {
+    public Template getTemplating(String RealPath, String layout) throws Exception {
         
 
         Configuration tcfg = new Configuration();
@@ -53,7 +53,7 @@ public class Templating {
         tcfg.setObjectWrapper(new DefaultObjectWrapper());
 
 
-        Template temp = tcfg.getTemplate(template);
+        Template temp = tcfg.getTemplate(layout!=null ? layout : "index.html");
 
         return temp;
     }
