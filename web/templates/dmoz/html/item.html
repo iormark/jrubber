@@ -8,7 +8,7 @@
     <div class="list_head">
 
         <div class="post__opts">
-            <div class="vote">
+            <div class="vote stop">
                 <div class="vote_up" value="${key}" title="+1">&nbsp;</div>
                 <span id="vote_${key}" class="vote_count ">${(content.getItem()[key]["vote"])!""}</span>
                 <div class="vote_down" value="${key}" title="-1">&nbsp;</div>
@@ -22,7 +22,7 @@
         </div>
 
         <div class="list_title">
-            <a class="h2" href="/post?id=${key}">${(content.getItem()[key]['title'])!''}</a>
+            <a class="h2" href="/post?id=${key}" target="_blank">${(content.getItem()[key]['title'])!''}</a>
         </div>
 
         <div class="list_date">

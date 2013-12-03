@@ -1,4 +1,4 @@
-<div id="comment__get" class="getComment" style="width: 600px">
+<div id="comment__get" class="getComment">
     <div class="comment_info">
         <h3>комментариев: ${(content.getComment()?size)!"0"}</h3>
     </div>
@@ -16,14 +16,16 @@
                     <span class="vote_up" value="${key!''}_comment" title="+1">&nbsp;</span>
                     <span class="vote_down" value="${key!''}_comment" title="-1">&nbsp;</span>
                 </span>
-                <span class="login">
-                    <a href="/${content.getComment()[key]['login']!''}">${content.getComment()[key]["login"]!""}</a>
+                <span class="users">
+                    <a href="/${content.getComment()[key]['login']!''}" class="login">${content.getComment()[key]["login"]!""}</a>
                     <#if (content.getComment()[key]['login_reply'])??>
-                    ответ <a href="#comment_${content.getComment()[key]['id_reply']!''}" onclick="Edit.anchor_selected(this); return false;">${content.getComment()[key]["login_reply"]!""}</a>
+                    ответ <a href="#comment_${content.getComment()[key]['id_reply']!''}" onclick="Edit.anchor_selected(this);
+                            return false;">${content.getComment()[key]["login_reply"]!""}</a>
                     </#if>
                 </span>
                 <span class="created">отправлено ${content.getComment()[key]["created"]!""}</span>
-                <a href="#comment_${key}" onclick="Edit.anchor_selected(this); return false;">#<span></span></a>
+                <a href="#comment_${key}" onclick="Edit.anchor_selected(this);
+                        return false;">#<span></span></a>
             </div>
 
             <div class="comment__value">
@@ -57,18 +59,33 @@
     </#if>
 </div>
 
-<div id="add-comment" style="width: 600px">
+<div id="add-comment">
     <div class="message hide"></div>
     <div class="addComment form__edit">
         <div>
-            <div><b>А вы что об этом думаете?</b></div>
-            <textarea rows="2" name="text" class=""></textarea>
+            <div style="margin-bottom: .5em"><b>А вы что об этом думаете?</b></div>
+            <#if (user.getUserMap()["avatar"])??>
+            <a style="float: left;" href="/${(user.getUserLogin()!'')}" class="b-user__comment__photo">
+                <img src="http://yourmood.ru/${(user.getUserMap()['avatar']['path'])!''}/b${(user.getUserMap()['avatar']['name'])!''}" width="50" height="50">
+            </a>
+            <#else>
+            <a style="float: left;" href="/${(user.getUserLogin()!'')}" class="b-user__comment__photo">
+                <img src="/templates/dmoz/image/user/m_no-avatar.jpg" width="50" height="50">
+            </a>
+            </#if>
+            <div style="margin-left: 65px;">
+                <textarea rows="2" name="text" class=""></textarea>
+            </div>
         </div>
         <div class="buttons">
             <input type="hidden" name="post" value="${content.getId()}">
             <input type="hidden" name="q" value="comment">
-            <div class="button">
-                <input type="button" name="button" value="Отправить" onclick="Edit.create('comment')" class="btn">
+            <div class="comment__button">
+                <#if (user.getCheck())>
+                <input type="button" name="button" value="Отправить" onclick="Edit.create('comment')" class="btn ">
+                <#else>
+                <input type="button" name="button" value="Отправить" onclick="return log('Пожалуйста, войдите в аккаунт или зарегистрируйтесь.')" class="btn">
+                </#if>
             </div>
             <div class="reply_to"></div>
         </div>

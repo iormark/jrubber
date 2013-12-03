@@ -1,6 +1,10 @@
-.user__page {border:1px solid #ddd;margin-bottom: 1em;background-color: #edeff4; padding: 1em;border-radius: 6px}
-.user__page h2 {margin-bottom: 0;line-height: 1.2;}
-
+/*user_page*/
+.b-user__page table {width: 100%;border-collapse: collapse;}
+.b-user__page table td {vertical-align: top;}
+.b-user__page {border:1px solid #ddd;margin-bottom: 1em;background-color: #edeff4; padding: 1em;border-radius: 6px}
+.b-user__page__photo {border: 0px solid #ddd;width: 100px;height: 100px;padding-right: 1em;line-height: 0;}
+.b-user__page h2 {margin-bottom: 0;line-height: 1.2;}
+.b-user__page__last_visit {color: #666;text-shadow: 0 1px 0 white;text-align: right;}
 
 
 
@@ -9,7 +13,7 @@
 .user__block {margin-bottom: 2em;}
 .user__block a {}
 .user__menu {border: 1px solid #ddd; padding: 1em;border-radius: 6px}
-.user__photo {border: 0px solid #ddd;width: 80px;height: 80px;float: left}
+.user__photo {border: 0px solid #ddd;width: 100px;height: 100px;}
 .user__menu ul {line-height: 170%;list-style: none;margin: 0;padding: 0}
 
 /*profile*/
@@ -31,8 +35,9 @@
     border-bottom: 1px solid #FFF;
 }
 
-
-
+.edit__field ul {list-style: none;padding: 0;margin-top: 0;}
+.edit__field ul li {list-style: none;margin: 0;}
+#edit__file_list li {width: 150px;}
 
 
 /*login/register*/

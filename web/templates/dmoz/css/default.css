@@ -31,6 +31,8 @@ input[type="text"], input[type="password"] {
     border-radius: 0px;
     margin: 0;
 }
+.btn.add:before { content: "\271A"; padding-right: .5em; }
+.btn.save:before { content: "\2714"; padding-right: .5em; }
 .btn {
     color: #444;
     cursor: pointer;
@@ -65,7 +67,7 @@ input[type="text"], input[type="password"] {
   position: relative;
   top: 1px;
 }
-input[type="submit"]:disabled {
+input[type="submit"]:disabled, input[type="button"]:disabled, .btn:disabled {
     color: #555;
     background:#f3f3f3;
     box-shadow:none;
@@ -73,7 +75,7 @@ input[type="submit"]:disabled {
 
 #out__error {
     position: fixed;
-    bottom: 5px;
+    top: 5px;
     right: 8px;
     background-color: #F8F8BA;
     border: 1px solid #f90;
@@ -81,6 +83,7 @@ input[type="submit"]:disabled {
     padding: 0.5em;
     color: red;
     display: none;
+    z-index: 99999;
 }
 .error, .good {
     font-size: 16px;

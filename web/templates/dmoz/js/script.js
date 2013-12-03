@@ -251,6 +251,54 @@ function randomNumber(m, n) {
 }
 
 
+function Uploads(params, callback) {
+    var percents = 0;
+    var xhr = new XMLHttpRequest();
+
+    xhr.upload.addEventListener("progress", function(e) {
+        if (e.lengthComputable) {
+            percents = Math.round((e.loaded / e.total) * 100);
+            if (callback.onprogress instanceof Function) {
+                callback.onprogress(percents);
+            }
+        }
+    }, false);
+
+    xhr.upload.addEventListener("load", function(e) {
+        percents = 100;
+    }, false);
+
+    xhr.upload.addEventListener("error", function() {
+        alert('Error uploading on server');
+    }, false);
+
+    xhr.onreadystatechange = function() {
+        var callbackDefined = callback.oncomplete instanceof Function;
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+                if (callbackDefined) {
+                    //alert(this.responseText);
+                    callback.oncomplete(JSON.parse(this.responseText));
+                }
+            } else {
+                alert('HTTP response code is not OK (' + this.status + ')');
+                if (callbackDefined) {
+                    callback.oncomplete(false);
+                }
+            }
+        }
+    };
+
+    xhr.open("POST", params.url);
+    var f = new FormData();
+    for (var key in params) {
+        f.append(key, params[key]);
+    }
+
+    xhr.send(f);
+}
+
+
 
 (function(e) {
     "function" == typeof define && define.amd ? define(["jquery"], e) : e(window.jQuery || window.$)

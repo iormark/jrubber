@@ -47,7 +47,7 @@
             <a href="/add?id=${(content.getId())!''}">Редактировать</a>
             </#if>
             
-            <a href="/view?id=${(content.getId())!''}" target="_blank">Увеличеть</a>
+            <a href="/post?id=${(content.getId())!''}">Уменьшить</a>
             
             <div id="share">
                 <a href="#ddd" onclick="return false"><span>Отправить</span></a>
@@ -61,8 +61,6 @@
                     <li><a href="#" title="Рассказать друзьям в Twitter" class="twitter" rel="nofollow">Twitter</a></li>
                 </ul>
             </div>
-            
-            
         </div>
     </div>
 
@@ -85,18 +83,18 @@
                 <span class="item__numbering">${i}</span>
                 </#if>
 
-                <meta itemprop="description" content="${content.getTitle()!""} - ${content.getAlt()}">
+                <meta itemprop="description" content="${content.getAlt()}">
                 <meta itemprop="contentUrl" content="${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['content']!''}">
                 <#if (((content.getItem()[key]['animated'])!'')!='')>
                 <div style="display: inline-block;position: relative">
                     <a class="image img__href img__animated" value="${(content.getItem()[key]['imagePath'])!''}:${(content.getItem()[key]['content'])!''}" target="_blank" href="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['content']!''}">
-                        <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['content'])!''}" alt="${content.getAlt()}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
+                        <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/${(content.getItem()[key]['content'])!''}" alt="${content.getAlt()}" style="max-width: 1000px;">
                         <div class="list__info__img__hint">gif, ${content.getItem()[key]['size']!''}</div>
                     </a>
                 </div>
                 <#else>
                 <a class="image img__href" target="_blank" href="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['content']!''}">
-                    <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['content'])!''}" alt="${content.getAlt()}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
+                    <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/${(content.getItem()[key]['content'])!''}" alt="${content.getAlt()}" style="max-width: 1000px;">
                 </a>
                 </#if>
             </div>
@@ -114,11 +112,9 @@
     </div>
 </article>
 
-
-<div style="width: 600px;">
+<div style="width: 1000px;">
     <#include "/user/comment.html">
 </div>
-
 <br>
 
 <script type="text/javascript" src="/templates/dmoz/js/lib.js" charset="utf-8"></script>

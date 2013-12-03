@@ -1,0 +1,12 @@
+<#if ((content.getBN()['next'])??) || ((content.getBN()['back'])??)>
+<div class="post-control">
+    <ul class="left">
+        <#if ((content.getBN()['next'])??)>
+        <li><a class="tagged__tag" href="/post?id=${(content.getBN()['next']['id'])!''}" title="${(content.getBN()['next']['title'])!''}">« Назад</a></li>
+        </#if>
+        <#if ((content.getBN()['back'])??)>
+        <li><a class="tagged__tag" href="/post?id=${(content.getBN()['back']['id'])!''}" title="${(content.getBN()['back']['title'])!''}">Вперед »</a></li>
+        </#if>
+    </ul>
+</div>
+</#if>

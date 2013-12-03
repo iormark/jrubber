@@ -2,13 +2,20 @@
 #file_list li {
     border-left: 0px solid #ddd;
     margin-left: 0em;
-    padding: .5em 0 .5em 0em;
+    //padding: .5em 0 .5em 0em;
     text-align: left;
     margin-bottom: 1em;
     cursor: move;
     background: #fff;
+    position: relative;
 }
-#file_list li .item-delete {cursor: pointer;color:red;}
+#file_list li .item-options {
+    font-size: 80%;
+    float: right;
+    text-align: right;
+    cursor: pointer;
+    color:#999;
+}
 #file_list li img {width: 150px;}
 #file_list li .progress {
     border: 0px solid #888888;

@@ -1,14 +1,31 @@
-<div class="user__page">
-    <div class="user__last_visit" style="float:right;color: #666;text-shadow: 0 1px 0 white;">
-        Заходил: ${(content.getUser()["lastVisit"])!"Давно"}
-    </div>
-    <h2>${(content.getUser()["login"])!""}</h2>
-    <div>на сайте c ${(content.getUser()["created"])!""}</div>
-    <div>рейтинг: ${(content.getUser()["rating"])!""}</div>
-    <div>
-        добавил${(content.getUser()["sex_end"])!"о"} постов ${(content.getUser()["postCount"])!"0"} и 
-        комментариев ${(content.getUser()["commentCount"])!"0"}.
-    </div>
+<div class="b-user__page">
+    <table>
+        <tr>
+            <#if (content.getUser()["avatar"])??>
+            <td class="b-user__page__photo">
+                <img src="${(content.getUser()['avatar']['path'])!''}/b${(content.getUser()['avatar']['name'])!''}" width="100" height="100" alt="${(content.getUser()["login"])!""}">
+            </td>
+            <#else>
+            <td class="b-user__page__photo">
+                <img src="/templates/dmoz/image/user/b_no-avatar.jpg" width="100" height="100">
+            </td>
+            </#if>
+            <td>
+
+                <h2>${(content.getUser()["login"])!""}</h2>
+                <div>на сайте c ${(content.getUser()["created"])!""}</div>
+                <div>рейтинг: ${(content.getUser()["rating"])!""}</div>
+                <div>
+                    добавил${(content.getUser()["sex_end"])!"о"} постов ${(content.getUser()["postCount"])!"0"} и 
+                    комментариев ${(content.getUser()["commentCount"])!"0"}.
+                </div>
+
+            </td>
+            <td class="b-user__page__last_visit">
+                Заходил: ${(content.getUser()["lastVisit"])!"Давно"}
+            </td>
+        </tr>
+    </table>
 </div>
 <!--
 <div class="list__filter">

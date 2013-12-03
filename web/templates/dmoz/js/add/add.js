@@ -15,6 +15,8 @@ $(document).ready(function() {
     //Quick tips tag
     var autocomplete = $('#filed__autocomplete');
 
+    var post = $("#add__post input[name='post']").val();
+
 
     // Status change form
     var create = false;
@@ -38,7 +40,7 @@ $(document).ready(function() {
             updateInfo();
         }
     });
-    //$(fileList).disableSelection();
+    $(fileList).disableSelection();
 
 
     //var drop = new Draggable(fileList.find('li'));
@@ -51,14 +53,14 @@ $(document).ready(function() {
     function info() {
         $(fieldInfo).html('<span>Всего: ' + itemCount + '</span>');
     }
-    
+
     function updateInfo() {
         var i = 0;
         fileList.find('li').each(function() {
             $(this).find('input[name="sort"]').val(i++);
         });
         fileList.find('li').removeClass('read').addClass('update');
-        create = true;
+        //create = true;
         $('#upload').removeAttr('disabled');
     }
 
@@ -107,6 +109,8 @@ $(document).ready(function() {
 
     fieldAddText.click(function() {
         var li = $('<li/>').appendTo(fileList);
+        var opts = $('<div/>').addClass('item-options').appendTo(li);
+        $('<span/>').addClass('item-delete').text('Удалить').appendTo(opts);
         $('<textarea/>').addClass('text').attr('name', 'text').appendTo(li).autosize();
         $('<input/>').attr('type', 'hidden').attr('name', 'id').attr('value', 0).appendTo(li);
         $('<input/>').attr('type', 'hidden').attr('name', 'sort').attr('value', itemCount).appendTo(li);
@@ -115,7 +119,9 @@ $(document).ready(function() {
     });
     fieldAddImage.click(function() {
         var li = $('<li/>').appendTo(fileList);
-        $('<input/>').attr('type', 'file').attr('class', 'file_input').attr('multiple', '').appendTo(li);
+        var opts = $('<div/>').addClass('item-options').appendTo(li);
+        $('<span/>').addClass('item-delete').text('Удалить').appendTo(opts);
+        $('<input/>').attr('type', 'file').addClass('file_input').attr('multiple', '').appendTo(li);
         $('<input/>').attr('type', 'hidden').attr('name', 'id').attr('value', 0).appendTo(li);
         $('<input/>').attr('type', 'hidden').attr('name', 'sort').attr('value', itemCount).appendTo(li);
         itemCount++;
@@ -123,7 +129,9 @@ $(document).ready(function() {
     });
     fieldAddVideo.click(function() {
         var li = $('<li/>').appendTo(fileList);
-        $('<div>').html('Видео (Coub): URL (без http\'s), пример: <code>www.youtube.com/video...</code>').appendTo(li);
+        var opts = $('<div/>').addClass('item-options').appendTo(li);
+        $('<span/>').addClass('item-delete').text('Удалить').appendTo(opts);
+        $('<div>').html('Видео (Coub): URL или &lt;iframe&gt;').appendTo(li);
         $('<input/>').attr('type', 'text').attr('name', 'video').attr('value', '').attr('id', 'filed__video').appendTo(li);
         $('<input/>').attr('type', 'hidden').attr('name', 'id').attr('value', 0).appendTo(li);
         $('<input/>').attr('type', 'hidden').attr('name', 'sort').attr('value', itemCount).appendTo(li);
@@ -133,21 +141,23 @@ $(document).ready(function() {
         info();
     });
 
+
+
     $(document).on('click', '.item-delete', function(e) {
         if (!confirm("Это действие невозможно будет отменить! Вы уверены что хотите удалить этот элемент?")) {
             return;
         }
 
-        var item = $(this).parent();
+        var item = $(this).parent().parent();
 
         // Delete item
         $.post('/svc/FileUpload', {
             url: '/svc/FileUpload',
             q: 'item-delete',
-            item: $(item).find('input[name="id"]').val(),
+            item: $(item).find('input[name="id"]').val()
         }, function(response) {
-            if (response.status === 'ok' && response.post >= 0) {
-                $(item).remove();
+            if (response.status === 'ok') {
+                $(item).fadeOut(1000, function(){$(this).remove()});
                 itemCount--;
                 if ($(item).hasClass('update')) {
                     updateCount--;
@@ -178,12 +188,12 @@ $(document).ready(function() {
 
             var li;
             var theFile;
-            if (num == 0) {
+            if (num === 0) {
                 li = $(obj).parent();
                 li.removeClass('read').addClass('update').addClass('file');
                 theFile = li.find('img');
 
-                if ($(theFile).length == 0) {
+                if ($(theFile).length === 0) {
                     $('<div/>').addClass('file_name').text(file.name).appendTo(li);
                     theFile = $('<img/>').appendTo(li);
                     var progress = $('<div/>').addClass('progress').appendTo(li);
@@ -238,15 +248,21 @@ $(document).ready(function() {
 
         fileList.find('li').each(function() {
             var item = this;
+
+
+
             // Keeps out of the loaded
             if ($(item).hasClass('read')) {
+                if (post > 0)
+                    updateCount++;
+
                 $('#upload').removeAttr('disabled');
                 return true;
             }
 
             var id = $(item).find('input[name="id"]');
             var isFile = null;
-            if (typeof(item.file) != 'undefined') {
+            if (typeof(item.file) !== 'undefined') {
                 isFile = item.file;
             } else if ($(item).find('.percent').text() === '100%') {
                 isFile = true;
@@ -261,12 +277,12 @@ $(document).ready(function() {
                 title: $("#add__post input[name='title']").val(),
                 tags: $("#add__post input[name='tags']").val(),
                 key: $("#add__post input[name='key']").val(),
-                text: typeof($(item).find('textarea').val()) != 'undefined' ? $(item).find('textarea').val() : null,
-                video: (typeof($(item).find('input[name="video"]').val()) != 'undefined' ? $(item).find('input[name="video"]').val() : null),
+                text: typeof($(item).find('textarea').val()) !== 'undefined' ? $(item).find('textarea').val() : null,
+                video: (typeof($(item).find('input[name="video"]').val()) !== 'undefined' ? $(item).find('input[name="video"]').val() : null),
                 sort: $(item).find('input[name="sort"]').val(),
                 file: isFile,
-                item: (typeof(id.val()) != 'undefined' ? id.val() : null),
-                post: $("#add__post input[name='post']").val()
+                item: (typeof(id.val()) !== 'undefined' ? id.val() : null),
+                post: post
             };
 
             //alert(JSON.stringify(params));
@@ -304,9 +320,9 @@ $(document).ready(function() {
 
 
     function createPost() {
-        //alert((((itemCount - updateCount) + updateCount === itemCount) || create));
-        if (!fileList.find('li').hasClass('update') &&
-                (((itemCount - updateCount) + updateCount === itemCount) || create)) {
+        //log((updateCount + " === " + itemCount));
+        if ((updateCount === itemCount) || create) {
+            updateCount = 0;
 
             log('Сохраняем...');
             $('#upload').attr('disabled', 'disabled');
@@ -333,63 +349,12 @@ $(document).ready(function() {
                 }
             }, "json").fail(function() {
                 $('#upload').removeAttr('disabled');
-                log("Произошла ошибка! Пожалуйста, повторите попытку, \nпростите...");
+                log("Произошла ошибка! Пожалуйста, повторите попытку, \nпростите...2");
             });
         } else {
             $('#upload').removeAttr('disabled');
         }
     }
-
-
-
-
-    function Uploads(params, callback) {
-        var percents = 0;
-        var xhr = new XMLHttpRequest();
-
-        xhr.upload.addEventListener("progress", function(e) {
-            if (e.lengthComputable) {
-                percents = Math.round((e.loaded / e.total) * 100);
-                if (callback.onprogress instanceof Function) {
-                    callback.onprogress(percents);
-                }
-            }
-        }, false);
-
-        xhr.upload.addEventListener("load", function(e) {
-            percents = 100;
-        }, false);
-
-        xhr.upload.addEventListener("error", function() {
-            alert('Error uploading on server');
-        }, false);
-
-        xhr.onreadystatechange = function() {
-            var callbackDefined = callback.oncomplete instanceof Function;
-            if (this.readyState == 4) {
-                if (this.status == 200) {
-                    if (callbackDefined) {
-                        //alert(this.responseText);
-                        callback.oncomplete(JSON.parse(this.responseText));
-                    }
-                } else {
-                    alert('HTTP response code is not OK (' + this.status + ')');
-                    if (callbackDefined) {
-                        callback.oncomplete(false);
-                    }
-                }
-            }
-        };
-
-        xhr.open("POST", params.url);
-        var f = new FormData();
-        for (var key in params) {
-            f.append(key, params[key]);
-        }
-
-        xhr.send(f);
-    }
-
 
     $("#filed__tags").keyup(function() {
         $.getJSON(('/svc/FileUpload?q=autocomplete&tags=' + $(this).val()), function(data) {
@@ -420,4 +385,3 @@ $(document).ready(function() {
         return Object.keys(obj);
     }
 });
-  

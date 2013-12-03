@@ -17,8 +17,9 @@
 
 
         <li class="read">
-            <span class="item-delete">Удалить</span>
+            <div class="item-options"><span class="item-delete">Удалить</span></div>
 
+            
             <#if (type=='text')><textarea name="text" cols="2">${cont}</textarea></#if>
 
             <#if (type=='image')>
@@ -31,12 +32,13 @@
             </#if>
 
             <#if (type=='video')>
-            <div>Видео (Coub): URL (без http's), пример: <code>www.youtube.com/video...</code></div>
+            <div>Видео (Coub): URL или &lt;iframe&gt;</div>
             <input type="text" name="video" value="${cont}">
             </#if>
 
             <input type="hidden" name="id" value="${key}">
             <input type="hidden" name="sort" value="${(content.getItem()[key]['sort'])!''}">
+            
         </li>
         </#list>
         <#else>
@@ -50,10 +52,10 @@
     </ul>
 
     <div class="field">
-        <button id="filed__add--text">+ Добавить текст</button>
-        <button id="filed__add--image">+ Добавить картинку</button>
+        <button id="filed__add--text" class="btn add">Добавить текст</button>
+        <button id="filed__add--image" class="btn add">Добавить картинку</button>
         <#if ( user.getRating()> 200 )>
-        <button id="filed__add--video">+ Добавить видео</button>
+        <button id="filed__add--video" class="btn add">Добавить видео</button>
         </#if>
     </div>
 
@@ -63,11 +65,15 @@
         <div id="filed__autocomplete"></div>
     </div>
 
+    
+    <!--<div class="field">
+        <input type="checkbox" name="status" value="new" checked> Опубликовано
+    </div>-->
 
 
 
     <div id="actions">
-        <button id="upload"><#if (content.getId()> 0)>Сохранить<#else>Загрузить</#if></button>
+        <button id="upload" class="btn save"><#if (content.getId()> 0)>Сохранить<#else>Загрузить</#if></button>
         <span id="add__info"></span>
     </div>
 
@@ -75,4 +81,5 @@
 </div>
 
 
-<script type="text/javascript" src="/templates/dmoz/js/add/add.js?3" charset="utf-8"></script>
+<script type="text/javascript" src="/templates/dmoz/js/add/add.js?5" charset="utf-8"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>

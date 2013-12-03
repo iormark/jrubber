@@ -3,8 +3,8 @@
     <head>
         <title>${title!'Юмор + Интеллект'} &mdash; YourMood.Ru</title>
         <meta charset="utf-8">
-        <link href="/templates/dmoz/css/default.css?17" rel="stylesheet" type="text/css">
-        <link href="/templates/dmoz/css/style.css?26" rel="stylesheet" type="text/css">
+        <link href="/templates/dmoz/css/default.css?16" rel="stylesheet" type="text/css">
+        <link href="/templates/dmoz/css/style.css?25" rel="stylesheet" type="text/css">
         <link href="/templates/dmoz/css/user.css?4" rel="stylesheet" type="text/css">
         <script src="/scriptiki/jquery-1.10.2.min.js"></script>
         <script src="/templates/dmoz/js/user.js?5"></script>
@@ -68,14 +68,12 @@
 
             <div id="docs">
 
-                <div class="b-content b-content--max2">
-                    <div class="b-content__sub">
-                        <#include "${content_tpl!''}">
-                    </div>
+                <div class="b-content b-content--max">
+                    <#include "${content_tpl!''}">
                 </div>
 
                 <#if leftNav??>
-                <div class="b-side b-side--max2">
+                <div class="b-side b-side--max">
                     <div style="width: 250px">
                         <#list leftNav as key>
                         <#include "${key}">
