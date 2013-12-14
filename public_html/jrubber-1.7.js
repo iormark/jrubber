@@ -3,6 +3,8 @@
  * http://jrubber.org
  *
  * Copyright 2011, Iordan Mark
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * 
  * Date: Wed May 1 18:53:34 2013 -0300
  */
 
