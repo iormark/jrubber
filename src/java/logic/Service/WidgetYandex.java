@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
  */
 public class WidgetYandex extends Creator {
 
-    private LinkedHashMap<String, HashMap> item = new LinkedHashMap<String, HashMap>();
+    private LinkedHashMap<String, HashMap> item = new LinkedHashMap();
     private Util util = new Util();
     private static final Logger logger = Logger.getLogger(WidgetYandex.class);
 
@@ -33,7 +33,7 @@ public class WidgetYandex extends Creator {
         CategoriesTree ct = null;
         Random random = new Random();
 
-        rs = stmt.executeQuery("SELECT MAX(p.id) AS max, MIN(p.id) AS min FROM `post_item` i, post p WHERE i.post = p.id AND p.status ='on' AND i.type is not null");
+        rs = stmt.executeQuery("SELECT MAX(p.id) AS max, MIN(p.id) AS min FROM `post_item` i, post p WHERE i.post = p.id AND p.status ='on' AND p.age='0' AND p.profanity='off' AND i.type is not null");
         if (rs.next()) {
             max = rs.getInt("max");
             min = rs.getInt("min");
@@ -41,7 +41,7 @@ public class WidgetYandex extends Creator {
 
         rand = min + random.nextInt((max - min) + 1);
 
-        rs = stmt.executeQuery("SELECT i.content, i.type, p.* FROM `post_item` i, `post` p WHERE i.post = p.id AND p.status ='on' "
+        rs = stmt.executeQuery("SELECT i.content, i.type, p.* FROM `post_item` i, `post` p WHERE i.post = p.id AND p.status ='on' AND p.age='0' AND p.profanity='off' "
                 + "AND (p.id <=" + max + " AND p.id>=" + min + ") AND p.id>=" + rand + " AND i.type is not null GROUP BY i.post LIMIT 1");
        
         Properties props = new Properties();

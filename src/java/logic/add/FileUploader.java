@@ -49,7 +49,6 @@ public class FileUploader {
         this.realPath = realPath;
 
         //System.out.println(realPath);
-
         //проверяем является ли полученный запрос multipart/form-data
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         if (!isMultipart) {
@@ -89,7 +88,7 @@ public class FileUploader {
                 for (int i = 0; i < 100; i++) {
                     String name = item.getFieldName();
                     //System.out.println(name+": "+item.getString("UTF-8"));
-                    
+
                     if (item.isFormField()) {
                         if (!ListContent.containsKey(i)) {
                             HashMap meta = new HashMap();
@@ -115,24 +114,27 @@ public class FileUploader {
             }
 
             // Access permission
-            int objId = Integer.parseInt((String) ListContent.get(0).get("post"));
-            if (objId > 0) {
-                rs = stmt.executeQuery("SELECT id FROM post "
-                        + "WHERE user='" + check.getUserID() + "' "
-                        + "AND id='" + objId + "' LIMIT 1");
-                if (!rs.next()) {
-                    message = "Простите, ошибка доступа.";
-                    return;
-                }
-            }
-            objId = Integer.parseInt((String) ListContent.get(0).get("item"));
-            if (objId > 0) {
-                rs = stmt.executeQuery("SELECT i.id FROM post p, post_item i "
-                        + "WHERE p.id=i.post AND p.user='" + check.getUserID() + "' "
-                        + "AND i.id='" + objId + "' LIMIT 1");
-                if (!rs.next()) {
-                    message = "Простите, ошибка доступа.";
-                    return;
+            /*int objId = Integer.parseInt((String) ListContent.get(0).get("post"));
+             if (objId > 0) {
+             rs = stmt.executeQuery("SELECT id FROM post "
+             + "WHERE user='" + check.getUserID() + "' "
+             + "AND id='" + objId + "' LIMIT 1");
+             if (!rs.next()) {
+             message = "Простите, ошибка доступа.";
+             return;
+             }
+             }*/
+            int objId = Integer.parseInt((String) ListContent.get(0).get("item"));
+            if (!check.getUserID().equals("1") && objId>0) {
+                
+                if (objId > 0) {
+                    rs = stmt.executeQuery("SELECT i.id FROM post p, post_item i "
+                            + "WHERE p.id=i.post AND p.user='" + check.getUserID() + "' "
+                            + "AND i.id='" + objId + "' LIMIT 1");
+                    if (!rs.next()) {
+                        message = "Простите, ошибка доступа.";
+                        return;
+                    }
                 }
             }
 
@@ -143,7 +145,7 @@ public class FileUploader {
             HashSet tags = new HashSet();
             if (message.length() == 0) {
 
-                System.out.println("ListContent: "+ListContent.get(0).get("file"));
+                System.out.println("ListContent: " + ListContent.get(0).get("file"));
                 boolean isFile = true;
                 if (ListFile.isEmpty()) {
                     isFile = Boolean.parseBoolean(ListContent.get(0).get("file").toString());
@@ -185,7 +187,6 @@ public class FileUploader {
             }
 
             //System.out.println("Total2: " + ListContent);
-
             if (message.length() == 0) {
                 PostCreate pc = new PostCreate(conn, stmt, check);
                 insertItem = pc.createPost_items(ListContent, tags, realPath);

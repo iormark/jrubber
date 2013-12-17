@@ -20,9 +20,9 @@ public class FieldCheck {
     private static HashMap censure = new HashMap();
 
     {
-        censure.put("пизда", "пи*да");
-        censure.put("пизду", "пи*ду");
-        censure.put("пиздой", "пи*дой");
+        censure.put("пизда", "пиз*а");
+        censure.put("пизду", "пиз*у");
+        censure.put("пиздой", "пиз*ой");
         censure.put("пезда", "пе*да");
         censure.put("пездой", "пе*дой");
         censure.put("пездень", "пе*день");
@@ -30,14 +30,18 @@ public class FieldCheck {
         censure.put("пизданутые", "пи*данутые");
         censure.put("пизданутая", "пи*данутая");
         censure.put("хуй", "х*й");
-        censure.put("хуевый", "х*евый");
-        censure.put("хуевая", "х*евая");
-        censure.put("хуевое", "х*евое");
-        censure.put("хуйня", "х*йня");
+        censure.put("хуевый", "хуе*ый");
+        censure.put("хуевая", "хуе*ая");
+        censure.put("хуевое", "хуе*ое");
+        censure.put("хуйня", "хуй*я");
         censure.put("членосос", "чле*осос");
-        censure.put("залупа", "за*упа");
-        censure.put("залупой", "за*упой");
-        censure.put("член", "ч*ен");
+        censure.put("залупа", "зал*па");
+        censure.put("залупой", "зал*пой");
+        censure.put("блять", "бл*ть");
+        censure.put("блятский", "бля*ский");
+        censure.put("блядский", "бля*ский");
+        censure.put("блядь", "бл*дь");
+        censure.put("блядина", "бля*ина");
     }
 
     private static HashSet blackTag = new HashSet();
@@ -220,7 +224,7 @@ public class FieldCheck {
 
                 String words = "";
                 for (String word : wordArray) {
-                    words += !censure.containsKey(word) ? word : (String) censure.get(word);
+                    words += !censure.containsKey(word.toLowerCase()) ? word : (String) censure.get(word.toLowerCase());
                     words += " ";
                 }
 

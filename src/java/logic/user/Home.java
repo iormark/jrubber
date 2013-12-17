@@ -129,8 +129,8 @@ public class Home extends Creator {
                 + "MAX(if(i.sort=0, i.content, NULL)) AS content, MAX(if(i.sort=0, i.type, NULL)) AS type,"
                 + "MAX(if(i.sort=1, i.content, NULL)) AS content2, MAX(if(i.sort=1, i.type, NULL)) AS type2 "
                 + "FROM users u, tags_link tl, post p LEFT JOIN post_item i on i.post=p.id "
-                + "WHERE u.id=p.user AND tl.post=p.id " + userID + " "
-                + "GROUP BY p.id ORDER BY p.svc_date DESC  LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
+                + "WHERE u.id=p.user AND p.status IN('on','new','abyss') AND tl.post=p.id " + userID + " "
+                + "GROUP BY p.id ORDER BY p.date DESC  LIMIT " + (page == 1 ? 0 : begin - lt) + "," + lt);
 
         view = new ViewMethod(rs, stmt);
         item = view.getPostItem(rs);

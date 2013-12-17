@@ -375,7 +375,7 @@ public class Util {
      */
     public String lineFeed(String str) {
         if (str != null) {
-            return str.replaceAll("[\n]", "<br>");
+            return str.replaceAll("(\r\n|\r|\n|\n\r)", "<br>");
         } else {
             return "";
         }

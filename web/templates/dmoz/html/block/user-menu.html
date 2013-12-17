@@ -1,17 +1,25 @@
 <div class="user__block">
     <div class="user__menu clear_fix">
         <div class="user__photo " style="float: right">
-            
+            <#if (user.getUserMap()["avatar"])??>
+            <a style="float: left;" href="/edit">
+                <img src="http://yourmood.ru${(user.getUserMap()['avatar']['path'])!''}/b${(user.getUserMap()['avatar']['name'])!''}" width="80" height="80">
+            </a>
+            <#else>
+            <a style="float: left;" href="/edit">
+                <img src="/templates/dmoz/image/user/b_no-avatar.jpg" width="80" height="80">
+            </a>
+            </#if>
         </div>
         <h3>${(user.getUserLogin())!""}</h3>
         <ul>
             <li>Рейтинг: ${(user.getUserMap()["rating"])!""}</li>
             <li><a href="/${(user.getUserLogin())!''}">Мои новости</a></li>
-            <li><a href="/feed?section=comment">Мои комментарии</a></li>
+            <li><a href="/feed?section=comment">Мои сообщения</a></li>
             <!--<li><a href="/fave">Закладки</a></li>-->
             <li><a href="/edit">Мои настройки</a></li>
             <li><a href="/svc/user?q=signout">Выход</a></li>
         </ul>
-        
+
     </div>
 </div>

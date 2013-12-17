@@ -3,6 +3,7 @@
  */
 package servlet;
 
+import core.Antibot;
 import core.EditCookie;
 import core.JNDIConnection;
 import java.io.IOException;
@@ -33,15 +34,24 @@ import org.apache.log4j.Logger;
 @WebServlet(name = "User", urlPatterns = {"/svc/user"})
 public class User extends HttpServlet {
 
+    private static HashMap<String, String> ip = new HashMap<>();
+    private Antibot antibot = new Antibot(3, 300000, 5000, ip);
     private static final Logger logger = Logger.getLogger(User.class);
     
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        
         PrintWriter out = response.getWriter();
 
         String q = request.getParameter("q") != null ? request.getParameter("q") : "home";
+        
+        antibot.access(request.getRemoteAddr());
+        if (antibot.getAccess() == false) {
+            out.println("{\"status\":\"error\",\"message\":\"Пожалуйста, повторите попытку через 5 минут.\"}");
+            return;
+        }
 
         JNDIConnection jndi = new JNDIConnection();
         Connection conn = jndi.init();

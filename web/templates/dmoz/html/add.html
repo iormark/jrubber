@@ -2,6 +2,15 @@
 <link href="/templates/dmoz/css/add/main.css" rel="stylesheet" type="text/css">
 
 <p>Прежде чем добавить новость, ознакомьтесь с <a href="/wtf.html">правилами!</a></p>
+<p class="faq">
+    Создаете новость не указав что она содержит контент для взрослых или ненормативную лексику -10 рейтинга.
+    <a href="/wtf.html#high_8" target="_blank">Подробнее...</a>
+    <br>
+    <br>
+    Пользуйтесь сервисами для поиска картинок если изображение низкого качества:<br>
+    <a href="http://www.google.ru/imghp" target="_blank">Google Картинки</a>, 
+    <a href="http://images.yandex.ru" target="_blank">Яндекс Картинки</a>
+</p>
 <div id="add__post"  style="border: 0px solid #ddd;padding: .7em .7em .7em 0">
 
     <div class="field"><input type="text" name="title" value="${(content.getPost()['title'])!''}" placeholder="название" id="filed__title"></div>
@@ -19,7 +28,7 @@
         <li class="read">
             <div class="item-options"><span class="item-delete">Удалить</span></div>
 
-            
+
             <#if (type=='text')><textarea name="text" cols="2">${cont}</textarea></#if>
 
             <#if (type=='image')>
@@ -38,7 +47,7 @@
 
             <input type="hidden" name="id" value="${key}">
             <input type="hidden" name="sort" value="${(content.getItem()[key]['sort'])!''}">
-            
+
         </li>
         </#list>
         <#else>
@@ -65,10 +74,16 @@
         <div id="filed__autocomplete"></div>
     </div>
 
-    
-    <!--<div class="field">
-        <input type="checkbox" name="status" value="new" checked> Опубликовано
-    </div>-->
+
+    <div class="field">
+        <input id="age" style="margin: 3px 0 0 0;" type="checkbox" name="age" <#if ((content.getPost()['age']!'')=='18')>checked</#if>> 
+               <label for="age">Контент для взрослых</label>
+    </div>
+
+    <div class="field">
+        <input id="profanity" style="margin: 3px 0 0 0;" type="checkbox" name="profanity" <#if ((content.getPost()['profanity']!'')=='on')>checked</#if>> 
+               <label for="profanity">В добавляемой новости присутствует <b>ненормативная лексика</b></label>
+    </div>
 
 
 
@@ -81,5 +96,5 @@
 </div>
 
 
-<script type="text/javascript" src="/templates/dmoz/js/add/add.js?5" charset="utf-8"></script>
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/templates/dmoz/js/add/add.min.js?1" defer></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js" defer></script>

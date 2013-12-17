@@ -40,7 +40,7 @@ public class Autocomplete {
     }
 
     private List query(Statement stmt) throws IOException, Exception {
-        ResultSet rs = stmt.executeQuery("SELECT t.tags, COUNT(*) AS count FROM tags t, tags_link tl WHERE t.tags LIKE '" + tags + "%' AND t.id=tl.tags GROUP BY tl.tags LIMIT 30");
+        ResultSet rs = stmt.executeQuery("SELECT t.tags, COUNT(*) AS count FROM tags t, tags_link tl WHERE t.tags LIKE '" + tags + "%' AND t.id=tl.tags GROUP BY tl.tags ORDER BY count DESC LIMIT 30");
         while (rs.next()) {
             listTags.add("<span class='tag'>" + rs.getString("tags") + "</span> × <span class='count'>" + rs.getString("count") + "</span>");
         }

@@ -281,7 +281,7 @@ function Uploads(params, callback) {
                     callback.oncomplete(JSON.parse(this.responseText));
                 }
             } else {
-                alert('HTTP response code is not OK (' + this.status + ')');
+                log('HTTP response code is not OK (' + this.status + ')');
                 if (callbackDefined) {
                     callback.oncomplete(false);
                 }

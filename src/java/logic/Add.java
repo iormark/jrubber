@@ -50,6 +50,8 @@ public class Add extends Creator {
 
         while (rs.next()) {
             post.put("title", StringEscapeUtils.escapeHtml4(rs.getString("title")));
+            post.put("age", rs.getString("age"));
+            post.put("profanity", rs.getString("profanity"));
         }
 
         if (post.isEmpty()) {

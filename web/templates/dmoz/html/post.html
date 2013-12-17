@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script defer>
     $(document).ready(function() {
     try {
     $('body').listScroll({});
@@ -47,7 +47,7 @@
             <a href="/add?id=${(content.getId())!''}">Редактировать</a>
             </#if>
             
-            <a href="/view?id=${(content.getId())!''}" target="_blank">Увеличеть</a>
+            <a href="/view?id=${(content.getId())!''}">Оригинал</a>
             
             <div id="share">
                 <a href="#ddd" onclick="return false"><span>Отправить</span></a>
@@ -95,7 +95,7 @@
                     </a>
                 </div>
                 <#else>
-                <a class="image img__href" target="_blank" href="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['content']!''}">
+                <a class="image img__href" target="_blank" href="/view?id=${(content.getId())!''}">
                     <img class="border" src="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/middle_${(content.getItem()[key]['content'])!''}" alt="${content.getAlt()}" width="${(content.getItem()[key]['width'])!''}" height="${(content.getItem()[key]['height'])!''}">
                 </a>
                 </#if>
@@ -121,7 +121,7 @@
 
 <br>
 
-<script type="text/javascript" src="/templates/dmoz/js/lib.js" charset="utf-8"></script>
+<script type="text/javascript" src="/templates/dmoz/js/lib.min.js" defer></script>
 
 
 

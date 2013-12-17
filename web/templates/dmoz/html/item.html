@@ -46,7 +46,7 @@
 
         <#if ((content.getItem()[key]["type"])=="image")>
         <div class="item__image">
-            <meta itemprop="description" content="${content.getAlt(key)!''}">
+            <meta itemprop="description" content="${(content.getItem()[key]['title'])!''} - ${content.getAlt(key)!''}">
             <meta itemprop="contentUrl" content="http://yourmood.ru${(content.getItem()[key]['imagePath'])!''}/${content.getItem()[key]['content']!''}">
             <#if (((content.getItem()[key]['animated'])!'')!='')>
             <div style="display: inline-block;position: relative">

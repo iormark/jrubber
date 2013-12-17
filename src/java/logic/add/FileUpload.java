@@ -70,7 +70,7 @@ public class FileUpload extends HttpServlet {
                 FieldCheck fc = null;
                 PostCreate pc = null;
                 HashSet tags = null;
-
+                
                 switch (q) {
                     case "header":
 
@@ -92,10 +92,21 @@ public class FileUpload extends HttpServlet {
 
                         break;
                     case "create":
-
+                        
                         pc = new PostCreate(request, response, conn, stmt, check);
-                        fc = new FieldCheck(request, response);
+                        message = pc.getMessage();
+                        if (message.length() != 0) {
+                           return; 
+                        }
+                        
+                        fc = new FieldCheck(request);
+                        
                         tags = fc.checkTags(request.getParameter("tags"));
+                        message = fc.getMessage();
+                        if (message.length() != 0) {
+                           return; 
+                        }
+ 
                         int insertPostId = pc.createPost();
                         pc.updateItem_post();
                         pc.createTags(tags);

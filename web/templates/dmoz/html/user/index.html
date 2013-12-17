@@ -3,7 +3,7 @@
         <tr>
             <#if (content.getUser()["avatar"])??>
             <td class="b-user__page__photo">
-                <img src="${(content.getUser()['avatar']['path'])!''}/b${(content.getUser()['avatar']['name'])!''}" width="100" height="100" alt="${(content.getUser()["login"])!""}">
+                <img src="http://yourmood.ru${(content.getUser()['avatar']['path'])!''}/b${(content.getUser()['avatar']['name'])!''}" width="100" height="100" alt="${(content.getUser()['login'])!''}">
             </td>
             <#else>
             <td class="b-user__page__photo">

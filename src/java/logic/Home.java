@@ -189,7 +189,7 @@ public class Home extends Creator {
     public String getMetaTitle() {
         String title = "";
         if ("on".equals(status)) {
-            title = selectedTags.isEmpty() ? "Все самое интересное и смешное в сети. Блог обо всем интересном" : "Тег: "+ selectedTags.get("tags").toString();
+            title = selectedTags.isEmpty() ? "Все самое интересное и смешное в сети. Блог об интересном в интернете" : "Тег: "+ selectedTags.get("tags").toString();
         } else if ("new".equals(status)) {
             title = selectedTags.isEmpty() ? "Свежие новости" : "Свежие новости / Тег: "+selectedTags.get("tags").toString();
         } else if ("abyss".equals(status)) {

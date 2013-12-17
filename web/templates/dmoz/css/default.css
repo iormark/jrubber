@@ -84,6 +84,8 @@ input[type="submit"]:disabled, input[type="button"]:disabled, .btn:disabled {
     color: red;
     display: none;
     z-index: 99999;
+    -webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
 }
 .error, .good {
     font-size: 16px;
@@ -107,7 +109,7 @@ input[type="submit"]:disabled, input[type="button"]:disabled, .btn:disabled {
     font-weight: normal;
     border: 1px solid #666666;
     background: #EEEEEE;
-    padding: 0.25em 0.25em 0 0.50em;
+    padding: 0.25em 0.25em 0.25em 0.50em;
     margin-bottom: 1em;
     margin-top: 1.5em;
 }

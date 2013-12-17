@@ -7,6 +7,7 @@ import core.ViewMethod;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import logic.user.Comment;
@@ -36,7 +38,7 @@ public class Post extends Creator {
     private HashMap<String, HashSet> tags = new HashMap();
     private LinkedHashMap<String, HashMap> Comment = null;
     private HashMap<String, HashMap> bn = new LinkedHashMap();
-    private static Util util = new Util();
+    private static final Util util = new Util();
     private UrlOption urloption;
     private Date LastModified = null;
     private EditCookie editcookie;
@@ -44,34 +46,47 @@ public class Post extends Creator {
     private ViewMethod view = null;
     private static final Logger logger = Logger.getLogger(Post.class);
 
-    public Post(HttpServletRequest request, HttpServletResponse response, Connection conn) throws Exception {
+    public Post(HttpServletRequest request, HttpServletResponse response, Connection conn) {
 
-        Statement stmt = conn.createStatement();
-
-        urloption = new UrlOption(request);
-
-        id = Integer.parseInt(request.getParameter("id"));
+        Statement stmt = null;
         ResultSet rs = null;
-        int typeId = 0;
 
-        rs = stmt.executeQuery("SELECT * FROM users u, post p WHERE u.id=p.user AND p.status IN('new','on','abyss') AND p.id = '" + id + "'");
+        try {
+            stmt = conn.createStatement();
+            urloption = new UrlOption(request);
+            id = Integer.parseInt(request.getParameter("id"));
+        } catch (NumberFormatException | SQLException ex) {
+            serverStatus = 404;
+            logger.error(ex);
+            return;
+        }
 
-        while (rs.next()) {
-            meta.put("id", rs.getString("id"));
-            meta.put("user", rs.getString("user"));
-            meta.put("login", rs.getString("login"));
-            meta.put("title", rs.getString("title"));
-            meta.put("vote", rs.getInt("vote"));
+        try {
+            rs = stmt.executeQuery("SELECT * FROM users u, post p WHERE u.id=p.user "
+                    + "AND p.status IN('new','on','abyss') AND p.id = " + id + "");
 
-            if (rs.getInt("vote") <= -4 || "noindex".equals(rs.getString("robots"))) {
-                meta.put("meta robots", "<meta name=\"robots\" content=\"noindex, nofollow\"/>\n");
+            while (rs.next()) {
+                meta.put("id", rs.getString("id"));
+                meta.put("user", rs.getString("user"));
+                meta.put("login", rs.getString("login"));
+                meta.put("title", StringEscapeUtils.escapeHtml4(rs.getString("title")));
+                meta.put("vote", rs.getInt("vote"));
+
+                if (rs.getInt("vote") <= -4 || "noindex".equals(rs.getString("robots"))) {
+                    meta.put("meta robots", "<meta name=\"robots\" content=\"noindex, nofollow\"/>\n");
+                }
+
+                meta.put("created", util.dateFormat(rs.getTimestamp("date")));
+                meta.put("time", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss+04:00").format(rs.getTimestamp("date")));
+
+                if (LastModified == null) {
+                    LastModified = rs.getTimestamp("last_modified");
+                }
             }
-
-            meta.put("created", util.dateFormat(rs.getTimestamp("date")));
-            meta.put("time", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss+04:00").format(rs.getTimestamp("date")));
-            if (LastModified == null) {
-                LastModified = rs.getTimestamp("last_modified");
-            }
+        } catch (SQLException ex) {
+            serverStatus = 500;
+            logger.error(ex);
+            return;
         }
 
         if (meta.isEmpty()) {
@@ -79,60 +94,70 @@ public class Post extends Creator {
             return;
         }
 
-        rs = stmt.executeQuery("SELECT id, post, sort, type, content FROM "
-                + "`post_item` WHERE  post = '" + id + "' ORDER BY sort LIMIT 99;");
+        try {
+            rs = stmt.executeQuery("SELECT id, post, sort, type, content FROM "
+                    + "`post_item` WHERE  post = " + id + " ORDER BY sort LIMIT 99;");
 
-        Properties props = new Properties();
-        props.setProperty("textSize", "0");
-        view = new ViewMethod(null, stmt, props);
-        item = view.getItem(rs);
-        tags = view.getPostTags(id);
+            Properties props = new Properties();
+            props.setProperty("textSize", "0");
+            view = new ViewMethod(null, stmt, props);
+            item = view.getItem(rs);
+            tags = view.getPostTags(id);
 
-        for (Map.Entry<String, HashMap> entry : item.entrySet()) {
-            if (gid.equals("0")) {
-                gid = (entry.getKey());
-            } else {
-                break;
+            for (Map.Entry<String, HashMap> entry : item.entrySet()) {
+                if (gid.equals("0")) {
+                    gid = (entry.getKey());
+                } else {
+                    break;
+                }
             }
+        } catch (SQLException ex) {
+            serverStatus = 500;
+            logger.error(ex);
+            return;
         }
 
-        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT min(id) as id FROM post WHERE status IN('new','on','abyss') AND id > " + id + ") p2 ON p2.id=p.id LIMIT 1");
+        try {
+            rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT min(id) as id FROM post WHERE status IN('new','on','abyss') AND id > " + id + ") p2 ON p2.id=p.id LIMIT 1");
 
-        if (rs.next()) {
-            HashMap batton = new HashMap();
-            if (rs.getString("id") != null) {
-                batton.put("id", rs.getString("id"));
-                if ("".equals(rs.getString("title"))) {
-                    batton.put("name", "Предыдущий");
-                } else {
-                    batton.put("name", util.Shortening(rs.getString("title"), 35, ""));
+            if (rs.next()) {
+                HashMap batton = new HashMap();
+                if (rs.getString("id") != null) {
+                    batton.put("id", rs.getString("id"));
+                    if ("".equals(rs.getString("title"))) {
+                        batton.put("name", "Предыдущий");
+                    } else {
+                        batton.put("name", util.Shortening(rs.getString("title"), 35, ""));
+                    }
+                    batton.put("title", StringEscapeUtils.escapeHtml4(rs.getString("title")));
                 }
-                batton.put("title", StringEscapeUtils.escapeHtml4(rs.getString("title")));
+                bn.put("next", batton);
             }
-            bn.put("next", batton);
-        }
 
-        rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT max(id) as id FROM post WHERE status IN('new','on','abyss') AND id < " + id + ") p2 ON p2.id=p.id LIMIT 1");
+            rs = stmt.executeQuery("SELECT p.title, p.id FROM `post`p JOIN  (SELECT max(id) as id FROM post WHERE status IN('new','on','abyss') AND id < " + id + ") p2 ON p2.id=p.id LIMIT 1");
 
-        if (rs.next()) {
-            HashMap batton = new HashMap();
-            if (rs.getString("id") != null) {
-                batton.put("id", rs.getString("id"));
-                if ("".equals(rs.getString("title"))) {
-                    batton.put("name", "Следующий");
-                } else {
-                    batton.put("name", util.Shortening(rs.getString("title"), 35, ""));
+            if (rs.next()) {
+                HashMap batton = new HashMap();
+                if (rs.getString("id") != null) {
+                    batton.put("id", rs.getString("id"));
+                    if ("".equals(rs.getString("title"))) {
+                        batton.put("name", "Следующий");
+                    } else {
+                        batton.put("name", util.Shortening(rs.getString("title"), 35, ""));
+                    }
+                    batton.put("title", StringEscapeUtils.escapeHtml4(rs.getString("title")));
                 }
-                batton.put("title", StringEscapeUtils.escapeHtml4(rs.getString("title")));
+                bn.put("back", batton);
             }
-            bn.put("back", batton);
+        } catch (SQLException ex) {
+            logger.error(ex);
         }
 
         // отзывы 
         try {
             Comment comment = new Comment(stmt, id);
             Comment = comment.getComment();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             logger.error(e);
         }
 
@@ -211,10 +236,14 @@ public class Post extends Creator {
     public String getMetaTitle() {
 
         if (meta.get("title").equals("")) {
-            if (!item.get(gid).get("type").equals("text")) {
-               return "Новость № " + id;
+            if (item.containsKey(gid)) {
+                if (!item.get(gid).get("type").equals("text")) {
+                    return "Новость № " + id;
+                } else {
+                    return util.specialCharacters(util.Shortening((String) item.get(gid).get("content"), 85, "")) + " # Новость №" + gid;
+                }
             } else {
-                return util.specialCharacters(util.Shortening((String)item.get(gid).get("content"), 85, "")) + " # Новость №" + gid;
+                return "Новость № " + id;
             }
         } else {
             if (imageLength > 1) {

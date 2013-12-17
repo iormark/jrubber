@@ -13,7 +13,7 @@
 .user__block {margin-bottom: 2em;}
 .user__block a {}
 .user__menu {border: 1px solid #ddd; padding: 1em;border-radius: 6px}
-.user__photo {border: 0px solid #ddd;width: 100px;height: 100px;}
+.user__photo {border: 0px solid #ddd;width: 80px;height: 80px;}
 .user__menu ul {line-height: 170%;list-style: none;margin: 0;padding: 0}
 
 /*profile*/

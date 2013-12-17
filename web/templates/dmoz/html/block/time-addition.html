@@ -1,4 +1,4 @@
-<div class="time-addition">
+<div class="b-block__add">
     <#if time_addition??>
     <div>
         ${time_addition!""}
@@ -6,7 +6,7 @@
     </#if>
     <div style="font-size: 15px;">
         <#if (user.getCheck())>
-        <a style="" href="/add" title="Изготовить пост">Добавить новость+</a>
+        <a style="" href="/add" title="Добавить новость+">Добавить новость+</a>
         <#else>
         <a style="" href="/add" onclick="return log('Пожалуйста, войдите в аккаунт или зарегистрируйтесь.')" title="Изготовить пост">Добавить новость+</a>
         </#if>

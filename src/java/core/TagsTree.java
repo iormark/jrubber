@@ -39,7 +39,7 @@ public class TagsTree {
         ResultSet rs;
 
         //if (isCount) {
-        rs = stmt.executeQuery("SELECT t.id, t.tags, p.date, COUNT(*) as count FROM tags_link tl, tags t, post p WHERE tl.post=p.id AND t.id=tl.tags AND p.date > DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY) GROUP BY tl.tags ORDER BY count DESC LIMIT 45");
+        rs = stmt.executeQuery("SELECT t.id, t.tags, p.date, COUNT(*) as count FROM tags_link tl, tags t, post p WHERE tl.post=p.id AND t.id=tl.tags AND p.date > DATE_SUB(CURRENT_DATE, INTERVAL 35 DAY) GROUP BY tl.tags ORDER BY count DESC LIMIT 45");
         //} else {
         // rs = stmt.executeQuery("SELECT `id`, `parent`, `name`, `hurl`, 0 AS count FROM `type` WHERE " + (id > 0 ? "parent=" + id + " AND " : "") + "`edit`='on';");
         //}

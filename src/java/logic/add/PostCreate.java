@@ -32,6 +32,8 @@ public class PostCreate {
 
     private String message = "";
     private int post = 0;
+    private int age = 0;
+    private String profanity = "off";
     private String userId = "0";
     private String title = null;
     private String text = null;
@@ -42,20 +44,47 @@ public class PostCreate {
 
     private int insertPostId = 0;
 
-    public PostCreate(Connection conn, Statement stmt, Check check) {
+    public PostCreate(Connection conn, Statement stmt, Check check) throws SQLException {
         this.conn = conn;
         this.stmt = stmt;
         this.check = check;
+
+        if (!check.getUserID().equals("1") && post>0) {
+            ResultSet rs = stmt.executeQuery("SELECT id FROM post "
+                    + "WHERE user='" + check.getUserID() + "' "
+                    + "AND id=" + post + " LIMIT 1");
+            if (!rs.next()) {
+                message = "Простите, ошибка доступа.";
+            }
+        }
     }
 
     public PostCreate(HttpServletRequest request, HttpServletResponse response, Connection conn, Statement stmt, Check check) throws SQLException {
 
         this.conn = conn;
         this.stmt = stmt;
-
         post = Integer.parseInt(request.getParameter("post"));
+
+        if (!check.getUserID().equals("1") && post>0) {
+            ResultSet rs = stmt.executeQuery("SELECT id FROM post "
+                    + "WHERE user='" + check.getUserID() + "' "
+                    + "AND id=" + post + " LIMIT 1");
+            if (!rs.next()) {
+                message = "Простите, ошибка доступа.";
+                return;
+            }
+        }
+
         userId = check.getUserID();
-        title = request.getParameter("title");
+        if (request.getParameter("age") != null) {
+            if ("on".equals(request.getParameter("age"))) {
+                age = 18;
+            }
+        }
+        if (request.getParameter("profanity") != null) {
+            profanity = request.getParameter("profanity");
+        }
+        title = request.getParameter("title").replaceAll("'", "\"");
         title = (String.valueOf(title.charAt(0)).toUpperCase()).concat(title.substring(1));
         text = request.getParameter("text");
         video = request.getParameter("video");
@@ -64,7 +93,6 @@ public class PostCreate {
             key = Long.parseLong(request.getParameter("key"));
         } catch (NumberFormatException ex) {
             message = ("<li>Ошибочка вышла, простите...</li>");
-            return;
         }
 
         //title = checkRequest.heckTitle(title);
@@ -72,16 +100,25 @@ public class PostCreate {
 
     public int createPost() throws SQLException {
 
+        if (message.length() != 0) {
+            return 0;
+        }
+
         System.out.println("Query post");
+
         PreparedStatement ps = conn.prepareStatement("INSERT INTO `post` "
-                + "(`id`, `user`, `title`, `date`, `svc_date`, status) "
-                + "VALUES (?, ?, ?, NOW(), NOW(), 'new') "
+                + "(`id`, `user`, `title`, `date`, `svc_date`, status, age, profanity) "
+                + "VALUES (?, ?, ?, NOW(), NOW(), 'new', ?, ?) "
                 + "ON DUPLICATE KEY UPDATE "
-                + "title='" + title + "'", Statement.RETURN_GENERATED_KEYS);
+                + "title='" + title + "',"
+                + "age='" + age + "',"
+                + "profanity='" + profanity + "'", Statement.RETURN_GENERATED_KEYS);
 
         ps.setInt(1, post);
         ps.setString(2, userId);
         ps.setString(3, title);
+        ps.setString(4, age + "");
+        ps.setString(5, profanity);
         ps.executeUpdate();
 
         ResultSet rs = ps.getGeneratedKeys();
@@ -113,6 +150,10 @@ public class PostCreate {
     }
 
     public int createPost_items(LinkedHashMap<Integer, HashMap> ListContent, HashSet tags, String realPath) throws Exception {
+
+        if (message.length() != 0) {
+            return 0;
+        }
 
         System.out.println("Query post_items");
         System.out.println(ListContent);
@@ -204,10 +245,16 @@ public class PostCreate {
     }
 
     public void updateItem_post() throws SQLException {
+        if (message.length() != 0) {
+            return;
+        }
         stmt.executeUpdate("UPDATE `post_item` SET post=if(post=0," + insertPostId + ",post), `key`=null WHERE `key`='" + key + "'");
     }
 
     public void createTags(HashSet tagsMap) throws SQLException {
+        if (message.length() != 0) {
+            return;
+        }
 
         System.out.println("Query tags");
 

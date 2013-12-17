@@ -114,7 +114,7 @@ public class Search extends Creator {
         SolrQuery query = new SolrQuery();
         query.setQuery(q);
         query.set("defType", "edismax");
-        query.set("qf", "title^2.1 text^3.2 alt^1.5");
+        query.set("qf", "title^2.1 text^2.6 alt^1.5");
         query.set("wt", "xml");
         query.setStart(page == 1 ? 0 : begin - lt);
         query.setRows(lt);

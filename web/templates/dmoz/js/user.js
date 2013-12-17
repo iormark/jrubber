@@ -367,15 +367,20 @@
             if (window.location.hash === '') {
                 selected = $($(obj).attr('href'));
             }
+            
+            
 
             if (typeof(selected.offset()) !== 'undefined') {
+                var height = $(window.location.hash).height();
+                //alert(height);
                 $('body,html').animate({
-                    scrollTop: selected.offset().top - ($(window).height() / 2)
+                    scrollTop: selected.offset().top - (($(window).height() / 2)-(height/2))
                 }, 100);
             }
+            
             var hash = (window.location.hash).split('_');
 
-            if (hash[0] === '#comment') {
+            if (hash[0] === '#comment' || hash[0] === '#high') {
                 var selected = $(window.location.hash);
                 selected.css('opacity', '.1');
                 $(selected).animate({opacity: "1"}, 4000);
